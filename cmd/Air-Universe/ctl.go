@@ -3,10 +3,13 @@ package main
 import (
 	"errors"
 	"github.com/crossfw/Air-Universe/pkg/SSPanelApi"
+	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2rayApi"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
 	"time"
 )
+
+type v2rayController structures.V2rayController
 
 func checkCfg() (err error) {
 	switch baseCfg.Panel.Type {
@@ -23,32 +26,36 @@ func checkCfg() (err error) {
 		err = errors.New("unsupported proxy type")
 	}
 
+	if len(baseCfg.Panel.NodeIDs) != len(baseCfg.Proxy.InTags) {
+		err = errors.New("node_ids isn't equal to in_tags")
+	}
+
 	return
 }
 
-func GetUserSelector() (*[]structures.UserInfo, error) {
+func GetUserSelector(idIndex uint32) (*[]structures.UserInfo, error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
-		return sspanelGetUsers()
+		return sspanelGetUsers(idIndex)
 	default:
 		err := errors.New("unsupported panel type")
 		return nil, err
 	}
 }
 
-func PostUserSelector(traffic *[]structures.UserTraffic) (ret int, err error) {
+func PostUserSelector(idIndex uint32, traffic *[]structures.UserTraffic) (ret int, err error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
-		return sspanelPostTraffic(traffic)
+		return sspanelPostTraffic(idIndex, traffic)
 	default:
 		err := errors.New("unsupported panel type")
 		return -1, err
 	}
 }
 
-func sspanelGetUsers() (users *[]structures.UserInfo, err error) {
+func sspanelGetUsers(idIndex uint32) (users *[]structures.UserInfo, err error) {
 	for {
-		users, err = sspApi.GetUser(baseCfg)
+		users, err = sspApi.GetUser(baseCfg, idIndex)
 		if err != nil {
 			log.Warnf("Failed to get users - %s", err)
 			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
@@ -59,15 +66,39 @@ func sspanelGetUsers() (users *[]structures.UserInfo, err error) {
 	return
 }
 
-func sspanelPostTraffic(traffic *[]structures.UserTraffic) (ret int, err error) {
+func sspanelPostTraffic(idIndex uint32, traffic *[]structures.UserTraffic) (ret int, err error) {
 	for {
-		ret, err = sspApi.PostTraffic(baseCfg, traffic)
+		ret, err = sspApi.PostTraffic(baseCfg, idIndex, traffic)
 		if err != nil {
 			log.Warnf("Failed to post traffic - %s", err)
 			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 		} else {
 			break
 		}
+	}
+	return
+}
+
+func (v2rayCtl v2rayController) v2rayAddUsers(users *[]structures.UserInfo) (err error) {
+	err = v2rayApi.V2AddUsers(v2rayCtl.HsClient, users)
+	if err != nil {
+		log.Warnf("An error caused when adding users to V2ray-core - %s", err)
+	}
+	return
+}
+
+func (v2rayCtl v2rayController) v2rayRemoveUsers(users *[]structures.UserInfo) (err error) {
+	err = v2rayApi.V2RemoveUsers(v2rayCtl.HsClient, users)
+	if err != nil {
+		log.Warnf("An error caused when removing users from V2ray-core - %s", err)
+	}
+	return
+}
+
+func (v2rayCtl v2rayController) v2rayQueryTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
+	usersTraffic, err = v2rayApi.V2QueryUsersTraffic(v2rayCtl.SsClient, users)
+	if err != nil {
+		log.Warnf("An error caused when querying traffic from V2ray-core - %s", err)
 	}
 	return
 }

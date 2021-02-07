@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2rayApi"
+	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"time"
 	_ "time"
 )
 
@@ -49,14 +52,70 @@ func init() {
 
 }
 
+func sync(idIndex uint32) error {
+	var (
+		err                   error
+		v2Client              v2rayController
+		usersBefore, usersNow *[]structures.UserInfo
+		usersTraffic          *[]structures.UserTraffic
+	)
+	usersBefore = new([]structures.UserInfo)
+	usersNow = new([]structures.UserInfo)
+	usersTraffic = new([]structures.UserTraffic)
+
+	for {
+		v2Client.HsClient, v2Client.SsClient, err = v2rayApi.V2InitApi(baseCfg)
+		if err != nil {
+			log.Error(err)
+		}
+		usersNow, err = GetUserSelector(idIndex)
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		useRemove, userAdd, err := structures.FindUserDiffer(usersBefore, usersNow)
+		if err != nil {
+			log.Error(err)
+		}
+
+		if userAdd != nil {
+			log.Debugf(fmt.Sprint("Add users ", *userAdd))
+			err = v2Client.v2rayAddUsers(userAdd)
+			if err != nil {
+				log.Error(err)
+			}
+		}
+		if useRemove != nil {
+			log.Debugf(fmt.Sprint("Remove users ", *useRemove))
+			err = v2Client.v2rayRemoveUsers(useRemove)
+			if err != nil {
+				log.Error(err)
+			}
+		}
+
+		// Sync_interval
+		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
+
+		usersTraffic, err = v2Client.v2rayQueryTraffic(usersNow)
+		if err != nil {
+			log.Error(err)
+		}
+		_, err = PostUserSelector(idIndex, usersTraffic)
+		if err != nil {
+			log.Error(err)
+		}
+		usersBefore = usersNow
+	}
+}
+
 func main() {
 	log.Debug("start")
-	users, err := sspanel()
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
+
+	for idIndex := 0; idIndex < len(baseCfg.Panel.NodeIDs); idIndex++ {
+		go sync(uint32(idIndex))
 	}
-	fmt.Println(*users)
+
+	time.Sleep(time.Duration(100000) * time.Second)
 }
 
 //	log.Println("Started.")

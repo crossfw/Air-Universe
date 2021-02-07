@@ -3,7 +3,7 @@
     "type": "sspanel",
     "url": "https://SSPanel.address",
     "key": "SSPanel-Key",
-    "node_id": 2
+    "node_id": [2, 3]
   },
   "proxy": {
     "type": "v2ray",

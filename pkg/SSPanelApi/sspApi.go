@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func GetUser(baseCfg *structures.BaseConfig) (userList *[]structures.UserInfo, err error) {
+func GetUser(baseCfg *structures.BaseConfig, idIndex uint32) (userList *[]structures.UserInfo, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("get users from sspanel failed")
@@ -22,7 +22,7 @@ func GetUser(baseCfg *structures.BaseConfig) (userList *[]structures.UserInfo, e
 	userList = new([]structures.UserInfo)
 	user := structures.UserInfo{}
 	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/users?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeID), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/users?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeIDs[idIndex]), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -47,13 +47,14 @@ func GetUser(baseCfg *structures.BaseConfig) (userList *[]structures.UserInfo, e
 		user.Uuid = rtn.Get("data").GetIndex(u).Get("uuid").MustString()
 		user.AlertId = baseCfg.Proxy.AlertID
 		user.Level = 0
+		user.InTag = baseCfg.Proxy.InTags[idIndex]
 		*userList = append(*userList, user)
 	}
 
 	return userList, nil
 }
 
-func PostTraffic(baseCfg *structures.BaseConfig, trafficData *[]structures.UserTraffic) (ret int, err error) {
+func PostTraffic(baseCfg *structures.BaseConfig, idIndex uint32, trafficData *[]structures.UserTraffic) (ret int, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("post traffic data to sspanel failed")
@@ -72,7 +73,7 @@ func PostTraffic(baseCfg *structures.BaseConfig, trafficData *[]structures.UserT
 	}
 	log.Println("Traffic data", body)
 	client := &http.Client{Timeout: time.Duration(baseCfg.Sync.Timeout) * time.Second}
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeID), bytes.NewBuffer(bodyJson))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeIDs[idIndex]), bytes.NewBuffer(bodyJson))
 	if err != nil {
 		return 0, err
 	}

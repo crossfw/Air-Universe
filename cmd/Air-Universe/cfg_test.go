@@ -7,7 +7,7 @@ import (
 
 func TestConfigParse(t *testing.T) {
 	var (
-		cfgPath = "C:\\Users\\bendf\\Documents\\my-research\\air\\Air-Series\\Air-Universe\\config\\v2rayssp_json\\v2rayssp_sample.json"
+		cfgPath = "config\\v2rayssp_json\\v2rayssp_sample.json"
 	)
 
 	cfg, err := parseBaseConfig(&cfgPath)

@@ -6,10 +6,10 @@ type BaseConfig struct {
 	Sync  Sync  `json:"sync"`
 }
 type Panel struct {
-	Type   string `json:"type"`
-	URL    string `json:"url"`
-	Key    string `json:"key"`
-	NodeID uint32 `json:"node_id"`
+	Type    string   `json:"type"`
+	URL     string   `json:"url"`
+	Key     string   `json:"key"`
+	NodeIDs []uint32 `json:"node_ids"`
 }
 type Proxy struct {
 	Type       string   `json:"type"`

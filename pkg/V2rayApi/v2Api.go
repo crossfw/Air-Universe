@@ -2,10 +2,9 @@ package v2rayApi
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	"log"
+	"google.golang.org/grpc"
 	"strconv"
 
 	"v2ray.com/core/app/proxyman/command"
@@ -15,19 +14,17 @@ import (
 	"v2ray.com/core/proxy/vmess"
 )
 
-type userInfo structures.UserInfo
-type userTraffic structures.UserTraffic
-
 // level will for control speed limit.
 // https://github.com/v2fly/v2ray-core/pull/403
 
-func v2AddUser(c command.HandlerServiceClient, user *userInfo) {
+func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
 			User: &protocol.User{
 				Level: user.Level,
-				Email: strconv.Itoa(user.Id),
+				// 区分不同组的用户 Email = id + tag
+				Email: strconv.Itoa(user.Id) + user.InTag,
 				Account: serial.ToTypedMessage(&vmess.Account{
 					Id:               user.Uuid,
 					AlterId:          user.AlertId,
@@ -37,23 +34,25 @@ func v2AddUser(c command.HandlerServiceClient, user *userInfo) {
 		}),
 	})
 	if err != nil {
-		log.Printf("failed to call grpc command: %v", err)
+		//log.Printf("failed to call grpc command: %v", err)
+		return err
 	} else {
-		//log.Printf("ok: %v", resp)
+		return nil
 	}
 }
 
-func v2RemoveUser(c command.HandlerServiceClient, user *userInfo) {
+func v2RemoveUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.RemoveUserOperation{
-			Email: strconv.Itoa(user.Id),
+			Email: strconv.Itoa(user.Id) + user.InTag,
 		}),
 	})
 	if err != nil {
-		log.Printf("failed to call grpc command: %v", err)
+		//log.Printf("failed to call grpc command: %v", err)
+		return err
 	} else {
-		//log.Printf("ok: %v", resp)
+		return nil
 	}
 }
 
@@ -74,56 +73,62 @@ func v2QueryUserTraffic(c statsService.StatsServiceClient, userId, direction str
 	if len(stat) != 0 {
 		traffic = stat[0].Value
 	} else {
-		err = errors.New("query traffic error - wrong data")
+		traffic = 0
 	}
+
 	return
 }
 
-func AddUsers(hsClient *command.HandlerServiceClient, users *[]userInfo) error {
-	log.Println("Adding users:", users)
-	//cmdConn, err := grpc.Dial(fmt.Sprintf("%s:%d", v2ApiAddr, v2ApiPort), grpc.WithInsecure())
-	//if err != nil {
-	//	return err
-	//}
-	//hsClient := command.NewHandlerServiceClient(cmdConn)
+func V2AddUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) error {
+
 	for _, u := range *users {
-		v2AddUser(*hsClient, &u)
+		err := v2AddUser(*hsClient, &u)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func RemoveUsers(hsClient *command.HandlerServiceClient, users *[]userInfo) error {
-	log.Println("Adding users:", users)
-	//cmdConn, err := grpc.Dial(fmt.Sprintf("%s:%d", v2ApiAddr, v2ApiPort), grpc.WithInsecure())
-	//if err != nil {
-	//	return err
-	//}
-	//hsClient := command.NewHandlerServiceClient(cmdConn)
+func V2RemoveUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) error {
 	for _, u := range *users {
-		v2RemoveUser(*hsClient, &u)
+		err := v2RemoveUser(*hsClient, &u)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func QueryUsersTraffic(StatsClient *statsService.StatsServiceClient, users *[]userInfo) (usersTraffic *[]userTraffic, err error) {
-	usersTraffic = new([]userTraffic)
-	var ut userTraffic
-	//cmdConn, err := grpc.Dial(fmt.Sprintf("%s:%d", v2ApiAddr, v2ApiPort), grpc.WithInsecure())
-	//if err != nil {
-	//	return nil, err
-	//}
-	//hsClientTraffic := statsService.NewStatsServiceClient(cmdConn)
+func V2QueryUsersTraffic(StatsClient *statsService.StatsServiceClient, users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
+	usersTraffic = new([]structures.UserTraffic)
+	var ut structures.UserTraffic
+
 	for _, u := range *users {
 		ut.Id = u.Id
-		ut.Up, _ = v2QueryUserTraffic(*StatsClient, strconv.Itoa(u.Id), "up")
-		ut.Down, _ = v2QueryUserTraffic(*StatsClient, strconv.Itoa(u.Id), "down")
+		ut.Up, err = v2QueryUserTraffic(*StatsClient, strconv.Itoa(u.Id)+u.InTag, "up")
+		ut.Down, err = v2QueryUserTraffic(*StatsClient, strconv.Itoa(u.Id)+u.InTag, "down")
 		// when a user used this node, post traffic data
 		if ut.Up+ut.Down > 0 {
 			*usersTraffic = append(*usersTraffic, ut)
 		}
+		if err != nil {
+			return
+		}
 	}
+	return
+}
 
-	return usersTraffic, nil
+//gRPC 操作一律用指针完成
+func V2InitApi(cfg *structures.BaseConfig) (*command.HandlerServiceClient, *statsService.StatsServiceClient, error) {
+	cmdConn, err := grpc.Dial(fmt.Sprintf("%s:%d", cfg.Proxy.APIAddress, cfg.Proxy.APIPort), grpc.WithInsecure())
+	if err != nil {
+		return nil, nil, err
+	}
+	hsClient := command.NewHandlerServiceClient(cmdConn)
+	ssClient := statsService.NewStatsServiceClient(cmdConn)
+
+	return &hsClient, &ssClient, nil
 }

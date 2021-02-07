@@ -7,11 +7,9 @@ import (
 	"os"
 )
 
-type baseConfig structures.BaseConfig
-
 // Default config
 var (
-	baseCfg = &baseConfig{
+	baseCfg = &structures.BaseConfig{
 		Panel: structures.Panel{
 			Type: "sspanel",
 		},
@@ -30,7 +28,7 @@ var (
 	}
 )
 
-func parseBaseConfig(configPath *string) (*baseConfig, error) {
+func parseBaseConfig(configPath *string) (*structures.BaseConfig, error) {
 	file, err := os.Open(*configPath)
 	if err != nil {
 		return nil, err

@@ -1,0 +1,23 @@
+{
+  "panel": {
+    "type": "sspanel",
+    "url": "https://SSPanel.address",
+    "key": "SSPanel-Key",
+    "node_id": [2, 3]
+  },
+  "proxy": {
+    "type": "v2ray",
+    "alert_id": 1,
+    "in_tags": [
+      "p0",
+      "p1"
+    ],
+    "api_address": "127.0.0.1",
+    "api_port": 10085
+  },
+  "sync": {
+    "interval": 60,
+    "fail_delay": 5,
+    "timeout": 5
+  }
+}

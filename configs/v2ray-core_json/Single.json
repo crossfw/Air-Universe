@@ -1,0 +1,96 @@
+{
+  "stats": {},
+  "api": {
+      "services": [
+        "HandlerService",
+        "LoggerService",
+        "StatsService"
+      ],
+      "tag": "api"
+  },
+  "policy": {
+    "levels": {
+        "0": {
+            "connIdle": 300,
+            "downlinkOnly": 5,
+            "handshake": 4,
+            "uplinkOnly": 5,
+            "statsUserDownlink": true,
+            "statsUserUplink": true
+        }
+    }
+},
+  "inbound": {
+    "port": 11071,
+    "protocol": "vmess",
+    "streamSettings": {
+      "network": "ws",
+      "wsSettings": {
+        "path": "/videos"
+      }
+    },
+      "tag": "p0"
+  },
+  "inboundDetour": [
+      {
+          "listen": "127.0.0.1",
+          "port": 10085,
+          "protocol": "dokodemo-door",
+          "settings": {
+              "address": "127.0.0.1"
+          },
+          "tag": "api"
+      }
+  ],
+  "log": {
+      "loglevel": "debug"
+  },
+  "outbounds": [
+    {
+      "tag":"direct",
+      "protocol":"freedom",
+      "settings":{}
+    },
+    {
+      "tag": "blackhole",
+      "protocol": "blackhole",
+      "settings": {}
+    }
+  ],
+  "routing": {
+      "settings": {
+          "rules": [
+            {
+                "type": "field",
+                "inboundTag": [
+                  "p0"
+                ],
+                "outboundTag": "direct"
+              },
+              {
+                  "inboundTag": [
+                      "api"
+                  ],
+                  "outboundTag": "api",
+                  "type": "field"
+              },
+              {
+                "type": "field",
+                "ip": [
+                  "127.0.0.1/32",
+                  "10.0.0.0/8",
+                  "fc00::/7",
+                  "fe80::/10",
+                  "172.16.0.0/12"
+                ],
+                "protocol":["bittorrent"],
+                "inboundTag": [
+                  "p0"
+                ],
+                "outboundTag": "blackhole"
+              }
+          ]
+      },
+      "strategy": "rules"
+  }
+}

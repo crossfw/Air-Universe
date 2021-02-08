@@ -122,13 +122,13 @@ func V2QueryUsersTraffic(StatsClient *statsService.StatsServiceClient, users *[]
 }
 
 //gRPC 操作一律用指针完成
-func V2InitApi(cfg *structures.BaseConfig) (*command.HandlerServiceClient, *statsService.StatsServiceClient, error) {
+func V2InitApi(cfg *structures.BaseConfig) (*command.HandlerServiceClient, *statsService.StatsServiceClient, *grpc.ClientConn, error) {
 	cmdConn, err := grpc.Dial(fmt.Sprintf("%s:%d", cfg.Proxy.APIAddress, cfg.Proxy.APIPort), grpc.WithInsecure())
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	hsClient := command.NewHandlerServiceClient(cmdConn)
 	ssClient := statsService.NewStatsServiceClient(cmdConn)
 
-	return &hsClient, &ssClient, nil
+	return &hsClient, &ssClient, cmdConn, nil
 }

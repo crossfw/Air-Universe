@@ -1,5 +1,10 @@
 package structures
 
+import (
+	"errors"
+	"fmt"
+)
+
 type UserInfo struct {
 	Id      int
 	Uuid    string
@@ -15,13 +20,13 @@ type UserTraffic struct {
 }
 
 func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error) {
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		remove = nil
-	//		add = nil
-	//		err = errors.New(fmt.Sprintf("model FindUserDiffer cause error - %s", r))
-	//	}
-	//}()
+	defer func() {
+		if r := recover(); r != nil {
+			remove = nil
+			add = nil
+			err = errors.New(fmt.Sprintf("model FindUserDiffer cause error - %s", r))
+		}
+	}()
 
 	remove = new([]UserInfo)
 	add = new([]UserInfo)

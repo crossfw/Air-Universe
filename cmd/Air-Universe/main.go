@@ -63,11 +63,17 @@ func sync(idIndex uint32) error {
 	usersNow = new([]structures.UserInfo)
 	usersTraffic = new([]structures.UserTraffic)
 
+	// Get gRpc client and init v2ray api connection
 	for {
-		v2Client.HsClient, v2Client.SsClient, err = v2rayApi.V2InitApi(baseCfg)
+		v2Client.HsClient, v2Client.SsClient, v2Client.CmdConn, err = v2rayApi.V2InitApi(baseCfg)
 		if err != nil {
 			log.Error(err)
+		} else {
+			break
 		}
+	}
+
+	for {
 		usersNow, err = GetUserSelector(idIndex)
 		if err != nil {
 			log.Error(err)
@@ -115,58 +121,5 @@ func main() {
 		go sync(uint32(idIndex))
 	}
 
-	time.Sleep(time.Duration(100000) * time.Second)
+	//time.Sleep(time.Duration(100000) * time.Second)
 }
-
-//	log.Println("Started.")
-//log.Println("Getting users from", cfg.Url)
-//
-//// Get users until success
-//now, err := v2rayssp.GetUser(cfg.Url, cfg.Key, cfg.NodeId)
-//for err != nil {
-//	log.Println("Failed to get users")
-//	now, err = v2rayssp.GetUser(cfg.Url, cfg.Key, cfg.NodeId)
-//	time.Sleep(time.Duration(cfg.FailDelay) * time.Second)
-//}
-//log.Println("Add users to V2ray-core.")
-//for _, tag := range cfg.InTags {
-//	_ = v2rayssp.AddUser(now, tag, cfg.APIAddress, cfg.APIPort, cfg.AlertId)
-//}
-//log.Println("Finish adding users.")
-//
-//// To find difference in 2 Users array
-//before := now
-//for {
-//	log.Printf("waitting %v s \n", cfg.SyncInterval)
-//	// Sleep and post traffic data and get new users
-//	time.Sleep(time.Duration(cfg.SyncInterval) * time.Second)
-//	nowTraffic, _ := v2rayssp.QueryTraffic(before, cfg.APIAddress, cfg.APIPort)
-//	// POST until success, because we'll reset traffic data in each query.
-//	log.Println("Post traffic to server.")
-//	ret, err := v2rayssp.PostTraffic(cfg.Url, cfg.Key, cfg.NodeId, nowTraffic)
-//	for err != nil && ret != 1 {
-//		log.Println("Failed to post traffic")
-//		ret, err = v2rayssp.PostTraffic(cfg.Url, cfg.Key, cfg.NodeId, nowTraffic)
-//		time.Sleep(time.Duration(cfg.FailDelay) * time.Second)
-//	}
-//	log.Println("Finish posting traffic.")
-//
-//	// Get new users
-//	log.Println("Getting users.")
-//	now, err = v2rayssp.GetUser(cfg.Url, cfg.Key, cfg.NodeId)
-//	for err != nil {
-//		log.Println("Failed to get users")
-//		now, err = v2rayssp.GetUser(cfg.Url, cfg.Key, cfg.NodeId)
-//		time.Sleep(time.Duration(cfg.FailDelay) * time.Second)
-//	}
-//	log.Println("Finish getting users.")
-//	log.Println("Add & remove users via users difference")
-//	remove, add, _ := v2rayssp.FindUserDiffer(before, now)
-//
-//	for _, tag := range cfg.InTags {
-//		v2rayssp.RemoveUser(remove, tag, cfg.APIAddress, cfg.APIPort, cfg.AlertId)
-//		v2rayssp.AddUser(add, tag, cfg.APIAddress, cfg.APIPort, cfg.AlertId)
-//	}
-//	before = now
-//	log.Println("Finish adding & removing")
-//}

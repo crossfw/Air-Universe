@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2rayApi"
@@ -57,9 +58,14 @@ func init() {
 
 }
 
-func nodeSync(idIndex uint32, w *WaitGroupWrapper) error {
+func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			w.Done()
+			err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
+		}
+	}()
 	var (
-		err                   error
 		v2Client              v2rayController
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
@@ -117,8 +123,6 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) error {
 		}
 		usersBefore = usersNow
 	}
-	w.Done()
-	return err
 }
 
 func main() {

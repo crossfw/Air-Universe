@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	VERSION = "0.0.5"
+	VERSION = "0.1.0"
 )
 
 type WaitGroupWrapper struct {
@@ -29,12 +29,12 @@ func init() {
 		configPath   string
 	)
 
-	flag.BoolVar(&printVersion, "V", false, "print version")
-	flag.StringVar(&configPath, "C", "config/Air-Universe_json/test.json", "configure file")
+	flag.BoolVar(&printVersion, "v", false, "print version")
+	flag.StringVar(&configPath, "c", "", "configure file")
 	flag.Parse()
 
 	if printVersion {
-		_, _ = fmt.Fprintf(os.Stdout, "V2ray-ssp %s\n", VERSION)
+		_, _ = fmt.Fprintf(os.Stdout, "Air-Universe %s\n", VERSION)
 		os.Exit(0)
 	}
 
@@ -51,10 +51,10 @@ func init() {
 		}
 	}
 
-	//if flag.NFlag() == 0 {
-	//	flag.PrintDefaults()
-	//	os.Exit(0)
-	//}
+	if flag.NFlag() == 0 {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
 
 }
 

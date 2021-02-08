@@ -95,16 +95,18 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 			log.Error(err)
 		}
 
-		if userAdd != nil {
-			log.Debugf(fmt.Sprint("Add users ", *userAdd))
-			err = v2Client.v2rayAddUsers(userAdd)
+		// Remove first, if user change uuid, remove old then add new.
+		if useRemove != nil {
+			log.Debugf(fmt.Sprint("Remove users ", *useRemove))
+			err = v2Client.v2rayRemoveUsers(useRemove)
 			if err != nil {
 				log.Error(err)
 			}
 		}
-		if useRemove != nil {
-			log.Debugf(fmt.Sprint("Remove users ", *useRemove))
-			err = v2Client.v2rayRemoveUsers(useRemove)
+
+		if userAdd != nil {
+			log.Debugf(fmt.Sprint("Add users ", *userAdd))
+			err = v2Client.v2rayAddUsers(userAdd)
 			if err != nil {
 				log.Error(err)
 			}

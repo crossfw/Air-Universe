@@ -7,6 +7,7 @@ import (
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"sync"
 	"time"
 	_ "time"
 )
@@ -14,6 +15,10 @@ import (
 const (
 	VERSION = "0.0.5"
 )
+
+type WaitGroupWrapper struct {
+	sync.WaitGroup
+}
 
 func init() {
 	log.SetLevel(log.DebugLevel)
@@ -52,7 +57,7 @@ func init() {
 
 }
 
-func sync(idIndex uint32) error {
+func nodeSync(idIndex uint32, w *WaitGroupWrapper) error {
 	var (
 		err                   error
 		v2Client              v2rayController
@@ -112,14 +117,19 @@ func sync(idIndex uint32) error {
 		}
 		usersBefore = usersNow
 	}
+	w.Done()
+	return err
 }
 
 func main() {
-	log.Debug("start")
+	var wg *WaitGroupWrapper
+	wg = new(WaitGroupWrapper)
 
 	for idIndex := 0; idIndex < len(baseCfg.Panel.NodeIDs); idIndex++ {
-		go sync(uint32(idIndex))
+		wg.Add(1)
+		go nodeSync(uint32(idIndex), wg)
 	}
 
-	//time.Sleep(time.Duration(100000) * time.Second)
+	// wait
+	wg.Wait()
 }

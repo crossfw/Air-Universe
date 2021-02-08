@@ -1,67 +1,144 @@
-# V2ray-ssp 
+# Air-Universe 
 ## Introduction
-V2ray-ssp is an open-source and free Middleware between SSPanel and V2ray-core. It will be compatible with any version of v2ray-core(4.x).
+Air-Universe is an open-source and free Middleware between SSPanel and V2ray-core. It will be compatible with any version of v2ray-core(4.x).
 ## Features
 * Sync users from your SSPanel to V2ray-core
 * Post traffic data to your SSPanel
 * Fully customizable V2ray-core profiles
 * NO users count limit.
+
+## TurnKey Install
+```shell
+wget https://github.com/crossfw/Air-Universe/raw/master/scripts/Install_single_inbound_server.sh && bash Install_single_inbound_server.sh
+```
+
 ## Install in linux
 1. Prepare V2ray-core form [V2ray Release](https://github.com/v2fly/v2ray-core/releases)
-2. Make a v2ray config for you, you can refer from [Here](https://github.com/crossfw/V2ray-ssp/blob/master/example/v2ray-core_json/Single.json) and [V2ray document](https://www.v2ray.com/) <br>
+2. Make a v2ray config for you, you can refer from [Here](https://github.com/crossfw/Air-Universe/blob/master/example/v2ray-core_json/Single.json) and [V2ray document](https://www.v2ray.com/) <br>
 You must remain V2ray-core API and a route rule for API, API port can change if you want, the default port for V2ray-core API is 10085.
    
-3. Download V2ray-ssp from [V2ray-ssp Release](https://github.com/crossfw/V2ray-ssp/releases)
-4. Make a V2ray-ssp config from [Here](https://github.com/crossfw/V2ray-ssp/blob/master/example/v2rayssp_json/example.json) <br>
+3. Download Air-Universe from [Air-Universe Release](https://github.com/crossfw/Air-Universe/releases)
+4. Make a Air-Universe config from [Here](https://github.com/crossfw/Air-Universe/blob/master/example/v2rayssp_json/example.json) <br>
 5. Start V2ray-core first
 ```shell
 ./v2ray -c your_v2ray.json
 ```
-6. After v2ray-core starts successfully, launch V2ray-ssp
+6. After v2ray-core starts successfully, launch Air-Universe
 ```shell
-./v2ray-ssp -C your_v2ray-ssp.json
+./Air-Universe -C your_Air-Universe.json
 ```
 7. Test connection.
 
-## V2ray-ssp Config explain
+## Air-Universe Configuration File Format
+
+### Overview
+Configuration of Air-Universe is a file with the following format. It includes "panel", "proxy", "sync"
 ```json
 {
-  "url": "https://SSPanel.address",
-  "key": "SSPanel-Key",
-  "node_id": 24,
-  "alert_id": 1,
-  "in_tags": ["p0"],
-  "api_address": "127.0.0.1",
-  "api_port": 10085,
-  "sync_interval": 60,
-  "fail_delay": 3
+  "panel": {},
+  "proxy": {},
+  "sync": {}
 }
-
 ```
 
-- url
-    - Your SSPanel url. Make sure it start at "http" or "https"
-    
-- key
-    - Your SSPanel's mu_key. Check from website root ./config/.config.php
-    
-- node_id
-    - The node you want to build
-    
-- alert_id
-    - Make sure alertId is equal to thr node configuration at your SSPanel, the wrong value will cause connection failure or memory leak
-    
-- in_tags
-    - An array includes Tags which v2ray-core inbound you want to add users
-    
-- api_address
-    - V2ray-core api address, normally it will be "127.0.0.1"
-    
-- api_port
-    - V2ray-core api port, normally it will be "10085". You can change it in your v2ray-core config json.
-    
-- sync_interval
-    - Interval time(second) in two synchronization.
-    
-- fail_delay
-    - Retry delay time(second) if synchronization failure.
+> `panel`: [PanelObject](#panelobject)
+ 
+ The settings about panel
+
+> `proxy`: [ProxyObject](#proxyobject)
+
+ Control local or remote Proxy-core
+
+> `sync`: [SyncObject](#syncobject)
+
+ Sync and retry settings
+
+
+### PanelObject
+
+`PanelObject` configuration format.
+```json
+{
+  "type": "type of panel",
+  "url": "https://SSPanel.address",
+  "key": "SSPanel-Key",
+  "node_ids": [1, 2]
+}
+```
+
+> `type`: string
+
+Which panel you are using. Now it supports 
+- `sspanel` - [SSPanel-Uim](https://github.com/Anankke/SSPanel-Uim)
+
+> `url`: string
+
+Your SSPanel url. Make sure it start at "http" or "https".
+
+> `key`: string
+
+Your SSPanel's mu_key. Check from website root `./config/.config.php` if your panel is sspanel.
+
+> `node_ids`: [uint32]
+
+An array, each element of which is a nodeId you want to service. Please make it length equal to `proxy.in_tags`.<br>
+The first element of `proxy.in_tags` will get users from the first element of `panel.node_ids`. Map by their index.
+
+### ProxyObject
+`ProxyObject` configuration format.
+```json
+{
+  "type": "type of proxy",
+  "alert_id": 1,
+  "in_tags": [
+    "p0",
+    "p1"
+  ],
+  "api_address": "127.0.0.1",
+  "api_port": 10085
+}
+```
+
+> `type`: string
+
+Which proxy you are using. Now it supports
+- `v2ray` - [V2Ray-core](https://github.com/v2fly/v2ray-core)
+
+> `alert_id`: string
+
+V2Ray AlertId you want to set for every user. Please make sure it is equal to your panel setting.
+
+> `in_tags`: [string]
+
+An array includes Tags which v2ray inbound you want to add users.Please make it length equal to `panel.node_ids`.<br>
+The first element of `proxy.in_tags` will get users from the first element of `panel.node_ids`. Map by their index.
+
+> `api_address`: string
+
+V2ray-core api address, normally it will be "127.0.0.1"
+
+> `api_port`: uint32
+
+V2ray-core api port, normally it will be "10085". You can change it in your v2ray-core config json.
+
+
+### SyncObject
+`SyncObject` configuration format.
+```json
+{
+  "interval": 60,
+  "fail_delay": 5,
+  "timeout": 5
+}
+```
+> `interval`: uint32
+
+Interval time(second) between two synchronization.
+
+> `fail_delay`: uint32
+
+Retry delay time(second) if synchronization failure.
+
+> `timeout`: uint32
+
+HTTP connection request timeout(for connect panel)

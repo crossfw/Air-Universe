@@ -3,12 +3,12 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 中文文档 → [here](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_cn.md)
 
 ## Bugs:
-- None
+- Can't clear V2Ray logs after recorded ip.
 ## TODO List:
-- ~~Fix known bugs.~~
+- Fix known bugs.
 - Auto generate V2ray-core configuration from SSPanel.
 - Support speed limit.
-- Record users ip.
+- ~~Record users ip.~~  Finished
 - Support Trojan protocol.
 - Turnkey installation script.
 - Support Shadowsocks multiuser in single port.

@@ -22,6 +22,7 @@ func GetUser(baseCfg *structures.BaseConfig, idIndex uint32) (userList *[]struct
 	userList = new([]structures.UserInfo)
 	user := structures.UserInfo{}
 	client := &http.Client{Timeout: 10 * time.Second}
+	defer client.CloseIdleConnections()
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/users?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeIDs[idIndex]), nil)
 	if err != nil {
 		return nil, err
@@ -60,10 +61,10 @@ func PostTraffic(baseCfg *structures.BaseConfig, idIndex uint32, trafficData *[]
 			err = errors.New("post traffic data to sspanel failed")
 		}
 	}()
-	type TrafficType struct {
+	type trafficType struct {
 		Data []structures.UserTraffic `json:"data"`
 	}
-	var body TrafficType
+	var body trafficType
 	// build post json
 	body.Data = *trafficData
 	bodyJson, err := json.Marshal(body)
@@ -73,6 +74,7 @@ func PostTraffic(baseCfg *structures.BaseConfig, idIndex uint32, trafficData *[]
 	}
 	log.Println("Traffic data", body)
 	client := &http.Client{Timeout: time.Duration(baseCfg.Sync.Timeout) * time.Second}
+	defer client.CloseIdleConnections()
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeIDs[idIndex]), bytes.NewBuffer(bodyJson))
 	if err != nil {
 		return 0, err

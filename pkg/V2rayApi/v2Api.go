@@ -18,13 +18,14 @@ import (
 // https://github.com/v2fly/v2ray-core/pull/403
 
 func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
+	// 区分不同组的用户 Email = id-tag
+	userEmail := fmt.Sprintf("%s-%s", strconv.Itoa(user.Id), user.InTag)
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
 			User: &protocol.User{
 				Level: user.Level,
-				// 区分不同组的用户 Email = id + tag
-				Email: strconv.Itoa(user.Id) + user.InTag,
+				Email: userEmail,
 				Account: serial.ToTypedMessage(&vmess.Account{
 					Id:               user.Uuid,
 					AlterId:          user.AlertId,
@@ -42,10 +43,11 @@ func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error 
 }
 
 func v2RemoveUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
+	userEmail := fmt.Sprintf("%s-%s", strconv.Itoa(user.Id), user.InTag)
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.RemoveUserOperation{
-			Email: strconv.Itoa(user.Id) + user.InTag,
+			Email: userEmail,
 		}),
 	})
 	if err != nil {

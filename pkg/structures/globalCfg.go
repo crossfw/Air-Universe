@@ -17,6 +17,7 @@ type Proxy struct {
 	InTags     []string `json:"in_tags"`
 	APIAddress string   `json:"api_address"`
 	APIPort    uint32   `json:"api_port"`
+	LogPath    string   `json:"log_path"`
 }
 type Sync struct {
 	Interval  uint32 `json:"interval"`

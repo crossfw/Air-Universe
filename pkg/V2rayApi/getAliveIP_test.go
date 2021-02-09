@@ -1,13 +1,13 @@
-package main
+package v2rayApi
 
 import (
-	"encoding/json"
+	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	"log"
-	"os"
+	"testing"
 )
 
-// Default config
+//# v2ray.com/core/common/buf
+//vet.exe: ..\..\vendor\v2ray.com\core\common\buf\readv_constraint_windows.go:10:6: reason declared but not used
 var (
 	baseCfg = &structures.BaseConfig{
 		Panel: structures.Panel{
@@ -19,7 +19,7 @@ var (
 			InTags:     []string{"p0"},
 			APIAddress: "127.0.0.1",
 			APIPort:    10085,
-			LogPath:    "./v2.log",
+			LogPath:    "\\locTest\\v2.log",
 		},
 		Sync: structures.Sync{
 			Interval:  60,
@@ -29,16 +29,7 @@ var (
 	}
 )
 
-func ParseBaseConfig(configPath *string) (*structures.BaseConfig, error) {
-	file, err := os.Open(*configPath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	if err := json.NewDecoder(file).Decode(baseCfg); err != nil {
-		return nil, err
-	}
-	log.Println(*baseCfg)
-	return baseCfg, nil
+func TestGetIP(t *testing.T) {
+	a, _ := ReadV2Log(baseCfg)
+	fmt.Println(*a)
 }

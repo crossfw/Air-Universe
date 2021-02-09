@@ -10,7 +10,7 @@ func TestConfigParse(t *testing.T) {
 		cfgPath = "config\\v2rayssp_json\\v2rayssp_sample.json"
 	)
 
-	cfg, err := parseBaseConfig(&cfgPath)
+	cfg, err := ParseBaseConfig(&cfgPath)
 	if err != nil {
 		t.Errorf("err\n")
 	}

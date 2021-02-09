@@ -1,10 +1,10 @@
 # Air-Universe 
 ## Introduction
-Air-Universe is an open-source and free Middleware between SSPanel and V2ray-core. It will be compatible with any version of v2ray-core(4.x).
+Air-Universe is an open-source and free Middleware between SSPanel and V2Ray-core. It will be compatible with any version of v2ray-core(4.x).
 ## Features
-* Sync users from your SSPanel to V2ray-core
+* Sync users from your SSPanel to V2Ray-core
 * Post traffic data to your SSPanel
-* Fully customizable V2ray-core profiles
+* Fully customizable V2Ray-core profiles
 * NO users count limit.
 
 ## TurnKey Install
@@ -13,13 +13,13 @@ wget https://github.com/crossfw/Air-Universe/raw/master/scripts/Install_single_i
 ```
 
 ## Install in linux
-1. Prepare V2ray-core form [V2ray Release](https://github.com/v2fly/v2ray-core/releases)
-2. Make a v2ray config for you, you can refer from [Here](https://github.com/crossfw/Air-Universe/blob/master/example/v2ray-core_json/Single.json) and [V2ray document](https://www.v2ray.com/) <br>
-You must remain V2ray-core API and a route rule for API, API port can change if you want, the default port for V2ray-core API is 10085.
+1. Prepare V2Ray-core form [V2Ray Release](https://github.com/v2fly/v2ray-core/releases)
+2. Make a v2ray config for you, you can refer from [Here](https://github.com/crossfw/Air-Universe/blob/master/example/v2ray-core_json/Single.json) and [V2Ray document](https://www.v2ray.com/) <br>
+You must remain V2Ray-core API and a route rule for API, API port can change if you want, the default port for V2Ray-core API is 10085.
    
 3. Download Air-Universe from [Air-Universe Release](https://github.com/crossfw/Air-Universe/releases)
 4. Make a Air-Universe config from [Here](https://github.com/crossfw/Air-Universe/blob/master/example/v2rayssp_json/example.json) <br>
-5. Start V2ray-core first
+5. Start V2Ray-core first
 ```shell
 ./v2ray -c your_v2ray.json
 ```
@@ -95,7 +95,8 @@ The first element of `proxy.in_tags` will get users from the first element of `p
     "p1"
   ],
   "api_address": "127.0.0.1",
-  "api_port": 10085
+  "api_port": 10085,
+  "log_path": "./v2.log"
 }
 ```
 
@@ -115,12 +116,15 @@ The first element of `proxy.in_tags` will get users from the first element of `p
 
 > `api_address`: string
 
-V2ray-core api address, normally it will be "127.0.0.1"
+V2Ray-core api address, normally it will be "127.0.0.1"
 
 > `api_port`: uint32
 
-V2ray-core api port, normally it will be "10085". You can change it in your v2ray-core config json.
+V2Ray-core api port, normally it will be "10085". You can change it in your v2ray-core config json.
 
+> `log_path`: string
+
+V2Ray-core log path, it will use to record users' IP address.
 
 ### SyncObject
 `SyncObject` configuration format.

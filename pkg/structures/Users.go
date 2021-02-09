@@ -6,7 +6,7 @@ import (
 )
 
 type UserInfo struct {
-	Id      int
+	Id      uint32
 	Uuid    string
 	AlertId uint32
 	Level   uint32
@@ -14,9 +14,15 @@ type UserInfo struct {
 }
 
 type UserTraffic struct {
-	Id   int   `json:"user_id"`
-	Up   int64 `json:"u"`
-	Down int64 `json:"d"`
+	Id   uint32 `json:"user_id"`
+	Up   int64  `json:"u"`
+	Down int64  `json:"d"`
+}
+
+type UserIP struct {
+	Id      uint32
+	InTag   string
+	AliveIP []string
 }
 
 func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error) {

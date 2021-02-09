@@ -3,7 +3,7 @@
     "type": "sspanel",
     "url": "https://SSPanel.address",
     "key": "SSPanel-Key",
-    "node_ids": [2, 3]
+    "node_ids": [1, 2]
   },
   "proxy": {
     "type": "v2ray",
@@ -13,7 +13,8 @@
       "p1"
     ],
     "api_address": "127.0.0.1",
-    "api_port": 10085
+    "api_port": 10085,
+    "log_path": "./v2.log"
   },
   "sync": {
     "interval": 60,

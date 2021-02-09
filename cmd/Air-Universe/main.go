@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	sspApi "github.com/crossfw/Air-Universe/pkg/SSPanelApi"
 	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2rayApi"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
@@ -14,7 +15,7 @@ import (
 )
 
 const (
-	VERSION = "0.1.1"
+	VERSION = "0.2.0"
 )
 
 type WaitGroupWrapper struct {
@@ -30,7 +31,7 @@ func init() {
 	)
 
 	flag.BoolVar(&printVersion, "v", false, "print version")
-	flag.StringVar(&configPath, "c", "", "configure file")
+	flag.StringVar(&configPath, "c", "locTest/test.json", "configure file")
 	flag.Parse()
 
 	if printVersion {
@@ -39,7 +40,7 @@ func init() {
 	}
 
 	if configPath != "" {
-		_, err := parseBaseConfig(&configPath)
+		_, err := ParseBaseConfig(&configPath)
 		if err != nil {
 			log.Error(err)
 			os.Exit(1)
@@ -51,18 +52,18 @@ func init() {
 		}
 	}
 
-	if flag.NFlag() == 0 {
-		flag.PrintDefaults()
-		os.Exit(0)
-	}
+	//if flag.NFlag() == 0 {
+	//	flag.PrintDefaults()
+	//	os.Exit(0)
+	//}
 
 }
 
 func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			w.Done()
 			err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
+			w.Done()
 		}
 	}()
 	var (
@@ -127,6 +128,26 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	}
 }
 
+func postUsersIP(w *WaitGroupWrapper) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("post users' IP thread error - %s", r))
+			w.Done()
+		}
+	}()
+	for {
+		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
+		usersIp, err := v2rayApi.ReadV2Log(baseCfg)
+		if err != nil {
+			log.Error(err)
+		}
+		ret, err := sspApi.PostUsersIP(baseCfg, usersIp)
+		if ret != 1 || err != nil {
+			log.Error(err)
+		}
+	}
+}
+
 func main() {
 	var wg *WaitGroupWrapper
 	wg = new(WaitGroupWrapper)
@@ -135,6 +156,8 @@ func main() {
 		wg.Add(1)
 		go nodeSync(uint32(idIndex), wg)
 	}
+	wg.Add(1)
+	go postUsersIP(wg)
 
 	// wait
 	wg.Wait()

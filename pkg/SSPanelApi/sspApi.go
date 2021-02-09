@@ -44,7 +44,7 @@ func GetUser(baseCfg *structures.BaseConfig, idIndex uint32) (userList *[]struct
 	numOfUsers := len(rtn.Get("data").MustArray())
 
 	for u := 0; u < numOfUsers; u++ {
-		user.Id = rtn.Get("data").GetIndex(u).Get("id").MustInt()
+		user.Id = uint32(rtn.Get("data").GetIndex(u).Get("id").MustInt())
 		user.Uuid = rtn.Get("data").GetIndex(u).Get("uuid").MustString()
 		user.AlertId = baseCfg.Proxy.AlertID
 		user.Level = 0

@@ -8,7 +8,6 @@ import (
 	regexp "github.com/dlclark/regexp2"
 	"io"
 	"os"
-	"os/exec"
 	"strconv"
 
 	"strings"
@@ -78,15 +77,15 @@ func captureDetail(line string) (useRec singleUserRecord, err error) {
 }
 
 func ReadV2Log(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, err error) {
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		err = errors.New(fmt.Sprintf("model FindUserDiffer cause error - %s", r))
-	//	}
-	//}()
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprintf("model FindUserDiffer cause error - %s", r))
+		}
+	}()
 
 	userIPs = new([]structures.UserIP)
 
-	v2Log, err := os.OpenFile(baseCfg.Proxy.LogPath, os.O_RDONLY, 0666)
+	v2Log, err := os.OpenFile(baseCfg.Proxy.LogPath, os.O_RDWR, 0666)
 	if err != nil {
 		fmt.Println("Open file error!", err)
 		return
@@ -116,7 +115,12 @@ func ReadV2Log(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, er
 	}
 
 	// clear log
-	cmd := exec.Command(fmt.Sprintf("cat /dev/null > %s", baseCfg.Proxy.LogPath))
-	err = cmd.Start()
+	clearLog, err := os.OpenFile(baseCfg.Proxy.LogPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println("Clear log error!", err)
+		return
+	}
+	defer clearLog.Close()
+
 	return
 }

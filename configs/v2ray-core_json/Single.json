@@ -1,4 +1,7 @@
 {
+  "log": {
+    "access":"./v2.log"
+  },
   "stats": {},
   "api": {
       "services": [

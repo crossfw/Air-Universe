@@ -19,7 +19,7 @@ import (
 
 func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
 	// 区分不同组的用户 Email = id-tag
-	userEmail := fmt.Sprintf("%s-%s", strconv.Itoa(int(user.Id)), user.InTag)
+	userEmail := fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
@@ -110,8 +110,8 @@ func V2QueryUsersTraffic(StatsClient *statsService.StatsServiceClient, users *[]
 
 	for _, u := range *users {
 		ut.Id = u.Id
-		ut.Up, err = v2QueryUserTraffic(*StatsClient, strconv.FormatUint(uint64(u.Id), 10)+u.InTag, "up")
-		ut.Down, err = v2QueryUserTraffic(*StatsClient, strconv.FormatUint(uint64(u.Id), 10)+u.InTag, "down")
+		ut.Up, err = v2QueryUserTraffic(*StatsClient, fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(u.Id), 10), u.InTag), "up")
+		ut.Down, err = v2QueryUserTraffic(*StatsClient, fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(u.Id), 10), u.InTag), "down")
 		// when a user used this node, post traffic data
 		if ut.Up+ut.Down > 0 {
 			*usersTraffic = append(*usersTraffic, ut)

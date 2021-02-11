@@ -15,8 +15,8 @@ import (
 
 /*
 regex:
-UserID:		(?<=email:)\d*(?=-)
-UserTag:	(?<=email:\d*-)\w*
+UserID:		(?<=email:.*)\d*(?=-)
+UserTag:	(?<=email:.*-)\w*
 UserIP:		((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}(?=.*accepted)
 */
 
@@ -56,8 +56,8 @@ func (useRec *singleUserRecord) addIP(userIPs *[]structures.UserIP) error {
 
 func captureDetail(line string) (useRec singleUserRecord, err error) {
 
-	reUserID, _ := regexp.Compile("(?<=email:)\\d*(?=-)", 1)
-	reUserTag, _ := regexp.Compile("(?<=email:\\d*-)\\w*", 1)
+	reUserID, _ := regexp.Compile("(?<=email:.*)\\d*(?=-)", 1)
+	reUserTag, _ := regexp.Compile("(?<=email:.*-)\\w*", 1)
 	reUserIP, _ := regexp.Compile("((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(\\.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}(?=.*accepted)", 1)
 
 	mUserID, _ := reUserID.FindStringMatch(line)
@@ -103,7 +103,7 @@ func ReadV2Log(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, er
 			}
 		}
 		line = strings.TrimSpace(line)
-		//fmt.Println(line)
+		fmt.Println(line)
 		// Process code
 
 		singUser, userErr := captureDetail(line)

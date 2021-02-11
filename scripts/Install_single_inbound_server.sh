@@ -43,26 +43,6 @@ EOF
 
 }
 
-createService(){
-  cat >> /lib/systemd/system/au.service << EOF
-  [Unit]
-Description=Air-Universe Service
-After=network.target
-[Service]
-Type=simple
-User=root
-ExecStart=/usr/bin/au/keepalive.sh
-
-Restart=always
-[Install]
-WantedBy=multi-user.target
-EOF
-
-systemctl daemon-reload;
-systemctl enable au;
-systemctl start au;
-
-}
 
 keepalive() {
   cat >>/usr/bin/au/keepalive.sh <<EOF
@@ -90,7 +70,6 @@ panelConfig
 download
 makeConfig
 keepalive
-createService
 chmod +x /usr/bin/au/*
 echo '*/1 * * * * /usr/bin/au/keepalive.sh'  >> /var/spool/cron/crontabs/root
 chown root:crontab /var/spool/cron/crontabs/root

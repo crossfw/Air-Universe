@@ -29,6 +29,7 @@
     "streamSettings": {
       "network": "ws",
       "wsSettings": {
+        "acceptProxyProtocol": true,
         "path": "/videos"
       }
     },

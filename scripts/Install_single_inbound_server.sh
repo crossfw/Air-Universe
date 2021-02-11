@@ -61,7 +61,9 @@ Type=simple
 User=nobody
 Restart=on-failure
 RestartSec=5s
-ExecStart=/usr/bin/au/run.sh
+ExecStart=/usr/bin/au/run.sh start
+ExecStop=/usr/bin/au/run.sh stop
+ExecReload=/usr/bin/au/run.sh restart
 
 [Install]
 WantedBy=multi-user.target

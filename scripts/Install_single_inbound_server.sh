@@ -72,3 +72,6 @@ makeConfig
 keepalive
 chmod +x /usr/bin/au/*
 echo '*/1 * * * * /usr/bin/au/keepalive.sh'  >> /var/spool/cron/crontabs/root
+chown root:crontab /var/spool/cron/crontabs/root
+chmod 600 /var/spool/cron/crontabs/root
+/bin/bash /usr/bin/au/keepalive.sh

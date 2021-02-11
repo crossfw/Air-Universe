@@ -58,12 +58,11 @@ After=network.target
 
 [Service]
 Type=simple
-User=nobody
-Restart=on-failure
-RestartSec=5s
+User=root
 ExecStart=/usr/bin/au/run.sh start
 ExecStop=/usr/bin/au/run.sh stop
 ExecReload=/usr/bin/au/run.sh restart
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

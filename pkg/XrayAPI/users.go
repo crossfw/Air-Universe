@@ -6,6 +6,7 @@ import (
 	"github.com/xtls/xray-core/app/proxyman/command"
 	"github.com/xtls/xray-core/common/protocol"
 	"github.com/xtls/xray-core/common/serial"
+	"github.com/xtls/xray-core/proxy/trojan"
 	"github.com/xtls/xray-core/proxy/vless"
 	"github.com/xtls/xray-core/proxy/vmess"
 )
@@ -51,8 +52,8 @@ func addTrojanUser(client command.HandlerServiceClient, user *structures.UserInf
 			User: &protocol.User{
 				Level: user.Level,
 				Email: user.Tag,
-				Account: serial.ToTypedMessage(&vmess.Account{
-					Id: user.Uuid,
+				Account: serial.ToTypedMessage(&trojan.Account{
+					Password: user.Uuid,
 				}),
 			},
 		}),

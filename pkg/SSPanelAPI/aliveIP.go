@@ -58,7 +58,8 @@ func postIP(baseCfg *structures.BaseConfig, idIndex uint32, userIP *postIPType) 
 		return 0, err
 	}
 
-	return rtn.Get("ret").MustInt(), nil
+	ret = rtn.Get("ret").MustInt()
+	return
 }
 
 func PostUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (ret int, err error) {
@@ -92,7 +93,7 @@ func PostUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (r
 				return 0, err
 			}
 		} else {
-			ret = 2
+			ret = 1
 		}
 	}
 	return

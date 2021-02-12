@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func InitApi(cfg *structures.BaseConfig, xrayCtl *structures.XrayController) (err error) {
+func (xrayCtl *XrayController) Init(cfg *structures.BaseConfig) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New(fmt.Sprintf("init apt of XRAY error - %s", r))

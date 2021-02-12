@@ -1,4 +1,4 @@
-package V2RayAPI
+package IPControl
 
 import (
 	"fmt"
@@ -30,6 +30,6 @@ var (
 )
 
 func TestGetIP(t *testing.T) {
-	a, _ := ReadV2Log(baseCfg)
+	a, _ := ReadLog(baseCfg)
 	fmt.Println(*a)
 }

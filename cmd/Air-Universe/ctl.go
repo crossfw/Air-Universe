@@ -10,11 +10,6 @@ import (
 	"time"
 )
 
-var (
-	v2rayCtl *structures.V2rayController
-	xrayCtl  *structures.XrayController
-)
-
 func checkCfg() (err error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
@@ -37,35 +32,38 @@ func checkCfg() (err error) {
 	return
 }
 
-func initAPI() (err error) {
+func initAPI() (apiClient structures.ProxyCommand, err error) {
 	switch baseCfg.Proxy.Type {
 	case "v2ray":
+		apiClient = new(v2rayApi.V2rayController)
 		for {
-			v2rayCtl = new(structures.V2rayController)
-			err = v2rayApi.InitApi(baseCfg, v2rayCtl)
+			err = apiClient.Init(baseCfg)
 			if err != nil {
 				log.Error(err)
 			} else {
 				break
 			}
 		}
+		return
 	case "xray":
+		apiClient = new(XrayAPI.XrayController)
 		for {
-			xrayCtl = new(structures.XrayController)
-			XrayAPI.InitApi(baseCfg, xrayCtl)
+			err = apiClient.Init(baseCfg)
 			if err != nil {
 				log.Error(err)
 			} else {
 				break
 			}
 		}
+		return
 	default:
-		err := errors.New("unsupported proxy core")
-		return err
+		err = errors.New("unsupported proxy core")
+		return
 	}
 	return
 }
 
+// TODO: Use interface to achieve
 func getUser(idIndex uint32) (*[]structures.UserInfo, error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
@@ -83,48 +81,6 @@ func postUser(idIndex uint32, traffic *[]structures.UserTraffic) (ret int, err e
 	default:
 		err := errors.New("unsupported panel type")
 		return -1, err
-	}
-}
-
-func addUser(users *[]structures.UserInfo) (err error) {
-	switch baseCfg.Proxy.Type {
-	case "v2ray":
-		return v2rayAddUsers(users)
-	case "xray":
-		switch (*users)[0].Protocol {
-		case "vmess":
-			return xrayAddVmessUsers(users)
-		case "trojan":
-			return xrayAddTrojanUsers(users)
-		}
-	default:
-		err := errors.New("unsupported proxy core")
-		return err
-	}
-	return
-}
-
-func removeUser(users *[]structures.UserInfo) (err error) {
-	switch baseCfg.Proxy.Type {
-	case "v2ray":
-		return v2rayRemoveUsers(users)
-	case "xray":
-		return xrayRemoveUsers(users)
-	default:
-		err := errors.New("unsupported proxy core")
-		return err
-	}
-}
-
-func queryTraffic(users *[]structures.UserInfo) (*[]structures.UserTraffic, error) {
-	switch baseCfg.Proxy.Type {
-	case "v2ray":
-		return v2rayQueryTraffic(users)
-	case "xray":
-		return xrayQueryTraffic(users)
-	default:
-		err := errors.New("unsupported proxy core")
-		return nil, err
 	}
 }
 
@@ -150,62 +106,6 @@ func sspanelPostTraffic(idIndex uint32, traffic *[]structures.UserTraffic) (ret 
 		} else {
 			break
 		}
-	}
-	return
-}
-
-func v2rayAddUsers(users *[]structures.UserInfo) (err error) {
-	err = v2rayApi.V2AddUsers(v2rayCtl.HsClient, users)
-	if err != nil {
-		log.Warnf("An error caused when adding users to V2ray-core - %s", err)
-	}
-	return
-}
-
-func v2rayRemoveUsers(users *[]structures.UserInfo) (err error) {
-	err = v2rayApi.V2RemoveUsers(v2rayCtl.HsClient, users)
-	if err != nil {
-		log.Warnf("An error caused when removing users from V2ray-core - %s", err)
-	}
-	return
-}
-
-func v2rayQueryTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
-	usersTraffic, err = v2rayApi.V2QueryUsersTraffic(v2rayCtl.SsClient, users)
-	if err != nil {
-		log.Warnf("An error caused when querying traffic from V2ray-core - %s", err)
-	}
-	return
-}
-
-func xrayAddVmessUsers(users *[]structures.UserInfo) (err error) {
-	err = XrayAPI.XrayAddVmessUsers(xrayCtl.HsClient, users)
-	if err != nil {
-		log.Warnf("An error caused when adding users to Xray-core - %s", err)
-	}
-	return
-}
-
-func xrayAddTrojanUsers(users *[]structures.UserInfo) (err error) {
-	err = XrayAPI.XrayAddTrojanUsers(xrayCtl.HsClient, users)
-	if err != nil {
-		log.Warnf("An error caused when adding users to Xray-core - %s", err)
-	}
-	return
-}
-
-func xrayRemoveUsers(users *[]structures.UserInfo) (err error) {
-	err = XrayAPI.XrayRemoveUsers(xrayCtl.HsClient, users)
-	if err != nil {
-		log.Warnf("An error caused when removing users from Xray-core - %s", err)
-	}
-	return
-}
-
-func xrayQueryTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
-	usersTraffic, err = XrayAPI.XrayQueryUsersTraffic(xrayCtl.SsClient, users)
-	if err != nil {
-		log.Warnf("An error caused when querying traffic from Xray-core - %s", err)
 	}
 	return
 }

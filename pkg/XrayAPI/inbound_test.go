@@ -31,8 +31,8 @@ var (
 )
 
 func TestAddInbound(t *testing.T) {
-	var xrayCtl *structures.XrayController
-	xrayCtl = new(structures.XrayController)
+	var xrayCtl *XrayController
+	xrayCtl = new(XrayController)
 	InitApi(baseCfg, xrayCtl)
 	err := addInbound(*xrayCtl.HsClient)
 	_ = xrayCtl.CmdConn.Close()

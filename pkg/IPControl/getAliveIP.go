@@ -1,4 +1,4 @@
-package V2RayAPI
+package IPControl
 
 import (
 	"bufio"
@@ -26,9 +26,11 @@ type singleUserRecord struct {
 	userIP  string
 }
 
+// add singleUserRecord to sum ip array
 func (useRec *singleUserRecord) addIP(userIPs *[]structures.UserIP) error {
 	addUserFlag := true
 	for id := 0; id < len(*userIPs); id++ {
+		// Compare ID & InTag, if true -> find new ip in user's ip pool if don't match, add the ip in it.
 		if (*userIPs)[id].Id == useRec.userId && (*userIPs)[id].InTag == useRec.userTag {
 			addUserFlag = false
 			addIPFlag := true
@@ -43,6 +45,7 @@ func (useRec *singleUserRecord) addIP(userIPs *[]structures.UserIP) error {
 			}
 		}
 	}
+	// append new user if he appear for the first time
 	if addUserFlag == true {
 		singleUserIP := structures.UserIP{
 			Id:      useRec.userId,
@@ -76,7 +79,7 @@ func captureDetail(line string) (useRec singleUserRecord, err error) {
 	}
 }
 
-func ReadV2Log(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, err error) {
+func ReadLog(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New(fmt.Sprintf("model FindUserDiffer cause error - %s", r))
@@ -85,9 +88,9 @@ func ReadV2Log(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, er
 
 	userIPs = new([]structures.UserIP)
 
-	v2Log, err := os.OpenFile(baseCfg.Proxy.LogPath, os.O_RDWR, 0666)
+	v2Log, err := os.OpenFile(baseCfg.Proxy.LogPath, os.O_RDONLY, 0666)
 	if err != nil {
-		fmt.Println("Open file error!", err)
+		err = errors.New(fmt.Sprintf("open logFile error - %s", err))
 		return
 	}
 	defer v2Log.Close()
@@ -97,13 +100,13 @@ func ReadV2Log(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, er
 		line, err := buf.ReadString('\n')
 		if err != nil {
 			if err == io.EOF {
+				err = nil
 				break
 			} else {
 				return nil, err
 			}
 		}
 		line = strings.TrimSpace(line)
-		fmt.Println(line)
 		// Process code
 
 		singUser, userErr := captureDetail(line)
@@ -114,13 +117,15 @@ func ReadV2Log(baseCfg *structures.BaseConfig) (userIPs *[]structures.UserIP, er
 		}
 	}
 
-	// clear log
+	return
+}
+
+func ClearLog(baseCfg *structures.BaseConfig) (err error) {
 	clearLog, err := os.OpenFile(baseCfg.Proxy.LogPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
-		fmt.Println("Clear log error!", err)
+		err = errors.New(fmt.Sprintf("clear logFile error - %s", err))
 		return
 	}
 	defer clearLog.Close()
-
 	return
 }

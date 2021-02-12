@@ -2,13 +2,19 @@ package XrayAPI
 
 import (
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	"github.com/xtls/xray-core/app/proxyman/command"
-	statsService "github.com/xtls/xray-core/app/stats/command"
 )
 
-func XrayAddVmessUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) (err error) {
+func (xrayCtl *XrayController) AddUsers(users *[]structures.UserInfo) (err error) {
 	for _, u := range *users {
-		err := addVmessUser(*hsClient, &u)
+		switch u.Protocol {
+		case "vmess":
+			err = addVmessUser(*xrayCtl.HsClient, &u)
+		case "trojan":
+			err = addTrojanUser(*xrayCtl.HsClient, &u)
+			//case "ss":
+			//	err = addSSUser(*xrayCtl.HsClient, &u)
+		}
+
 		if err != nil {
 			return err
 		}
@@ -16,9 +22,9 @@ func XrayAddVmessUsers(hsClient *command.HandlerServiceClient, users *[]structur
 	return
 }
 
-func XrayAddTrojanUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) (err error) {
+func (xrayCtl *XrayController) RemoveUsers(users *[]structures.UserInfo) (err error) {
 	for _, u := range *users {
-		err := addTrojanUser(*hsClient, &u)
+		err := removeUser(*xrayCtl.HsClient, &u)
 		if err != nil {
 			return err
 		}
@@ -26,24 +32,14 @@ func XrayAddTrojanUsers(hsClient *command.HandlerServiceClient, users *[]structu
 	return
 }
 
-func XrayRemoveUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) (err error) {
-	for _, u := range *users {
-		err := removeUser(*hsClient, &u)
-		if err != nil {
-			return err
-		}
-	}
-	return
-}
-
-func XrayQueryUsersTraffic(StatsClient *statsService.StatsServiceClient, users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
+func (xrayCtl *XrayController) QueryUsersTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
 	usersTraffic = new([]structures.UserTraffic)
 	var ut structures.UserTraffic
 
 	for _, u := range *users {
 		ut.Id = u.Id
-		ut.Up, err = queryUserTraffic(*StatsClient, u.Tag, "up")
-		ut.Down, err = queryUserTraffic(*StatsClient, u.Tag, "down")
+		ut.Up, err = queryUserTraffic(*xrayCtl.SsClient, u.Tag, "up")
+		ut.Down, err = queryUserTraffic(*xrayCtl.SsClient, u.Tag, "down")
 		// when a user used this node, post traffic data
 		if ut.Up+ut.Down > 0 {
 			*usersTraffic = append(*usersTraffic, ut)

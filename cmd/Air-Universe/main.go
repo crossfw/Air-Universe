@@ -4,8 +4,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/crossfw/Air-Universe/pkg/IPControl"
 	sspApi "github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
-	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2RayAPI"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -71,13 +71,18 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	var (
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
+		apiClient             structures.ProxyCommand
 	)
 	usersBefore = new([]structures.UserInfo)
 	usersNow = new([]structures.UserInfo)
 	usersTraffic = new([]structures.UserTraffic)
 
 	// Get gRpc client and init v2ray api connection
-	err = initAPI()
+	apiClient, err = initAPI()
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
 
 	for {
 		usersNow, err = getUser(idIndex)
@@ -93,7 +98,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		// Remove first, if user change uuid, remove old then add new.
 		if useRemove != nil {
 			log.Debugf(fmt.Sprint("Remove users ", *useRemove))
-			err = removeUser(useRemove)
+			err = apiClient.RemoveUsers(useRemove)
 			if err != nil {
 				log.Error(err)
 			}
@@ -101,7 +106,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 
 		if userAdd != nil {
 			log.Debugf(fmt.Sprint("Add users ", *userAdd))
-			err = addUser(userAdd)
+			err = apiClient.AddUsers(userAdd)
 			if err != nil {
 				log.Error(err)
 			}
@@ -110,7 +115,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		// Sync_interval
 		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
 
-		usersTraffic, err = queryTraffic(usersNow)
+		usersTraffic, err = apiClient.QueryUsersTraffic(usersNow)
 		if err != nil {
 			log.Error(err)
 		}
@@ -131,7 +136,7 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 	}()
 	for {
 		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
-		usersIp, err := v2rayApi.ReadV2Log(baseCfg)
+		usersIp, err := IPControl.ReadLog(baseCfg)
 		if err != nil {
 			log.Error(err)
 		}

@@ -9,22 +9,21 @@ import (
 	statsService "v2ray.com/core/app/stats/command"
 )
 
-func InitApi(cfg *structures.BaseConfig, v2gRpc *structures.V2rayController) (err error) {
+func (V2rayCtl *V2rayController) Init(cfg *structures.BaseConfig) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New(fmt.Sprintf("init apt of V2ray error - %s", r))
 		}
 	}()
-	v2gRpc = new(structures.V2rayController)
-	v2gRpc.CmdConn, err = grpc.Dial(fmt.Sprintf("%s:%d", cfg.Proxy.APIAddress, cfg.Proxy.APIPort), grpc.WithInsecure())
+	V2rayCtl.CmdConn, err = grpc.Dial(fmt.Sprintf("%s:%d", cfg.Proxy.APIAddress, cfg.Proxy.APIPort), grpc.WithInsecure())
 	if err != nil {
 		return
 	}
-	hsClient := command.NewHandlerServiceClient(v2gRpc.CmdConn)
-	ssClient := statsService.NewStatsServiceClient(v2gRpc.CmdConn)
+	hsClient := command.NewHandlerServiceClient(V2rayCtl.CmdConn)
+	ssClient := statsService.NewStatsServiceClient(V2rayCtl.CmdConn)
 
-	v2gRpc.HsClient = &hsClient
-	v2gRpc.SsClient = &ssClient
+	V2rayCtl.HsClient = &hsClient
+	V2rayCtl.SsClient = &ssClient
 
 	return
 }

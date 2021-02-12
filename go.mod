@@ -8,9 +8,7 @@ require (
 	github.com/dlclark/regexp2 v1.4.0
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/sirupsen/logrus v1.7.0
-	github.com/v2fly/v2ray-core v4.15.0+incompatible // indirect
 	github.com/xtls/xray-core v1.2.4
 	google.golang.org/grpc v1.35.0
 	v2ray.com/core v4.19.1+incompatible
-	v2ray.com/ext v4.15.0+incompatible // indirect
 )

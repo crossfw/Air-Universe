@@ -8,7 +8,7 @@ import (
 
 func XrayAddVmessUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) (err error) {
 	for _, u := range *users {
-		err := addV2rayVmessUser(*hsClient, &u)
+		err := addVmessUser(*hsClient, &u)
 		if err != nil {
 			return err
 		}

@@ -11,7 +11,7 @@ import (
 	"github.com/xtls/xray-core/proxy/vmess"
 )
 
-func addV2rayVmessUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
+func addVmessUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{

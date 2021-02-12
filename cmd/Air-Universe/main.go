@@ -72,23 +72,30 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
 		apiClient             structures.ProxyCommand
+		node                  structures.PanelCmd
 	)
 	usersBefore = new([]structures.UserInfo)
 	usersNow = new([]structures.UserInfo)
 	usersTraffic = new([]structures.UserTraffic)
 
 	// Get gRpc client and init v2ray api connection
-	apiClient, err = initAPI()
+	apiClient, err = initProxyCore()
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	node, err = initNode()
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
 
 	for {
-		usersNow, err = getUser(idIndex)
+		node.GetNodeInfo(baseCfg, idIndex)
+
+		usersNow, err = node.GetUser(baseCfg)
 		if err != nil {
 			log.Error(err)
-			os.Exit(1)
 		}
 		useRemove, userAdd, err := structures.FindUserDiffer(usersBefore, usersNow)
 		if err != nil {
@@ -119,7 +126,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		if err != nil {
 			log.Error(err)
 		}
-		_, err = postUser(idIndex, usersTraffic)
+		_, err = node.PostTraffic(baseCfg, usersTraffic)
 		if err != nil {
 			log.Error(err)
 		}

@@ -18,40 +18,24 @@ path	(?<=path=).*(?=\|)|(?<=path=).*
 host	(?<=host=).*(?=\|)|(?<=host=).*
 */
 
-type NodeInfo struct {
-	Id                  uint32
-	SpeedLimit          uint32 `json:"node_speedlimit"`
-	Sort                uint32 `json:"sort"`
-	RawInfo             string `json:"server"`
-	Url                 string
-	Protocol            string
-	ListenPort          uint32
-	AlertID             uint32
-	EnableTLS           bool
-	EnableProxyProtocol bool
-	TransportMode       string
-	Path                string
-	Host                string
-}
-
 func String2Uint32(s string) (uint32, error) {
-	uint64, err := strconv.ParseUint(s, 10, 32)
+	t, err := strconv.ParseUint(s, 10, 32)
 	if err != nil {
 		return 0, err
 	}
-	return uint32(uint64), err
+	return uint32(t), err
 }
 
-func GetNodeInfo(baseCfg *structures.BaseConfig, idIndex uint32) (nodeInfo *NodeInfo, err error) {
+func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("get users from sspanel failed")
 		}
 	}()
-	nodeInfo = new(NodeInfo)
+	//nodeInfo = new(NodeInfo)
 	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", baseCfg.Panel.URL, baseCfg.Panel.NodeIDs[idIndex], baseCfg.Panel.Key), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", cfg.Panel.URL, cfg.Panel.NodeIDs[idIndex], cfg.Panel.Key), nil)
 	if err != nil {
 		return
 	}
@@ -69,11 +53,13 @@ func GetNodeInfo(baseCfg *structures.BaseConfig, idIndex uint32) (nodeInfo *Node
 		return
 	}
 
-	nodeInfo.RawInfo = rtn.Get("data").Get("server").MustString()
-	nodeInfo.Sort = uint32(rtn.Get("data").Get("sort").MustInt())
-	nodeInfo.Id = idIndex
-	nodeInfo.SpeedLimit = uint32(rtn.Get("data").Get("node_speedlimit").MustInt())
+	node.RawInfo = rtn.Get("data").Get("server").MustString()
+	node.Sort = uint32(rtn.Get("data").Get("sort").MustInt())
+	node.Id = cfg.Panel.NodeIDs[idIndex]
+	node.idIndex = idIndex
+	node.SpeedLimit = uint32(rtn.Get("data").Get("node_speedlimit").MustInt())
 
+	err = node.parseRawInfo()
 	return
 }
 
@@ -100,33 +86,49 @@ func (node *NodeInfo) parseRawInfo() (err error) {
 	mRelay, _ := reRelay.FindStringMatch(node.RawInfo)
 	mInsidePort, _ := reInsidePort.FindStringMatch(node.RawInfo)
 	//insidePort := mInsidePort
-	node.Url = basicInfoArray[0]
-	if mInsidePort == nil {
-		node.ListenPort, _ = String2Uint32(basicInfoArray[1])
-	} else {
-		node.ListenPort, _ = String2Uint32(mInsidePort.String())
-	}
-	node.AlertID, _ = String2Uint32(basicInfoArray[2])
+	if len(basicInfoArray) == 5 {
+		node.Url = basicInfoArray[0]
+		if mInsidePort == nil {
+			node.ListenPort, _ = String2Uint32(basicInfoArray[1])
+		} else {
+			node.ListenPort, _ = String2Uint32(mInsidePort.String())
+		}
+		node.AlertID, _ = String2Uint32(basicInfoArray[2])
 
-	if basicInfoArray[3] == "tls" {
-		node.EnableTLS = true
+		node.TransportMode = basicInfoArray[3]
+
+		if basicInfoArray[4] == "tls" {
+			node.EnableTLS = true
+		} else {
+			node.EnableTLS = false
+		}
+
 	} else {
-		node.EnableTLS = false
+		err = errors.New("panel config missing params")
 	}
 
-	node.TransportMode = basicInfoArray[4]
 	if mPath != nil {
 		// First cheater is "\", remove it.
 		node.Path = mPath.String()[1:]
 	}
 	if mRelay != nil {
 		node.EnableProxyProtocol = true
+	} else {
+		node.EnableProxyProtocol = false
 	}
 	if mHost != nil {
 		node.Host = mHost.String()
 	}
 
-	//fmt.Println(basicInfoArray)
+	switch node.Sort {
+	case 11:
+		node.Protocol = "v2ray"
+	case 12:
+		node.Protocol = "v2ray"
+		node.EnableProxyProtocol = true
+	case 14:
+		node.Protocol = "trojan"
+	}
 
 	return
 }

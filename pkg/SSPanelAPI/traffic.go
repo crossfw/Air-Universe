@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func PostTraffic(baseCfg *structures.BaseConfig, idIndex uint32, trafficData *[]structures.UserTraffic) (ret int, err error) {
+func (node *NodeInfo) PostTraffic(cfg *structures.BaseConfig, trafficData *[]structures.UserTraffic) (ret int, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("post traffic data to sspanel failed")
@@ -31,9 +31,9 @@ func PostTraffic(baseCfg *structures.BaseConfig, idIndex uint32, trafficData *[]
 		return 0, err
 	}
 	log.Println("Traffic data", body)
-	client := &http.Client{Timeout: time.Duration(baseCfg.Sync.Timeout) * time.Second}
+	client := &http.Client{Timeout: time.Duration(cfg.Sync.Timeout) * time.Second}
 	defer client.CloseIdleConnections()
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeIDs[idIndex]), bytes.NewBuffer(bodyJson))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", cfg.Panel.URL, cfg.Panel.Key, node.Id), bytes.NewBuffer(bodyJson))
 	if err != nil {
 		return 0, err
 	}

@@ -30,7 +30,7 @@ type singleUserRecord struct {
 func (useRec *singleUserRecord) addIP(userIPs *[]structures.UserIP) error {
 	addUserFlag := true
 	for id := 0; id < len(*userIPs); id++ {
-		// Compare ID & InTag, if true -> find new ip in user's ip pool if don't match, add the ip in it.
+		// Compare Id & InTag, if true -> find new ip in user's ip pool if don't match, add the ip in it.
 		if (*userIPs)[id].Id == useRec.userId && (*userIPs)[id].InTag == useRec.userTag {
 			addUserFlag = false
 			addIPFlag := true

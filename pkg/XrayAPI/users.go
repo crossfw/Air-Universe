@@ -1,4 +1,4 @@
-package XrayApi
+package XrayAPI
 
 import (
 	"context"
@@ -61,7 +61,7 @@ func addV2rayTrojanUser(client command.HandlerServiceClient, user *structures.Us
 	return err
 }
 
-func removeV2rayUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
+func removeUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.RemoveUserOperation{

@@ -4,14 +4,16 @@ import (
 	"errors"
 	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
 	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2RayAPI"
-	"github.com/crossfw/Air-Universe/pkg/XrayApi"
+	"github.com/crossfw/Air-Universe/pkg/XrayAPI"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
 	"time"
 )
 
-type v2rayController structures.V2rayController
-type xrayController structures.XrayController
+var (
+	v2rayCtl *structures.V2rayController
+	xrayCtl  *structures.XrayController
+)
 
 func checkCfg() (err error) {
 	switch baseCfg.Panel.Type {
@@ -35,7 +37,36 @@ func checkCfg() (err error) {
 	return
 }
 
-func GetUserSelector(idIndex uint32) (*[]structures.UserInfo, error) {
+func initAPI() (err error) {
+	switch baseCfg.Proxy.Type {
+	case "v2ray":
+		for {
+			v2rayCtl = new(structures.V2rayController)
+			err = v2rayApi.InitApi(baseCfg, v2rayCtl)
+			if err != nil {
+				log.Error(err)
+			} else {
+				break
+			}
+		}
+	case "xray":
+		for {
+			xrayCtl = new(structures.XrayController)
+			XrayAPI.InitApi(baseCfg, xrayCtl)
+			if err != nil {
+				log.Error(err)
+			} else {
+				break
+			}
+		}
+	default:
+		err := errors.New("unsupported proxy core")
+		return err
+	}
+	return
+}
+
+func getUser(idIndex uint32) (*[]structures.UserInfo, error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
 		return sspanelGetUsers(idIndex)
@@ -45,13 +76,49 @@ func GetUserSelector(idIndex uint32) (*[]structures.UserInfo, error) {
 	}
 }
 
-func PostUserSelector(idIndex uint32, traffic *[]structures.UserTraffic) (ret int, err error) {
+func postUser(idIndex uint32, traffic *[]structures.UserTraffic) (ret int, err error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
 		return sspanelPostTraffic(idIndex, traffic)
 	default:
 		err := errors.New("unsupported panel type")
 		return -1, err
+	}
+}
+
+func addUser(users *[]structures.UserInfo) (err error) {
+	switch baseCfg.Proxy.Type {
+	case "v2ray":
+		return v2rayAddUsers(users)
+	case "xray":
+		return xrayAddVmessUsers(users)
+	default:
+		err := errors.New("unsupported proxy core")
+		return err
+	}
+}
+
+func removeUser(users *[]structures.UserInfo) (err error) {
+	switch baseCfg.Proxy.Type {
+	case "v2ray":
+		return v2rayRemoveUsers(users)
+	case "xray":
+		return xrayRemoveUsers(users)
+	default:
+		err := errors.New("unsupported proxy core")
+		return err
+	}
+}
+
+func queryTraffic(users *[]structures.UserInfo) (*[]structures.UserTraffic, error) {
+	switch baseCfg.Proxy.Type {
+	case "v2ray":
+		return v2rayQueryTraffic(users)
+	case "xray":
+		return xrayQueryTraffic(users)
+	default:
+		err := errors.New("unsupported proxy core")
+		return nil, err
 	}
 }
 
@@ -81,7 +148,7 @@ func sspanelPostTraffic(idIndex uint32, traffic *[]structures.UserTraffic) (ret 
 	return
 }
 
-func (v2rayCtl v2rayController) v2rayAddUsers(users *[]structures.UserInfo) (err error) {
+func v2rayAddUsers(users *[]structures.UserInfo) (err error) {
 	err = v2rayApi.V2AddUsers(v2rayCtl.HsClient, users)
 	if err != nil {
 		log.Warnf("An error caused when adding users to V2ray-core - %s", err)
@@ -89,7 +156,7 @@ func (v2rayCtl v2rayController) v2rayAddUsers(users *[]structures.UserInfo) (err
 	return
 }
 
-func (v2rayCtl v2rayController) v2rayRemoveUsers(users *[]structures.UserInfo) (err error) {
+func v2rayRemoveUsers(users *[]structures.UserInfo) (err error) {
 	err = v2rayApi.V2RemoveUsers(v2rayCtl.HsClient, users)
 	if err != nil {
 		log.Warnf("An error caused when removing users from V2ray-core - %s", err)
@@ -97,7 +164,7 @@ func (v2rayCtl v2rayController) v2rayRemoveUsers(users *[]structures.UserInfo) (
 	return
 }
 
-func (v2rayCtl v2rayController) v2rayQueryTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
+func v2rayQueryTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
 	usersTraffic, err = v2rayApi.V2QueryUsersTraffic(v2rayCtl.SsClient, users)
 	if err != nil {
 		log.Warnf("An error caused when querying traffic from V2ray-core - %s", err)
@@ -105,10 +172,26 @@ func (v2rayCtl v2rayController) v2rayQueryTraffic(users *[]structures.UserInfo) 
 	return
 }
 
-func (xrayCtl xrayController) xrayAddUsers(users *[]structures.UserInfo) (err error) {
-	err = XrayApi.XrayAddVmessUsers(xrayCtl.HsClient, users)
+func xrayAddVmessUsers(users *[]structures.UserInfo) (err error) {
+	err = XrayAPI.XrayAddVmessUsers(xrayCtl.HsClient, users)
 	if err != nil {
-		log.Warnf("An error caused when adding users to V2ray-core - %s", err)
+		log.Warnf("An error caused when adding users to Xray-core - %s", err)
+	}
+	return
+}
+
+func xrayRemoveUsers(users *[]structures.UserInfo) (err error) {
+	err = XrayAPI.XrayRemoveUsers(xrayCtl.HsClient, users)
+	if err != nil {
+		log.Warnf("An error caused when removing users from Xray-core - %s", err)
+	}
+	return
+}
+
+func xrayQueryTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures.UserTraffic, err error) {
+	usersTraffic, err = XrayAPI.XrayQueryUsersTraffic(xrayCtl.SsClient, users)
+	if err != nil {
+		log.Warnf("An error caused when querying traffic from Xray-core - %s", err)
 	}
 	return
 }

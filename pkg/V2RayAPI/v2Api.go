@@ -4,9 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	"google.golang.org/grpc"
-	"strconv"
-
 	"v2ray.com/core/app/proxyman/command"
 	statsService "v2ray.com/core/app/stats/command"
 	"v2ray.com/core/common/protocol"
@@ -18,14 +15,12 @@ import (
 // https://github.com/v2fly/v2ray-core/pull/403
 
 func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
-	// 区分不同组的用户 Email = id-tag
-	userEmail := fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
 			User: &protocol.User{
 				Level: user.Level,
-				Email: userEmail,
+				Email: user.Tag,
 				Account: serial.ToTypedMessage(&vmess.Account{
 					Id:               user.Uuid,
 					AlterId:          user.AlertId,
@@ -43,11 +38,10 @@ func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error 
 }
 
 func v2RemoveUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
-	userEmail := fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.RemoveUserOperation{
-			Email: userEmail,
+			Email: user.Tag,
 		}),
 	})
 	if err != nil {
@@ -110,8 +104,8 @@ func V2QueryUsersTraffic(StatsClient *statsService.StatsServiceClient, users *[]
 
 	for _, u := range *users {
 		ut.Id = u.Id
-		ut.Up, err = v2QueryUserTraffic(*StatsClient, fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(u.Id), 10), u.InTag), "up")
-		ut.Down, err = v2QueryUserTraffic(*StatsClient, fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(u.Id), 10), u.InTag), "down")
+		ut.Up, err = v2QueryUserTraffic(*StatsClient, u.Tag, "up")
+		ut.Down, err = v2QueryUserTraffic(*StatsClient, u.Tag, "down")
 		// when a user used this node, post traffic data
 		if ut.Up+ut.Down > 0 {
 			*usersTraffic = append(*usersTraffic, ut)
@@ -121,16 +115,4 @@ func V2QueryUsersTraffic(StatsClient *statsService.StatsServiceClient, users *[]
 		}
 	}
 	return
-}
-
-//gRPC 操作一律用指针完成
-func V2InitApi(cfg *structures.BaseConfig) (*command.HandlerServiceClient, *statsService.StatsServiceClient, *grpc.ClientConn, error) {
-	cmdConn, err := grpc.Dial(fmt.Sprintf("%s:%d", cfg.Proxy.APIAddress, cfg.Proxy.APIPort), grpc.WithInsecure())
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	hsClient := command.NewHandlerServiceClient(cmdConn)
-	ssClient := statsService.NewStatsServiceClient(cmdConn)
-
-	return &hsClient, &ssClient, cmdConn, nil
 }

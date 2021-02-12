@@ -50,6 +50,7 @@ func init() {
 			log.Error(err)
 			os.Exit(1)
 		}
+		return
 	}
 
 	if flag.NFlag() == 0 {
@@ -62,12 +63,12 @@ func init() {
 func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
+			log.Println(r)
 			err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
 			w.Done()
 		}
 	}()
 	var (
-		v2Client              v2rayController
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
 	)
@@ -76,17 +77,10 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	usersTraffic = new([]structures.UserTraffic)
 
 	// Get gRpc client and init v2ray api connection
-	for {
-		v2Client.HsClient, v2Client.SsClient, v2Client.CmdConn, err = v2rayApi.V2InitApi(baseCfg)
-		if err != nil {
-			log.Error(err)
-		} else {
-			break
-		}
-	}
+	err = initAPI()
 
 	for {
-		usersNow, err = GetUserSelector(idIndex)
+		usersNow, err = getUser(idIndex)
 		if err != nil {
 			log.Error(err)
 			os.Exit(1)
@@ -99,7 +93,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		// Remove first, if user change uuid, remove old then add new.
 		if useRemove != nil {
 			log.Debugf(fmt.Sprint("Remove users ", *useRemove))
-			err = v2Client.v2rayRemoveUsers(useRemove)
+			err = removeUser(useRemove)
 			if err != nil {
 				log.Error(err)
 			}
@@ -107,7 +101,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 
 		if userAdd != nil {
 			log.Debugf(fmt.Sprint("Add users ", *userAdd))
-			err = v2Client.v2rayAddUsers(userAdd)
+			err = addUser(userAdd)
 			if err != nil {
 				log.Error(err)
 			}
@@ -116,11 +110,11 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		// Sync_interval
 		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
 
-		usersTraffic, err = v2Client.v2rayQueryTraffic(usersNow)
+		usersTraffic, err = queryTraffic(usersNow)
 		if err != nil {
 			log.Error(err)
 		}
-		_, err = PostUserSelector(idIndex, usersTraffic)
+		_, err = postUser(idIndex, usersTraffic)
 		if err != nil {
 			log.Error(err)
 		}

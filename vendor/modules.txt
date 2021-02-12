@@ -209,6 +209,7 @@ v2ray.com/core/common/log
 v2ray.com/core/common/net
 v2ray.com/core/common/platform
 v2ray.com/core/common/protocol
+v2ray.com/core/common/protocol/tls/cert
 v2ray.com/core/common/protocol/udp
 v2ray.com/core/common/serial
 v2ray.com/core/common/session
@@ -218,6 +219,8 @@ v2ray.com/core/common/signal/semaphore
 v2ray.com/core/common/strmatcher
 v2ray.com/core/common/task
 v2ray.com/core/common/uuid
+v2ray.com/core/external/github.com/refraction-networking/utls
+v2ray.com/core/external/github.com/refraction-networking/utls/cpu
 v2ray.com/core/features
 v2ray.com/core/features/dns
 v2ray.com/core/features/dns/localdns
@@ -230,4 +233,5 @@ v2ray.com/core/proxy
 v2ray.com/core/proxy/vmess
 v2ray.com/core/transport
 v2ray.com/core/transport/internet
+v2ray.com/core/transport/internet/tls
 v2ray.com/core/transport/internet/udp

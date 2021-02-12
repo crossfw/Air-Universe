@@ -6,9 +6,9 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 - None
 ## TODO List:
 - ~~Fix known bugs.~~
-- Auto generate V2ray-core configuration from SSPanel.
+- Auto generate ~~V2ray-core~~ Xray-core configuration from SSPanel. -- Doing
 - Support speed limit.
 - ~~Record users ip.~~  Finished
-- Support Trojan protocol.
-- Turnkey installation script.
-- Support Shadowsocks multiuser in single port.
+- ~~Support Trojan protocol.~~ Finished
+- ~~Turnkey installation script.~~ Finished
+- Support Shadowsocks multiuser in single port. -- Doing

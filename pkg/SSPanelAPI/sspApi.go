@@ -97,6 +97,8 @@ func GetUser(baseCfg *structures.BaseConfig, idIndex uint32) (userList *[]struct
 		user.InTag = baseCfg.Proxy.InTags[idIndex]
 		user.Tag = fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)
 		user.Protocol = nodeProtocol
+		user.SpeedLimit = uint32(rtn.Get("data").GetIndex(u).Get("node_speedlimit").MustInt())
+		user.MaxClients = uint32(rtn.Get("data").GetIndex(u).Get("node_connector").MustInt())
 		*userList = append(*userList, user)
 	}
 

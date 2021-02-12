@@ -11,6 +11,7 @@ type UserInfo struct {
 	AlertId uint32
 	Level   uint32
 	InTag   string
+	Tag     string
 }
 
 type UserTraffic struct {

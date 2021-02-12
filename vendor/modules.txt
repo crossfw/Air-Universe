@@ -15,6 +15,8 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
+# github.com/gorilla/websocket v1.4.2
+github.com/gorilla/websocket
 # github.com/kr/pretty v0.2.1
 ## explicit
 # github.com/pires/go-proxyproto v0.4.2
@@ -24,8 +26,6 @@ github.com/seiflotfy/cuckoofilter
 # github.com/sirupsen/logrus v1.7.0
 ## explicit
 github.com/sirupsen/logrus
-# github.com/v2fly/v2ray-core v4.15.0+incompatible
-## explicit
 # github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499
 github.com/xtls/go
 # github.com/xtls/xray-core v1.2.4
@@ -40,6 +40,8 @@ github.com/xtls/xray-core/common/bitmask
 github.com/xtls/xray-core/common/buf
 github.com/xtls/xray-core/common/bytespool
 github.com/xtls/xray-core/common/cmdarg
+github.com/xtls/xray-core/common/crypto
+github.com/xtls/xray-core/common/crypto/internal
 github.com/xtls/xray-core/common/dice
 github.com/xtls/xray-core/common/errors
 github.com/xtls/xray-core/common/log
@@ -49,6 +51,7 @@ github.com/xtls/xray-core/common/ocsp
 github.com/xtls/xray-core/common/platform
 github.com/xtls/xray-core/common/platform/filesystem
 github.com/xtls/xray-core/common/protocol
+github.com/xtls/xray-core/common/protocol/http
 github.com/xtls/xray-core/common/protocol/tls/cert
 github.com/xtls/xray-core/common/protocol/udp
 github.com/xtls/xray-core/common/retry
@@ -75,9 +78,14 @@ github.com/xtls/xray-core/proxy/trojan
 github.com/xtls/xray-core/proxy/vless
 github.com/xtls/xray-core/proxy/vmess
 github.com/xtls/xray-core/proxy/vmess/aead
+github.com/xtls/xray-core/proxy/vmess/encoding
+github.com/xtls/xray-core/proxy/vmess/inbound
 github.com/xtls/xray-core/transport
 github.com/xtls/xray-core/transport/internet
+github.com/xtls/xray-core/transport/internet/tcp
+github.com/xtls/xray-core/transport/internet/tls
 github.com/xtls/xray-core/transport/internet/udp
+github.com/xtls/xray-core/transport/internet/websocket
 github.com/xtls/xray-core/transport/internet/xtls
 # golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 golang.org/x/crypto/chacha20
@@ -89,6 +97,7 @@ golang.org/x/crypto/hkdf
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/ocsp
 golang.org/x/crypto/poly1305
+golang.org/x/crypto/sha3
 # golang.org/x/net v0.0.0-20210119194325-5f4716e94777
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -222,5 +231,3 @@ v2ray.com/core/proxy/vmess
 v2ray.com/core/transport
 v2ray.com/core/transport/internet
 v2ray.com/core/transport/internet/udp
-# v2ray.com/ext v4.15.0+incompatible
-## explicit

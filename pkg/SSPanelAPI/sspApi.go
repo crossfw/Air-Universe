@@ -14,6 +14,47 @@ import (
 	"time"
 )
 
+func GetNodeInfo(baseCfg *structures.BaseConfig, idIndex uint32) (nodeConfig string, protocol string, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New("get users from sspanel failed")
+		}
+	}()
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	defer client.CloseIdleConnections()
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", baseCfg.Panel.URL, baseCfg.Panel.NodeIDs[idIndex], baseCfg.Panel.Key), nil)
+	if err != nil {
+		return
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	rtn, err := simplejson.NewJson(bodyText)
+	if err != nil {
+		return
+	}
+
+	nodeConfig = rtn.Get("data").Get("server").MustString()
+	sort := rtn.Get("data").Get("sort").MustInt()
+	switch sort {
+	case 11:
+		protocol = "vmess"
+	case 14:
+		protocol = "trojan"
+	default:
+		err = errors.New("unsupported protocol")
+	}
+
+	return
+}
+
 func GetUser(baseCfg *structures.BaseConfig, idIndex uint32) (userList *[]structures.UserInfo, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -43,6 +84,10 @@ func GetUser(baseCfg *structures.BaseConfig, idIndex uint32) (userList *[]struct
 	}
 
 	numOfUsers := len(rtn.Get("data").MustArray())
+	_, nodeProtocol, err := GetNodeInfo(baseCfg, idIndex)
+	if err != nil {
+		return nil, err
+	}
 
 	for u := 0; u < numOfUsers; u++ {
 		user.Id = uint32(rtn.Get("data").GetIndex(u).Get("id").MustInt())
@@ -51,6 +96,7 @@ func GetUser(baseCfg *structures.BaseConfig, idIndex uint32) (userList *[]struct
 		user.Level = 0
 		user.InTag = baseCfg.Proxy.InTags[idIndex]
 		user.Tag = fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)
+		user.Protocol = nodeProtocol
 		*userList = append(*userList, user)
 	}
 

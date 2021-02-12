@@ -6,12 +6,13 @@ import (
 )
 
 type UserInfo struct {
-	Id      uint32
-	Uuid    string
-	AlertId uint32
-	Level   uint32
-	InTag   string
-	Tag     string
+	Id       uint32
+	Uuid     string
+	AlertId  uint32
+	Level    uint32
+	InTag    string
+	Tag      string
+	Protocol string
 }
 
 type UserTraffic struct {

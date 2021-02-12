@@ -6,7 +6,6 @@ import (
 	"github.com/xtls/xray-core/app/proxyman/command"
 	"github.com/xtls/xray-core/common/protocol"
 	"github.com/xtls/xray-core/common/serial"
-	"github.com/xtls/xray-core/proxy/trojan"
 	"github.com/xtls/xray-core/proxy/vless"
 	"github.com/xtls/xray-core/proxy/vmess"
 )
@@ -28,7 +27,7 @@ func addV2rayVmessUser(client command.HandlerServiceClient, user *structures.Use
 	return err
 }
 
-func addV2rayVlessUser(client command.HandlerServiceClient, inboundTag string, level uint32, email string, id string, flow string) error {
+func addVlessUser(client command.HandlerServiceClient, inboundTag string, level uint32, email string, id string, flow string) error {
 	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: inboundTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
@@ -45,15 +44,15 @@ func addV2rayVlessUser(client command.HandlerServiceClient, inboundTag string, l
 	return err
 }
 
-func addV2rayTrojanUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
+func addTrojanUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
 			User: &protocol.User{
 				Level: user.Level,
 				Email: user.Tag,
-				Account: serial.ToTypedMessage(&trojan.Account{
-					Password: user.Uuid,
+				Account: serial.ToTypedMessage(&vmess.Account{
+					Id: user.Uuid,
 				}),
 			},
 		}),

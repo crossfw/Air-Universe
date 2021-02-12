@@ -91,11 +91,17 @@ func addUser(users *[]structures.UserInfo) (err error) {
 	case "v2ray":
 		return v2rayAddUsers(users)
 	case "xray":
-		return xrayAddVmessUsers(users)
+		switch (*users)[0].Protocol {
+		case "vmess":
+			return xrayAddVmessUsers(users)
+		case "trojan":
+			return xrayAddTrojanUsers(users)
+		}
 	default:
 		err := errors.New("unsupported proxy core")
 		return err
 	}
+	return
 }
 
 func removeUser(users *[]structures.UserInfo) (err error) {
@@ -174,6 +180,14 @@ func v2rayQueryTraffic(users *[]structures.UserInfo) (usersTraffic *[]structures
 
 func xrayAddVmessUsers(users *[]structures.UserInfo) (err error) {
 	err = XrayAPI.XrayAddVmessUsers(xrayCtl.HsClient, users)
+	if err != nil {
+		log.Warnf("An error caused when adding users to Xray-core - %s", err)
+	}
+	return
+}
+
+func xrayAddTrojanUsers(users *[]structures.UserInfo) (err error) {
+	err = XrayAPI.XrayAddTrojanUsers(xrayCtl.HsClient, users)
 	if err != nil {
 		log.Warnf("An error caused when adding users to Xray-core - %s", err)
 	}

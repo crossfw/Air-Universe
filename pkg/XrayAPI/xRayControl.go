@@ -16,6 +16,16 @@ func XrayAddVmessUsers(hsClient *command.HandlerServiceClient, users *[]structur
 	return
 }
 
+func XrayAddTrojanUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) (err error) {
+	for _, u := range *users {
+		err := addTrojanUser(*hsClient, &u)
+		if err != nil {
+			return err
+		}
+	}
+	return
+}
+
 func XrayRemoveUsers(hsClient *command.HandlerServiceClient, users *[]structures.UserInfo) (err error) {
 	for _, u := range *users {
 		err := removeUser(*hsClient, &u)

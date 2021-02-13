@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 )
 
@@ -14,12 +15,13 @@ var (
 			Type: "sspanel",
 		},
 		Proxy: structures.Proxy{
-			Type:       "v2ray",
-			AlertID:    1,
-			InTags:     []string{"p0"},
-			APIAddress: "127.0.0.1",
-			APIPort:    10085,
-			LogPath:    "./v2.log",
+			Type:         "xray",
+			AlertID:      1,
+			AutoGenerate: true,
+			InTags:       []string{"p0"},
+			APIAddress:   "127.0.0.1",
+			APIPort:      10085,
+			LogPath:      "./v2.log",
 		},
 		Sync: structures.Sync{
 			Interval:  60,
@@ -38,6 +40,14 @@ func ParseBaseConfig(configPath *string) (*structures.BaseConfig, error) {
 
 	if err := json.NewDecoder(file).Decode(baseCfg); err != nil {
 		return nil, err
+	}
+	if baseCfg.Proxy.AutoGenerate == true {
+		if len(baseCfg.Proxy.InTags) < len(baseCfg.Panel.NodeIDs) {
+			log.Warnln("InTags length isn't equal to nodeID length, adding inTags")
+			for n := 1; n < len(baseCfg.Panel.NodeIDs); n++ {
+				baseCfg.Proxy.InTags = append(baseCfg.Proxy.InTags, fmt.Sprintf("p%v", n))
+			}
+		}
 	}
 	log.Println(*baseCfg)
 	return baseCfg, nil

@@ -8,6 +8,7 @@
   "proxy": {
     "type": "v2ray",
     "alert_id": 1,
+    "auto_generate": true,
     "in_tags": [
       "p0",
       "p1"

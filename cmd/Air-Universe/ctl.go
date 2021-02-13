@@ -26,7 +26,7 @@ func checkCfg() (err error) {
 	}
 
 	if len(baseCfg.Panel.NodeIDs) != len(baseCfg.Proxy.InTags) {
-		err = errors.New("node_ids isn't equal to in_tags")
+		err = errors.New("node_ids length isn't equal to in_tags length")
 	}
 
 	return

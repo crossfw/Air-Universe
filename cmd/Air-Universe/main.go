@@ -29,10 +29,10 @@ func init() {
 		printVersion bool
 		configPath   string
 	)
-	log.SetReportCaller(true)
+	//log.SetReportCaller(true)
 
 	flag.BoolVar(&printVersion, "v", false, "print version")
-	flag.StringVar(&configPath, "c", "", "configure file")
+	flag.StringVar(&configPath, "c", "locTest\\test.json", "configure file")
 	flag.Parse()
 
 	if printVersion {
@@ -94,7 +94,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 			log.Error(err)
 		}
 		// Try add first, if no error cause, it's the first time to add, else remove then add until no error
-		if changed == true {
+		if changed == true && baseCfg.Proxy.AutoGenerate == true {
 			err = apiClient.AddInbound(nodeNow)
 			for err != nil {
 				err = apiClient.RemoveInbound(nodeNow)

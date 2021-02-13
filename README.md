@@ -6,7 +6,7 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 - None
 ## TODO List:
 - ~~Fix known bugs.~~
-- Auto generate ~~V2ray-core~~ Xray-core configuration from SSPanel. -- Doing
+- ~~Auto generate Xray-core configuration from SSPanel.~~  Finished
 - Support speed limit.
 - ~~Record users ip.~~  Finished
 - ~~Support Trojan protocol.~~ Finished

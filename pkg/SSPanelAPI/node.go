@@ -26,15 +26,15 @@ func String2Uint32(s string) (uint32, error) {
 	return uint32(t), err
 }
 
-func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (changed bool, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = errors.New("get users from sspanel failed")
-		}
-	}()
+func GetNodeInfo(cfg *structures.BaseConfig, node *structures.NodeInfo, idIndex uint32) (changed bool, err error) {
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		err = errors.New("get users from sspanel failed")
+	//	}
+	//}()
 
-	var nodeInfo *NodeInfo
-	nodeInfo = new(NodeInfo)
+	var nodeInfo *structures.NodeInfo
+	nodeInfo = new(structures.NodeInfo)
 	//nodeInfo = new(NodeInfo)
 	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
@@ -68,18 +68,18 @@ func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (c
 	switch nodeInfo.Sort {
 	case 11:
 		nodeInfo.Protocol = "vmess"
-		err = nodeInfo.parseVmessRawInfo()
+		err = parseVmessRawInfo(nodeInfo)
 	case 12:
 		nodeInfo.Protocol = "vmess"
-		err = nodeInfo.parseVmessRawInfo()
+		err = parseVmessRawInfo(nodeInfo)
 		// Force Relay
 		nodeInfo.EnableProxyProtocol = true
 	case 14:
 		nodeInfo.Protocol = "trojan"
-		err = nodeInfo.parseTrojanRawInfo()
+		err = parseTrojanRawInfo(nodeInfo)
 	}
 
-	if nodeInfo == node {
+	if *nodeInfo == *node {
 		return false, nil
 	} else {
 		*node = *nodeInfo
@@ -92,7 +92,7 @@ func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (c
 path	(?<=path=).*?(?=\|)|(?<=path=).*
 host	(?<=host=).*?(?=\|)|(?<=host=).*
 */
-func (node *NodeInfo) parseVmessRawInfo() (err error) {
+func parseVmessRawInfo(node *structures.NodeInfo) (err error) {
 	reBasicInfos, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
 	rePath, _ := regexp.Compile("(?<=path=).*?(?=\\|)|(?<=path=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
@@ -147,7 +147,7 @@ func (node *NodeInfo) parseVmessRawInfo() (err error) {
 	return
 }
 
-func (node *NodeInfo) parseTrojanRawInfo() (err error) {
+func parseTrojanRawInfo(node *structures.NodeInfo) (err error) {
 	reUrl, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
 	rePort, _ := regexp.Compile("(?<=port=).*?(?=\\|)|(?<=port=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
@@ -185,6 +185,6 @@ func (node *NodeInfo) parseTrojanRawInfo() (err error) {
 	}
 
 	node.TransportMode = "tcp"
-
+	node.EnableTLS = true
 	return
 }

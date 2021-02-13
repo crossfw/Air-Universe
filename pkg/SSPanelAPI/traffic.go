@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func (node *NodeInfo) PostTraffic(cfg *structures.BaseConfig, trafficData *[]structures.UserTraffic) (ret int, err error) {
+func PostTraffic(cfg *structures.BaseConfig, node *structures.NodeInfo, trafficData *[]structures.UserTraffic) (ret int, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("post traffic data to sspanel failed")

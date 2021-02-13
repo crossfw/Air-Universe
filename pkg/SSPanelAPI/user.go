@@ -1,6 +1,7 @@
 package SSPanelAPI
 
 import (
+	"errors"
 	"fmt"
 	"github.com/bitly/go-simplejson"
 	"github.com/crossfw/Air-Universe/pkg/structures"
@@ -10,12 +11,12 @@ import (
 	"time"
 )
 
-func (node *NodeInfo) GetUser(cfg *structures.BaseConfig) (userList *[]structures.UserInfo, err error) {
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		err = errors.New("get users from sspanel failed")
-	//	}
-	//}()
+func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[]structures.UserInfo, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New("get users from sspanel failed")
+		}
+	}()
 	userList = new([]structures.UserInfo)
 	user := structures.UserInfo{}
 	client := &http.Client{Timeout: 10 * time.Second}

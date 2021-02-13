@@ -13,10 +13,10 @@ type V2rayController struct {
 	CmdConn  *grpc.ClientConn
 }
 
-func (V2rayCtl *V2rayController) AddInbound(node *structures.PanelCmd) (err error) {
+func (V2rayCtl *V2rayController) AddInbound(node *structures.NodeInfo) (err error) {
 	panic("PlaceHolder")
 }
 
-func (V2rayCtl *V2rayController) RemoveInbound(node *structures.PanelCmd) (err error) {
+func (V2rayCtl *V2rayController) RemoveInbound(node *structures.NodeInfo) (err error) {
 	panic("PlaceHolder")
 }

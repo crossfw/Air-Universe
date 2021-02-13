@@ -2,7 +2,7 @@ package XrayAPI
 
 import (
 	"context"
-	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
+	"github.com/crossfw/Air-Universe/pkg/structures"
 	"github.com/xtls/xray-core/app/proxyman"
 	"github.com/xtls/xray-core/app/proxyman/command"
 	"github.com/xtls/xray-core/common/net"
@@ -10,21 +10,21 @@ import (
 	"github.com/xtls/xray-core/common/serial"
 	"github.com/xtls/xray-core/core"
 	"github.com/xtls/xray-core/infra/conf"
-	"github.com/xtls/xray-core/proxy/vmess/inbound"
+	trojanInbound "github.com/xtls/xray-core/proxy/trojan"
+	vmessInbound "github.com/xtls/xray-core/proxy/vmess/inbound"
 	"github.com/xtls/xray-core/transport/internet"
-	_ "github.com/xtls/xray-core/transport/internet"
 	"github.com/xtls/xray-core/transport/internet/tcp"
-	_ "github.com/xtls/xray-core/transport/internet/tcp"
 	"github.com/xtls/xray-core/transport/internet/tls"
 	"github.com/xtls/xray-core/transport/internet/websocket"
 )
 
-func addInbound(client command.HandlerServiceClient, node *SSPanelAPI.NodeInfo) error {
+func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) error {
 	var (
 		protocolName      string
 		transportSettings []*internet.TransportConfig
 		securityType      string
 		securitySettings  []*serial.TypedMessage
+		proxySetting      *serial.TypedMessage
 	)
 	switch node.TransportMode {
 	case "ws":
@@ -90,6 +90,17 @@ func addInbound(client command.HandlerServiceClient, node *SSPanelAPI.NodeInfo) 
 		securitySettings = nil
 	}
 
+	switch node.Protocol {
+	case "vmess":
+		proxySetting = serial.ToTypedMessage(&vmessInbound.Config{
+			Detour: &vmessInbound.DetourConfig{
+				To: "direct",
+			},
+		})
+	case "trojan":
+		proxySetting = serial.ToTypedMessage(&trojanInbound.ServerConfig{})
+	}
+
 	_, err := client.AddInbound(context.Background(), &command.AddInboundRequest{
 		Inbound: &core.InboundHandlerConfig{
 			Tag: node.Tag,
@@ -107,18 +118,14 @@ func addInbound(client command.HandlerServiceClient, node *SSPanelAPI.NodeInfo) 
 					SecuritySettings:  securitySettings,
 				},
 			}),
-			ProxySettings: serial.ToTypedMessage(&inbound.Config{
-				Detour: &inbound.DetourConfig{
-					To: "direct",
-				},
-			}),
+			ProxySettings: proxySetting,
 		},
 	})
 
 	return err
 }
 
-func removeInbound(client command.HandlerServiceClient, node *SSPanelAPI.NodeInfo) error {
+func removeInbound(client command.HandlerServiceClient, node *structures.NodeInfo) error {
 	_, err := client.RemoveInbound(context.Background(), &command.RemoveInboundRequest{
 		Tag: node.Tag,
 	})

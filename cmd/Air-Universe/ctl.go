@@ -7,6 +7,7 @@ import (
 	"github.com/crossfw/Air-Universe/pkg/XrayAPI"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 func checkCfg() (err error) {
@@ -62,61 +63,80 @@ func initProxyCore() (apiClient structures.ProxyCommand, err error) {
 	return
 }
 
-func initNode() (node structures.PanelCmd, err error) {
-	switch baseCfg.Panel.Type {
-	case "sspanel":
-		node = new(SSPanelAPI.NodeInfo)
-		return
-	default:
-		err := errors.New("unsupported panel type")
-		return nil, err
-	}
-
-}
-
-// TODO: Use interface to achieve
-//func getUser(idIndex uint32) (*[]structures.UserInfo, error) {
+//func initNode() (node structures.PanelCmd, err error) {
 //	switch baseCfg.Panel.Type {
 //	case "sspanel":
-//		return sspanelGetUsers(idIndex)
+//		node = new(SSPanelAPI.NodeInfo)
+//		return
 //	default:
 //		err := errors.New("unsupported panel type")
 //		return nil, err
 //	}
-//}
 //
-//func postUser(idIndex uint32, traffic *[]structures.UserTraffic) (ret int, err error) {
-//	switch baseCfg.Panel.Type {
-//	case "sspanel":
-//		return sspanelPostTraffic(idIndex, traffic)
-//	default:
-//		err := errors.New("unsupported panel type")
-//		return -1, err
-//	}
 //}
-//
-//func sspanelGetUsers(idIndex uint32) (users *[]structures.UserInfo, err error) {
-//	for {
-//		users, err = SSPanelAPI.GetUser(baseCfg, idIndex)
-//		if err != nil {
-//			log.Warnf("Failed to get users - %s", err)
-//			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
-//		} else {
-//			break
-//		}
-//	}
-//	return
-//}
-//
-//func sspanelPostTraffic(idIndex uint32, traffic *[]structures.UserTraffic) (ret int, err error) {
-//	for {
-//		ret, err = SSPanelAPI.PostTraffic(baseCfg, idIndex, traffic)
-//		if err != nil {
-//			log.Warnf("Failed to post traffic - %s", err)
-//			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
-//		} else {
-//			break
-//		}
-//	}
-//	return
-//}
+
+func getNodeInfo(node *structures.NodeInfo, idIndex uint32) (changed bool, err error) {
+	switch baseCfg.Panel.Type {
+	case "sspanel":
+		return sspanelGetNodeInfo(node, idIndex)
+	}
+	return false, errors.New("unsupported panel type ")
+}
+
+func getUsers(node *structures.NodeInfo) (*[]structures.UserInfo, error) {
+	switch baseCfg.Panel.Type {
+	case "sspanel":
+		return sspanelGetUsers(node)
+	default:
+		err := errors.New("unsupported panel type")
+		return nil, err
+	}
+}
+
+func postUsersTraffic(node *structures.NodeInfo, traffic *[]structures.UserTraffic) (ret int, err error) {
+	switch baseCfg.Panel.Type {
+	case "sspanel":
+		return sspanelPostTraffic(node, traffic)
+	default:
+		err := errors.New("unsupported panel type")
+		return -1, err
+	}
+}
+
+func sspanelGetUsers(node *structures.NodeInfo) (users *[]structures.UserInfo, err error) {
+	for {
+		users, err = SSPanelAPI.GetUser(baseCfg, node)
+		if err != nil {
+			log.Warnf("Failed to get users - %s", err)
+			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+		} else {
+			break
+		}
+	}
+	return
+}
+
+func sspanelPostTraffic(node *structures.NodeInfo, traffic *[]structures.UserTraffic) (ret int, err error) {
+	for {
+		ret, err = SSPanelAPI.PostTraffic(baseCfg, node, traffic)
+		if err != nil {
+			log.Warnf("Failed to post traffic - %s", err)
+			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+		} else {
+			break
+		}
+	}
+	return
+}
+
+func sspanelGetNodeInfo(node *structures.NodeInfo, idIndex uint32) (changed bool, err error) {
+	for {
+		changed, err = SSPanelAPI.GetNodeInfo(baseCfg, node, idIndex)
+		if err != nil {
+			log.Warnf("Failed to Get NodeInfo - %s", err)
+			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+		} else {
+			return changed, err
+		}
+	}
+}

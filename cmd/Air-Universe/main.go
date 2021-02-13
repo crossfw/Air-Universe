@@ -73,8 +73,9 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
 		apiClient             structures.ProxyCommand
-		nodeNow               structures.PanelCmd
+		nodeNow               *structures.NodeInfo
 	)
+	nodeNow = new(structures.NodeInfo)
 	usersBefore = new([]structures.UserInfo)
 	usersNow = new([]structures.UserInfo)
 	usersTraffic = new([]structures.UserTraffic)
@@ -85,20 +86,27 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		log.Error(err)
 		os.Exit(1)
 	}
-	nodeNow, err = initNode()
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
 
 	for {
-		changed, err := nodeNow.GetNodeInfo(baseCfg, idIndex)
+		changed, err := getNodeInfo(nodeNow, idIndex)
+		if err != nil {
+			log.Error(err)
+		}
 		if changed == true {
-			apiClient.AddInbound(&nodeNow)
-			log.Println("Add inbound")
+			err = apiClient.RemoveInbound(nodeNow)
+			apiClient.RemoveInbound(nodeNow)
+			for {
+				err = apiClient.AddInbound(nodeNow)
+				if err == nil {
+					break
+				}
+				log.Warnf("Add inbound Failed", err)
+				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+			}
+			log.Printf("Added inbound %s", nodeNow.Tag)
 		}
 
-		usersNow, err = nodeNow.GetUser(baseCfg)
+		usersNow, err = getUsers(nodeNow)
 		if err != nil {
 			log.Error(err)
 		}
@@ -131,8 +139,9 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		if err != nil {
 			log.Error(err)
 		}
+		log.Debugf(fmt.Sprint("Traffic data ", *usersTraffic))
 		for err != nil {
-			_, err = nodeNow.PostTraffic(baseCfg, usersTraffic)
+			_, err = postUsersTraffic(nodeNow, usersTraffic)
 			if err != nil {
 				log.Error(err)
 			}
@@ -155,6 +164,7 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 		if err != nil {
 			log.Error(err)
 		}
+		log.Debugf(fmt.Sprint("IP data ", *usersIp))
 		ret, err := sspApi.PostUsersIP(baseCfg, usersIp)
 		if ret != 1 || err != nil {
 			log.Error(err)

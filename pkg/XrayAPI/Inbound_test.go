@@ -13,8 +13,8 @@ var (
 	baseCfg = &structures.BaseConfig{
 		Panel: structures.Panel{
 			Type:    "sspanel",
-			URL:     "http://10.50.1.1:10080",
-			Key:     "crossfw666",
+			URL:     "http://",
+			Key:     "",
 			NodeIDs: []uint32{37},
 		},
 		Proxy: structures.Proxy{
@@ -43,14 +43,14 @@ func TestAutoAddInbound(t *testing.T) {
 	)
 
 	xrayCtl = new(XrayController)
-	ssp := new(sspApi.NodeInfo)
-	ssp.GetNodeInfo(baseCfg, 0)
+	ssp := new(structures.NodeInfo)
+	sspApi.GetNodeInfo(baseCfg, ssp, 0)
 
 	fmt.Println(ssp)
 	_ = xrayCtl.Init(baseCfg)
 	err := addInbound(*xrayCtl.HsClient, ssp)
 	//err := addInboundManual(*xrayCtl.HsClient)
-	users, _ := ssp.GetUser(baseCfg)
+	users, _ := sspApi.GetUser(baseCfg, ssp)
 	log.Println(users)
 	err = xrayCtl.AddUsers(users)
 
@@ -66,11 +66,11 @@ func TestAutoAddInbound(t *testing.T) {
 func TestRemoveInbound(t *testing.T) {
 	var (
 		xrayCtl *XrayController
-		ssp     *sspApi.NodeInfo
+		ssp     *structures.NodeInfo
 	)
 
-	ssp = new(sspApi.NodeInfo)
-	ssp.GetNodeInfo(baseCfg, 0)
+	ssp = new(structures.NodeInfo)
+	sspApi.GetNodeInfo(baseCfg, ssp, 0)
 	xrayCtl = new(XrayController)
 	_ = xrayCtl.Init(baseCfg)
 

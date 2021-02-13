@@ -10,7 +10,7 @@ func TestParseRawInfo(t *testing.T) {
 	node := &NodeInfo{
 		RawInfo: serverRawInfo,
 	}
-	err := node.parseRawInfo()
+	err := node.parseVmessRawInfo()
 	if err != nil {
 		t.Errorf("Failed")
 	}

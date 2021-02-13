@@ -29,6 +29,7 @@ func init() {
 		printVersion bool
 		configPath   string
 	)
+	log.SetReportCaller(true)
 
 	flag.BoolVar(&printVersion, "v", false, "print version")
 	flag.StringVar(&configPath, "c", "locTest/test.json", "configure file")
@@ -61,18 +62,18 @@ func init() {
 }
 
 func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Println(r)
-			err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
-			w.Done()
-		}
-	}()
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		log.Println(r)
+	//		err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
+	//		w.Done()
+	//	}
+	//}()
 	var (
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
 		apiClient             structures.ProxyCommand
-		node                  structures.PanelCmd
+		nodeNow               structures.PanelCmd
 	)
 	usersBefore = new([]structures.UserInfo)
 	usersNow = new([]structures.UserInfo)
@@ -84,16 +85,20 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		log.Error(err)
 		os.Exit(1)
 	}
-	node, err = initNode()
+	nodeNow, err = initNode()
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
 
 	for {
-		node.GetNodeInfo(baseCfg, idIndex)
+		changed, err := nodeNow.GetNodeInfo(baseCfg, idIndex)
+		if changed == true {
+			apiClient.AddInbound(&nodeNow)
+			log.Println("Add inbound")
+		}
 
-		usersNow, err = node.GetUser(baseCfg)
+		usersNow, err = nodeNow.GetUser(baseCfg)
 		if err != nil {
 			log.Error(err)
 		}
@@ -127,7 +132,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 			log.Error(err)
 		}
 		for err != nil {
-			_, err = node.PostTraffic(baseCfg, usersTraffic)
+			_, err = nodeNow.PostTraffic(baseCfg, usersTraffic)
 			if err != nil {
 				log.Error(err)
 			}

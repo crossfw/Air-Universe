@@ -1,6 +1,7 @@
 package XrayAPI
 
 import (
+	sspApi "github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
@@ -49,4 +50,13 @@ func (xrayCtl *XrayController) QueryUsersTraffic(users *[]structures.UserInfo) (
 		}
 	}
 	return
+}
+
+func (xrayCtl *XrayController) AddInbound(node *sspApi.NodeInfo) (err error) {
+
+	return addInbound(*xrayCtl.HsClient, node)
+}
+
+func (xrayCtl *XrayController) RemoveInbound(node *sspApi.NodeInfo) (err error) {
+	return removeInbound(*xrayCtl.HsClient, node)
 }

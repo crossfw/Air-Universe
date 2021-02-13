@@ -193,6 +193,8 @@ github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499 h1:QHESTXtfgc1ABV+ArlbPVqU
 github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499/go.mod h1:5TB2+k58gx4A4g2Nf5miSHNDF6CuAzHKpWBooLAshTs=
 github.com/xtls/xray-core v1.2.4 h1:OrkDMi+AYHjQ0mhCmbXA9vCMtHP3nj5LH1+YGK34PG8=
 github.com/xtls/xray-core v1.2.4/go.mod h1:Vmp++I+Fzl60Elt0XvfImQOGmgLrxT5J9JwP/L0KoH4=
+github.com/xtls/xray-core v1.3.0 h1:W65UwrUx84shFBGiFJYZwuiBBgoSefTR+VODZdurROY=
+github.com/xtls/xray-core v1.3.0/go.mod h1:Vmp++I+Fzl60Elt0XvfImQOGmgLrxT5J9JwP/L0KoH4=
 go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
 go.starlark.net v0.0.0-20190225160109-1174b2613e82 h1:vAHCTDREx7LqPeWqNeTvCKWcURJztP3wBKnF2Q0sW7Q=

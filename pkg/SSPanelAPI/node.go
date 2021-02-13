@@ -26,12 +26,15 @@ func String2Uint32(s string) (uint32, error) {
 	return uint32(t), err
 }
 
-func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (err error) {
+func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (changed bool, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("get users from sspanel failed")
 		}
 	}()
+
+	var nodeInfo *NodeInfo
+	nodeInfo = new(NodeInfo)
 	//nodeInfo = new(NodeInfo)
 	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
@@ -53,17 +56,35 @@ func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (e
 		return
 	}
 
-	node.RawInfo = rtn.Get("data").Get("server").MustString()
-	node.Sort = uint32(rtn.Get("data").Get("sort").MustInt())
-	node.Id = cfg.Panel.NodeIDs[idIndex]
-	node.IdIndex = idIndex
-	node.SpeedLimit = uint32(rtn.Get("data").Get("node_speedlimit").MustInt())
+	nodeInfo.RawInfo = rtn.Get("data").Get("server").MustString()
+	nodeInfo.Sort = uint32(rtn.Get("data").Get("sort").MustInt())
+	nodeInfo.Id = cfg.Panel.NodeIDs[idIndex]
+	nodeInfo.IdIndex = idIndex
+	nodeInfo.SpeedLimit = uint32(rtn.Get("data").Get("node_speedlimit").MustInt())
 	if cfg.Proxy.Cert.KeyPath != "" && cfg.Proxy.Cert.CertPath != "" {
-		node.Cert = cfg.Proxy.Cert
+		nodeInfo.Cert = cfg.Proxy.Cert
+	}
+	nodeInfo.Tag = cfg.Proxy.InTags[idIndex]
+	switch nodeInfo.Sort {
+	case 11:
+		nodeInfo.Protocol = "vmess"
+		err = nodeInfo.parseVmessRawInfo()
+	case 12:
+		nodeInfo.Protocol = "vmess"
+		err = nodeInfo.parseVmessRawInfo()
+		// Force Relay
+		nodeInfo.EnableProxyProtocol = true
+	case 14:
+		nodeInfo.Protocol = "trojan"
+		err = nodeInfo.parseTrojanRawInfo()
 	}
 
-	err = node.parseRawInfo()
-	return
+	if nodeInfo == node {
+		return false, nil
+	} else {
+		*node = *nodeInfo
+		return true, nil
+	}
 }
 
 /*
@@ -71,7 +92,7 @@ func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (e
 path	(?<=path=).*?(?=\|)|(?<=path=).*
 host	(?<=host=).*?(?=\|)|(?<=host=).*
 */
-func (node *NodeInfo) parseRawInfo() (err error) {
+func (node *NodeInfo) parseVmessRawInfo() (err error) {
 	reBasicInfos, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
 	rePath, _ := regexp.Compile("(?<=path=).*?(?=\\|)|(?<=path=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
@@ -123,15 +144,47 @@ func (node *NodeInfo) parseRawInfo() (err error) {
 		node.Host = mHost.String()
 	}
 
-	switch node.Sort {
-	case 11:
-		node.Protocol = "vmess"
-	case 12:
-		node.Protocol = "vmess"
-		node.EnableProxyProtocol = true
-	case 14:
-		node.Protocol = "trojan"
+	return
+}
+
+func (node *NodeInfo) parseTrojanRawInfo() (err error) {
+	reUrl, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
+	rePort, _ := regexp.Compile("(?<=port=).*?(?=\\|)|(?<=port=).*", 1)
+	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
+	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=)", 1)
+	reListenPort, _ := regexp.Compile("(?<=#).*", 1)
+
+	mUrl, _ := reUrl.FindStringMatch(node.RawInfo)
+	mPort, _ := rePort.FindStringMatch(node.RawInfo)
+	mHost, _ := reHost.FindStringMatch(node.RawInfo)
+	mRelay, _ := reRelay.FindStringMatch(node.RawInfo)
+
+	if mUrl != nil {
+		// First cheater is "\", remove it.
+		node.Url = mUrl.String()
 	}
+
+	// Listen port
+	if mPort != nil {
+		portRaw := mPort.String()
+		mListenPort, _ := reListenPort.FindStringMatch(portRaw)
+		if mListenPort != nil {
+			node.ListenPort, _ = String2Uint32(mListenPort.String())
+		} else {
+			node.ListenPort, _ = String2Uint32(portRaw)
+		}
+	}
+
+	if mRelay != nil {
+		node.EnableProxyProtocol, _ = strconv.ParseBool(mRelay.String())
+	} else {
+		node.EnableProxyProtocol = false
+	}
+	if mHost != nil {
+		node.Host = mHost.String()
+	}
+
+	node.TransportMode = "tcp"
 
 	return
 }

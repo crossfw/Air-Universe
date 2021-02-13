@@ -6,6 +6,7 @@ import (
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"log"
 	"testing"
+	"time"
 )
 
 var (
@@ -23,10 +24,10 @@ var (
 			APIAddress: "127.0.0.1",
 			APIPort:    10085,
 			LogPath:    "./v2.log",
-			Cert: structures.Cert{
-				CertPath: "cert\\f.crt",
-				KeyPath:  "cert\\f.key",
-			},
+			//Cert: structures.Cert{
+			//	CertPath: "",
+			//	KeyPath:  "",
+			//},
 		},
 		Sync: structures.Sync{
 			Interval:  60,
@@ -35,18 +36,6 @@ var (
 		},
 	}
 )
-
-func TestAddInbound(t *testing.T) {
-	var xrayCtl *XrayController
-	xrayCtl = new(XrayController)
-	_ = xrayCtl.Init(baseCfg)
-	err := addInboundManual(*xrayCtl.HsClient)
-	_ = xrayCtl.CmdConn.Close()
-	log.Println(err)
-	if err != nil {
-		t.Errorf("Failed")
-	}
-}
 
 func TestAutoAddInbound(t *testing.T) {
 	var (
@@ -65,8 +54,29 @@ func TestAutoAddInbound(t *testing.T) {
 	log.Println(users)
 	err = xrayCtl.AddUsers(users)
 
+	time.Sleep(10 * time.Second)
+
+	err = removeInbound(*xrayCtl.HsClient, ssp)
 	_ = xrayCtl.CmdConn.Close()
 	log.Println(err)
+	if err != nil {
+		t.Errorf("Failed")
+	}
+}
+func TestRemoveInbound(t *testing.T) {
+	var (
+		xrayCtl *XrayController
+		ssp     *sspApi.NodeInfo
+	)
+
+	ssp = new(sspApi.NodeInfo)
+	ssp.GetNodeInfo(baseCfg, 0)
+	xrayCtl = new(XrayController)
+	_ = xrayCtl.Init(baseCfg)
+
+	err := removeInbound(*xrayCtl.HsClient, ssp)
+	//err := removeInboundManual(*xrayCtl.HsClient)
+	_ = xrayCtl.CmdConn.Close()
 	if err != nil {
 		t.Errorf("Failed")
 	}

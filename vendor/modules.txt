@@ -50,7 +50,7 @@ github.com/seiflotfy/cuckoofilter
 github.com/sirupsen/logrus
 # github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499
 github.com/xtls/go
-# github.com/xtls/xray-core v1.2.4
+# github.com/xtls/xray-core v1.3.0
 ## explicit
 github.com/xtls/xray-core/app/commander
 github.com/xtls/xray-core/app/dispatcher
@@ -98,6 +98,7 @@ github.com/xtls/xray-core/common/signal/semaphore
 github.com/xtls/xray-core/common/strmatcher
 github.com/xtls/xray-core/common/task
 github.com/xtls/xray-core/common/uuid
+github.com/xtls/xray-core/common/xudp
 github.com/xtls/xray-core/core
 github.com/xtls/xray-core/features
 github.com/xtls/xray-core/features/dns

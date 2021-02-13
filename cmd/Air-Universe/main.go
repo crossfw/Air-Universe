@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	VERSION = "0.3.0"
+	VERSION = "0.3.1"
 )
 
 type WaitGroupWrapper struct {
@@ -171,6 +171,10 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 		ret, err := sspApi.PostUsersIP(baseCfg, usersIp)
 		if ret != 1 || err != nil {
 			log.Error(err)
+		}
+		err = IPControl.ClearLog(baseCfg)
+		if err != nil {
+			log.Error("Clear log error - ", err)
 		}
 	}
 }

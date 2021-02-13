@@ -1,2 +1,0 @@
-# XTLS
-THE FUTURE

@@ -18,9 +18,14 @@ type Proxy struct {
 	APIAddress string   `json:"api_address"`
 	APIPort    uint32   `json:"api_port"`
 	LogPath    string   `json:"log_path"`
+	Cert       Cert     `json:"cert"`
 }
 type Sync struct {
 	Interval  uint32 `json:"interval"`
 	FailDelay uint32 `json:"fail_delay"`
 	Timeout   uint32 `json:"timeout"`
+}
+type Cert struct {
+	CertPath string `json:"cert_path"`
+	KeyPath  string `json:"key_path"`
 }

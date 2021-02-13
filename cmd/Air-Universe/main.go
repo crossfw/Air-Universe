@@ -126,10 +126,13 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		if err != nil {
 			log.Error(err)
 		}
-		_, err = node.PostTraffic(baseCfg, usersTraffic)
-		if err != nil {
-			log.Error(err)
+		for err != nil {
+			_, err = node.PostTraffic(baseCfg, usersTraffic)
+			if err != nil {
+				log.Error(err)
+			}
 		}
+
 		usersBefore = usersNow
 	}
 }

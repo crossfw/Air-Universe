@@ -56,8 +56,11 @@ func (node *NodeInfo) GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (e
 	node.RawInfo = rtn.Get("data").Get("server").MustString()
 	node.Sort = uint32(rtn.Get("data").Get("sort").MustInt())
 	node.Id = cfg.Panel.NodeIDs[idIndex]
-	node.idIndex = idIndex
+	node.IdIndex = idIndex
 	node.SpeedLimit = uint32(rtn.Get("data").Get("node_speedlimit").MustInt())
+	if cfg.Proxy.Cert.KeyPath != "" && cfg.Proxy.Cert.CertPath != "" {
+		node.Cert = cfg.Proxy.Cert
+	}
 
 	err = node.parseRawInfo()
 	return
@@ -73,7 +76,7 @@ func (node *NodeInfo) parseRawInfo() (err error) {
 	rePath, _ := regexp.Compile("(?<=path=).*?(?=\\|)|(?<=path=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
 	reInsidePort, _ := regexp.Compile("(?<=inside_port=).*?(?=\\|)|(?<=inside_port=).*", 1)
-	reRelay, _ := regexp.Compile("\\|relay", 1)
+	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=)", 1)
 
 	basicInfos, _ := reBasicInfos.FindStringMatch(node.RawInfo)
 	var basicInfoArray []string
@@ -109,10 +112,10 @@ func (node *NodeInfo) parseRawInfo() (err error) {
 
 	if mPath != nil {
 		// First cheater is "\", remove it.
-		node.Path = mPath.String()[1:]
+		node.Path = mPath.String()
 	}
 	if mRelay != nil {
-		node.EnableProxyProtocol = true
+		node.EnableProxyProtocol, _ = strconv.ParseBool(mRelay.String())
 	} else {
 		node.EnableProxyProtocol = false
 	}
@@ -122,9 +125,9 @@ func (node *NodeInfo) parseRawInfo() (err error) {
 
 	switch node.Sort {
 	case 11:
-		node.Protocol = "v2ray"
+		node.Protocol = "vmess"
 	case 12:
-		node.Protocol = "v2ray"
+		node.Protocol = "vmess"
 		node.EnableProxyProtocol = true
 	case 14:
 		node.Protocol = "trojan"

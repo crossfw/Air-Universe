@@ -48,7 +48,7 @@ func (node *NodeInfo) GetUser(cfg *structures.BaseConfig) (userList *[]structure
 		user.Uuid = rtn.Get("data").GetIndex(u).Get("uuid").MustString()
 		user.AlertId = node.AlertID
 		user.Level = 0
-		user.InTag = cfg.Proxy.InTags[node.idIndex]
+		user.InTag = cfg.Proxy.InTags[node.IdIndex]
 		user.Tag = fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)
 		user.Protocol = node.Protocol
 		user.MaxClients = uint32(rtn.Get("data").GetIndex(u).Get("node_connector").MustInt())

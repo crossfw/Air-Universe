@@ -7,7 +7,7 @@ import (
 
 func checkReadVConstraint(conn syscall.RawConn) (bool, error) {
 	var isSocketReady = false
-	//var reason error
+	var reason error
 	/*
 		In Windows, WSARecv system call only support socket connection.
 
@@ -30,7 +30,7 @@ func checkReadVConstraint(conn syscall.RawConn) (bool, error) {
 		} else {
 			isSocketReady = true
 		}
-		//reason = err
+		reason = err
 	})
 
 	return isSocketReady, err

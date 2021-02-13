@@ -14,7 +14,11 @@
     ],
     "api_address": "127.0.0.1",
     "api_port": 10085,
-    "log_path": "./v2.log"
+    "log_path": "./v2.log",
+    "cert": {
+      "cert_path": "/path/to/certificate.crt",
+      "key_path": "/path/to/key.key"
+    }
   },
   "sync": {
     "interval": 60,

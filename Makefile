@@ -27,6 +27,8 @@ WINDOWS_ARCH_LIST = \
 
 all: linux-amd64 linux-386 windows-amd64 linux-armv5 linux-armv6 linux-armv8 linux-mips64 linux-mips64le# Most used
 
+test: linux-amd64 windows-amd64
+
 darwin-amd64:
 	GOARCH=amd64 GOOS=darwin $(GOBUILD) -o $(BINDIR)/$(NAME)-$@ $(GOFILES)
 

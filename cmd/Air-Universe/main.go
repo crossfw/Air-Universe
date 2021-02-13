@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	VERSION = "0.2.0"
+	VERSION = "0.3.0"
 )
 
 type WaitGroupWrapper struct {
@@ -62,13 +62,14 @@ func init() {
 }
 
 func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		log.Println(r)
-	//		err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
-	//		w.Done()
-	//	}
-	//}()
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println(r)
+			err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
+			log.Error(err)
+			w.Done()
+		}
+	}()
 	var (
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
@@ -92,10 +93,11 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		if err != nil {
 			log.Error(err)
 		}
+		// Try add first, if no error cause, it's the first time to add, else remove then add until no error
 		if changed == true {
-			err = apiClient.RemoveInbound(nodeNow)
-			apiClient.RemoveInbound(nodeNow)
-			for {
+			err = apiClient.AddInbound(nodeNow)
+			for err != nil {
+				err = apiClient.RemoveInbound(nodeNow)
 				err = apiClient.AddInbound(nodeNow)
 				if err == nil {
 					break
@@ -155,6 +157,7 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New(fmt.Sprintf("post users' IP thread error - %s", r))
+			log.Error(err)
 			w.Done()
 		}
 	}()

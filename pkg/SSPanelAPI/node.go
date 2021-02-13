@@ -27,11 +27,11 @@ func String2Uint32(s string) (uint32, error) {
 }
 
 func GetNodeInfo(cfg *structures.BaseConfig, node *structures.NodeInfo, idIndex uint32) (changed bool, err error) {
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		err = errors.New("get users from sspanel failed")
-	//	}
-	//}()
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New("get users from sspanel failed")
+		}
+	}()
 
 	var nodeInfo *structures.NodeInfo
 	nodeInfo = new(structures.NodeInfo)

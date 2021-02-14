@@ -66,6 +66,13 @@ func GetNodeInfo(cfg *structures.BaseConfig, node *structures.NodeInfo, idIndex 
 	}
 	nodeInfo.Tag = cfg.Proxy.InTags[idIndex]
 	switch nodeInfo.Sort {
+	case 0:
+		nodeInfo.Protocol = "ss"
+		err = parseSSRawInfo(nodeInfo)
+	case 10:
+		nodeInfo.Protocol = "ss"
+		err = parseSSRawInfo(nodeInfo)
+		nodeInfo.EnableProxyProtocol = true
 	case 11:
 		nodeInfo.Protocol = "vmess"
 		err = parseVmessRawInfo(nodeInfo)
@@ -187,4 +194,10 @@ func parseTrojanRawInfo(node *structures.NodeInfo) (err error) {
 	node.TransportMode = "tcp"
 	node.EnableTLS = true
 	return
+}
+
+func parseSSRawInfo(node *structures.NodeInfo) (err error) {
+	node.TransportMode = "tcp"
+	node.EnableTLS = false
+	return err
 }

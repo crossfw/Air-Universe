@@ -47,6 +47,16 @@ func addVlessUser(client command.HandlerServiceClient, inboundTag string, level 
 }
 
 func addSSUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
+	var ssCipherType shadowsocks.CipherType
+	switch user.CipherType {
+	case "aes-128-gcm":
+		ssCipherType = shadowsocks.CipherType_AES_128_GCM
+	case "aes-256-gcm":
+		ssCipherType = shadowsocks.CipherType_AES_256_GCM
+	case "chacha20-ietf-poly1305":
+		ssCipherType = shadowsocks.CipherType_CHACHA20_POLY1305
+	}
+
 	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
@@ -55,7 +65,7 @@ func addSSUser(client command.HandlerServiceClient, user *structures.UserInfo) e
 				Email: user.Tag,
 				Account: serial.ToTypedMessage(&shadowsocks.Account{
 					Password:   user.Password,
-					CipherType: shadowsocks.CipherType_AES_128_GCM,
+					CipherType: ssCipherType,
 				}),
 			},
 		}),

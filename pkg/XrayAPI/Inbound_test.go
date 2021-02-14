@@ -82,7 +82,7 @@ func TestAddSSInbound(t *testing.T) {
 				InTag:      "p0",
 				Tag:        "1-p0",
 				Protocol:   "ss",
-				Encryption: "aes-256-gcm",
+				CipherType: "aes-256-gcm",
 				Password:   "1234567",
 			},
 		}

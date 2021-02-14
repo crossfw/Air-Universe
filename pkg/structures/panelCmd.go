@@ -17,6 +17,7 @@ type NodeInfo struct {
 	RawInfo             string `json:"server"`
 	Url                 string
 	Protocol            string
+	CipherType          string
 	ListenPort          uint32
 	AlertID             uint32
 	EnableTLS           bool

@@ -47,6 +47,7 @@ func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[
 	for u := 0; u < numOfUsers; u++ {
 		user.Id = uint32(rtn.Get("data").GetIndex(u).Get("id").MustInt())
 		user.Uuid = rtn.Get("data").GetIndex(u).Get("uuid").MustString()
+		user.Password = rtn.Get("data").GetIndex(u).Get("passwd").MustString()
 		user.AlertId = node.AlertID
 		user.Level = 0
 		user.InTag = cfg.Proxy.InTags[node.IdIndex]
@@ -62,7 +63,26 @@ func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[
 			user.SpeedLimit = node.SpeedLimit
 		}
 
+		//单端口承载用户判定, 请在配置文件中打开为后端下发偏移后端口选项
+		isMultiUser := rtn.Get("data").GetIndex(u).Get("is_multi_user").MustInt()
+		if isMultiUser > 0 {
+			user.SSConfig = true
+			if node.Protocol == "ss" {
+				node.ListenPort = uint32(rtn.Get("data").GetIndex(u).Get("port").MustInt())
+				node.CipherType = rtn.Get("data").GetIndex(u).Get("method").MustString()
+			}
+		} else {
+			user.SSConfig = false
+		}
+
 		*userList = append(*userList, user)
+	}
+
+	//写入加密方式，为避免承载用户不是第一个，所以单独拉出来循环
+	if node.Protocol == "ss" {
+		for _, u := range *userList {
+			u.CipherType = node.CipherType
+		}
 	}
 
 	return userList, nil

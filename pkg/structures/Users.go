@@ -16,10 +16,12 @@ type UserInfo struct {
 	Tag string
 	// Protocol Vmess, trojan..
 	Protocol   string
-	Encryption string
+	CipherType string
 	Password   string
 	SpeedLimit uint32
 	MaxClients uint32
+	// 单端口承载用户标识，true代表该用户为单端口承载用户
+	SSConfig bool
 }
 
 type UserTraffic struct {

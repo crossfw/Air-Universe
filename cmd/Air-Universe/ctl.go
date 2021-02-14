@@ -75,12 +75,13 @@ func initProxyCore() (apiClient structures.ProxyCommand, err error) {
 //
 //}
 
-func getNodeInfo(node *structures.NodeInfo, idIndex uint32) (changed bool, err error) {
+func getNodeInfo(idIndex uint32) (node *structures.NodeInfo, err error) {
+	node = new(structures.NodeInfo)
 	switch baseCfg.Panel.Type {
 	case "sspanel":
-		return sspanelGetNodeInfo(node, idIndex)
+		return sspanelGetNodeInfo(idIndex)
 	}
-	return false, errors.New("unsupported panel type ")
+	return nil, errors.New("unsupported panel type ")
 }
 
 func getUsers(node *structures.NodeInfo) (*[]structures.UserInfo, error) {
@@ -129,14 +130,15 @@ func sspanelPostTraffic(node *structures.NodeInfo, traffic *[]structures.UserTra
 	return
 }
 
-func sspanelGetNodeInfo(node *structures.NodeInfo, idIndex uint32) (changed bool, err error) {
+func sspanelGetNodeInfo(idIndex uint32) (node *structures.NodeInfo, err error) {
+	node = new(structures.NodeInfo)
 	for {
-		changed, err = SSPanelAPI.GetNodeInfo(baseCfg, node, idIndex)
+		node, err = SSPanelAPI.GetNodeInfo(baseCfg, idIndex)
 		if err != nil {
 			log.Warnf("Failed to Get NodeInfo - %s", err)
 			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 		} else {
-			return changed, err
+			return
 		}
 	}
 }

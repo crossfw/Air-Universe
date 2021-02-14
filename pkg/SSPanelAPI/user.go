@@ -14,7 +14,7 @@ import (
 func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[]structures.UserInfo, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New("get users from sspanel failed")
+			err = errors.New(fmt.Sprintf("get users from sspanel %s", r))
 		}
 	}()
 	userList = new([]structures.UserInfo)
@@ -80,8 +80,8 @@ func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[
 
 	//写入加密方式，为避免承载用户不是第一个，所以单独拉出来循环
 	if node.Protocol == "ss" {
-		for _, u := range *userList {
-			u.CipherType = node.CipherType
+		for u := 0; u < len(*userList); u++ {
+			(*userList)[u].CipherType = node.CipherType
 		}
 	}
 

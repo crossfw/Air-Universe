@@ -9,6 +9,7 @@ import (
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"reflect"
 	"sync"
 	"time"
 	_ "time"
@@ -75,8 +76,10 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		usersTraffic          *[]structures.UserTraffic
 		apiClient             structures.ProxyCommand
 		nodeNow               *structures.NodeInfo
+		nodeBefore            *structures.NodeInfo
 	)
 	nodeNow = new(structures.NodeInfo)
+	nodeBefore = new(structures.NodeInfo)
 	usersBefore = new([]structures.UserInfo)
 	usersNow = new([]structures.UserInfo)
 	usersTraffic = new([]structures.UserTraffic)
@@ -89,15 +92,22 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	}
 
 	for {
-		changed, err := getNodeInfo(nodeNow, idIndex)
+		nodeNow, err = getNodeInfo(idIndex)
+		if err != nil {
+			log.Error(err)
+		}
+
+		usersNow, err = getUsers(nodeNow)
 		if err != nil {
 			log.Error(err)
 		}
 		// Try add first, if no error cause, it's the first time to add, else remove then add until no error
-		if changed == true && baseCfg.Proxy.AutoGenerate == true {
+		if reflect.DeepEqual(*nodeNow, *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
 			err = apiClient.AddInbound(nodeNow)
 			for err != nil {
-				err = apiClient.RemoveInbound(nodeNow)
+				err = apiClient.RemoveInbound(nodeBefore)
+				log.Warnf("Remove inbound Failed", err)
+				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 				err = apiClient.AddInbound(nodeNow)
 				if err == nil {
 					break
@@ -106,12 +116,9 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 			}
 			log.Printf("Added inbound %s", nodeNow.Tag)
+			usersBefore = new([]structures.UserInfo)
 		}
-
-		usersNow, err = getUsers(nodeNow)
-		if err != nil {
-			log.Error(err)
-		}
+		*nodeBefore = *nodeNow
 		useRemove, userAdd, err := structures.FindUserDiffer(usersBefore, usersNow)
 		if err != nil {
 			log.Error(err)

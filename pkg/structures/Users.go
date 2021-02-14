@@ -16,6 +16,8 @@ type UserInfo struct {
 	Tag string
 	// Protocol Vmess, trojan..
 	Protocol   string
+	Encryption string
+	Password   string
 	SpeedLimit uint32
 	MaxClients uint32
 }

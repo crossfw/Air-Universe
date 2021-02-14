@@ -10,6 +10,7 @@ import (
 	"github.com/xtls/xray-core/common/serial"
 	"github.com/xtls/xray-core/core"
 	"github.com/xtls/xray-core/infra/conf"
+	ssInbound "github.com/xtls/xray-core/proxy/shadowsocks"
 	trojanInbound "github.com/xtls/xray-core/proxy/trojan"
 	vmessInbound "github.com/xtls/xray-core/proxy/vmess/inbound"
 	"github.com/xtls/xray-core/transport/internet"
@@ -99,6 +100,10 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 		})
 	case "trojan":
 		proxySetting = serial.ToTypedMessage(&trojanInbound.ServerConfig{})
+	case "ss":
+		proxySetting = serial.ToTypedMessage(&ssInbound.ServerConfig{
+			Network: []net.Network{2, 3},
+		})
 	}
 
 	_, err := client.AddInbound(context.Background(), &command.AddInboundRequest{

@@ -6,6 +6,7 @@ import (
 	"github.com/xtls/xray-core/app/proxyman/command"
 	"github.com/xtls/xray-core/common/protocol"
 	"github.com/xtls/xray-core/common/serial"
+	"github.com/xtls/xray-core/proxy/shadowsocks"
 	"github.com/xtls/xray-core/proxy/trojan"
 	"github.com/xtls/xray-core/proxy/vless"
 	"github.com/xtls/xray-core/proxy/vmess"
@@ -38,6 +39,23 @@ func addVlessUser(client command.HandlerServiceClient, inboundTag string, level 
 				Account: serial.ToTypedMessage(&vless.Account{
 					Id:   id,
 					Flow: flow,
+				}),
+			},
+		}),
+	})
+	return err
+}
+
+func addSSUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
+	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
+		Tag: user.InTag,
+		Operation: serial.ToTypedMessage(&command.AddUserOperation{
+			User: &protocol.User{
+				Level: user.Level,
+				Email: user.Tag,
+				Account: serial.ToTypedMessage(&shadowsocks.Account{
+					Password:   user.Password,
+					CipherType: shadowsocks.CipherType_AES_128_GCM,
 				}),
 			},
 		}),

@@ -11,8 +11,8 @@ func (xrayCtl *XrayController) AddUsers(users *[]structures.UserInfo) (err error
 			err = addVmessUser(*xrayCtl.HsClient, &u)
 		case "trojan":
 			err = addTrojanUser(*xrayCtl.HsClient, &u)
-			//case "ss":
-			//	err = addSSUser(*xrayCtl.HsClient, &u)
+		case "ss":
+			err = addSSUser(*xrayCtl.HsClient, &u)
 		}
 
 		if err != nil {

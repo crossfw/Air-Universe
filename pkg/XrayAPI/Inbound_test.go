@@ -56,13 +56,49 @@ func TestAutoAddInbound(t *testing.T) {
 
 	time.Sleep(10 * time.Second)
 
-	err = removeInbound(*xrayCtl.HsClient, ssp)
+	//err = removeInbound(*xrayCtl.HsClient, ssp)
 	_ = xrayCtl.CmdConn.Close()
 	log.Println(err)
 	if err != nil {
 		t.Errorf("Failed")
 	}
 }
+
+func TestAddSSInbound(t *testing.T) {
+	var (
+		xrayCtl *XrayController
+		ssp     = &structures.NodeInfo{
+			Tag:                 "p0",
+			Protocol:            "ss",
+			TransportMode:       "tcp",
+			EnableTLS:           false,
+			EnableProxyProtocol: false,
+			ListenPort:          31856,
+		}
+		users = &[]structures.UserInfo{
+			{
+				Id:         1,
+				Level:      0,
+				InTag:      "p0",
+				Tag:        "1-p0",
+				Protocol:   "ss",
+				Encryption: "aes-256-gcm",
+				Password:   "1234567",
+			},
+		}
+	)
+	xrayCtl = new(XrayController)
+	_ = xrayCtl.Init(baseCfg)
+	err := addInbound(*xrayCtl.HsClient, ssp)
+	if err != nil {
+		t.Errorf("Failed%s", err)
+	}
+	err = xrayCtl.AddUsers(users)
+	if err != nil {
+		t.Errorf("Failed%s", err)
+	}
+}
+
 func TestRemoveInbound(t *testing.T) {
 	var (
 		xrayCtl *XrayController

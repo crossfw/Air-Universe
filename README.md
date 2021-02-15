@@ -3,9 +3,9 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 中文文档 → [here](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_cn.md)
 
 ## Bugs:
-- Can't hot change nodes info(except change port)
+- None
 ## TODO List:
-- Fix known bugs.
+- ~~Fix known bugs.~~
 - ~~Auto generate Xray-core configuration from SSPanel.~~  Finished
 - Support speed limit.
 - ~~Record users ip.~~  Finished

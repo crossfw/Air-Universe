@@ -90,13 +90,18 @@ The first element of `proxy.in_tags` will get users from the first element of `p
 {
   "type": "type of proxy",
   "alert_id": 1,
+  "auto_generate": true,
   "in_tags": [
     "p0",
     "p1"
   ],
   "api_address": "127.0.0.1",
   "api_port": 10085,
-  "log_path": "./v2.log"
+  "log_path": "./v2.log",
+  "cert": {
+    "cert_path": "/path/to/certificate.crt",
+    "key_path": "/path/to/key.key"
+  }
 }
 ```
 
@@ -108,6 +113,10 @@ Which proxy you are using. Now it supports
 > `alert_id`: string
 
 V2Ray AlertId you want to set for every user. Please make sure it is equal to your panel setting.
+
+> `auto_generate`: bool
+
+If it's true, the Inbound to Xray will generate automatically.
 
 > `in_tags`: [string]
 
@@ -125,6 +134,10 @@ V2Ray-core api port, normally it will be "10085". You can change it in your v2ra
 > `log_path`: string
 
 V2Ray-core log path, it will use to record users' IP address.
+
+> `cert`: cert object
+
+Include domain certificate for tls
 
 ### SyncObject
 `SyncObject` configuration format.

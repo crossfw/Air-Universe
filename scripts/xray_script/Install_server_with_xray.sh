@@ -5,9 +5,9 @@ VERSION="0.3.2"
 panelConfig() {
   echo "Air-Universe 0.3.2  + Xray 1.3.0 Installation"
   echo "########Air-Universe config#######\n"
-  read -p "Enter node_ids, eg 1,2,3:" nIds
-  read -p "Enter sspanel domain(https://):" pUrl
-  read -p "Enter panel token:" nKey
+  read -p "Enter node_ids, (eg 1,2,3): " nIds
+  read -p "Enter sspanel domain(https://): " pUrl
+  read -p "Enter panel token: " nKey
 
   apt-get update
   apt-get install cron wget ca-certificates -y
@@ -34,12 +34,10 @@ makeConfig() {
       "node_ids": [${nIds}]
     },
     "proxy": {
-      "log_path": "/var/log/au-v.log"
+      "log_path": "/var/log/xr.log"
     }
   }
 EOF
-
-  sed -i "s/11071/${vOut}/g" /etc/au/v2.json
 
 }
 
@@ -72,6 +70,7 @@ makeConfig
 keepalive
 chmod +x /usr/bin/au/*
 echo '*/1 * * * * /usr/bin/au/keepalive.sh'  >> /var/spool/cron/crontabs/root
+echo '0 6 * * * cat /dev/null > /var/log/au.log'  >> /var/spool/cron/crontabs/root
 chown root:crontab /var/spool/cron/crontabs/root
 chmod 600 /var/spool/cron/crontabs/root
 /bin/bash /usr/bin/au/keepalive.sh

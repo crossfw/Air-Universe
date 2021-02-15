@@ -9,7 +9,7 @@ Air-Universe is an open-source and free Middleware between SSPanel and V2Ray-cor
 
 ## TurnKey Install
 ```shell
-wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/Install_single_inbound_server.sh && bash Install_single_inbound_server.sh
+wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/xray_script/Install_server_with_xray.sh && bash Install_server_with_xray.sh
 ```
 
 ## Install in linux

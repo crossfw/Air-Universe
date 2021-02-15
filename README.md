@@ -13,6 +13,7 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 - ~~Turnkey installation script.~~ Finished
 - ~~Support Shadowsocks multiuser in single port.~~ Finished
 
+## 注意, 未经严格测试, 出问题了造成经济损失一概不负责
 ## Features
 - 支持3端(Shadowsocks, V2ray, Trojan) 单端口多用户
 - **Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用AEAD加密单端口**
@@ -25,7 +26,7 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 - 审计信息**不会**上报
 
 ## TurnKey Install
-自动安装 Air-Universe + Xray
+自动安装 Air-Universe + Xray, 在debian8测试通过, 不支持Centos
 ```shell
 wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/xray_script/Install_server_with_xray.sh && bash Install_server_with_xray.sh
 ```

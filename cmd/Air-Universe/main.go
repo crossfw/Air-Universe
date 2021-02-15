@@ -103,13 +103,16 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		}
 		// Try add first, if no error cause, it's the first time to add, else remove then add until no error
 		if reflect.DeepEqual(*nodeNow, *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
-			//err = apiClient.RemoveInbound(nodeBefore)
+			err = apiClient.RemoveInbound(nodeBefore)
 			err = apiClient.AddInbound(nodeNow)
-			log.Warnf("Add inbound check", err)
+			if err != nil {
+				log.Warnf("Add inbound Error", err)
+			}
 			for err != nil {
-				log.Warnf("Add inbound check", err)
 				err = apiClient.RemoveInbound(nodeBefore)
-				log.Warnf("Remove inbound check", err)
+				if err != nil {
+					log.Warnf("Remove inbound Error", err)
+				}
 				time.Sleep(time.Duration(30) * time.Second)
 				err = apiClient.AddInbound(nodeNow)
 				if err == nil {
@@ -118,7 +121,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 				log.Warnf("Add inbound Failed", err)
 				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 			}
-			log.Printf("Added inbound %s", nodeNow.Tag)
+			log.Printf("Added inbound %s", nodeNow)
 			usersBefore = new([]structures.UserInfo)
 		}
 		*nodeBefore = *nodeNow

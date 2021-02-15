@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	VERSION = "0.3.1"
+	VERSION = "0.3.2"
 )
 
 type WaitGroupWrapper struct {
@@ -103,11 +103,14 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		}
 		// Try add first, if no error cause, it's the first time to add, else remove then add until no error
 		if reflect.DeepEqual(*nodeNow, *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
+			//err = apiClient.RemoveInbound(nodeBefore)
 			err = apiClient.AddInbound(nodeNow)
+			log.Warnf("Add inbound check", err)
 			for err != nil {
+				log.Warnf("Add inbound check", err)
 				err = apiClient.RemoveInbound(nodeBefore)
-				log.Warnf("Remove inbound Failed", err)
-				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+				log.Warnf("Remove inbound check", err)
+				time.Sleep(time.Duration(30) * time.Second)
 				err = apiClient.AddInbound(nodeNow)
 				if err == nil {
 					break

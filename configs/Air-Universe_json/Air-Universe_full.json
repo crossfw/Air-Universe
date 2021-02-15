@@ -6,7 +6,7 @@
     "node_ids": [1, 2]
   },
   "proxy": {
-    "type": "v2ray",
+    "type": "xray",
     "alert_id": 1,
     "auto_generate": true,
     "in_tags": [

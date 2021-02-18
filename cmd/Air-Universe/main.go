@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	VERSION = "0.3.2"
+	VERSION = "0.3.3"
 )
 
 type WaitGroupWrapper struct {
@@ -33,7 +33,7 @@ func init() {
 	//log.SetReportCaller(true)
 
 	flag.BoolVar(&printVersion, "v", false, "print version")
-	flag.StringVar(&configPath, "c", "./locTest/test.json", "configure file")
+	flag.StringVar(&configPath, "c", "", "configure file")
 	flag.Parse()
 
 	if printVersion {

@@ -44,7 +44,7 @@ wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Univers
 
 注意 Shadowsocks AEAD单端口多用户需要更新面板到
 [232c87c](https://github.com/Anankke/SSPanel-Uim/commit/232c87c0ff80d0118249d9c0eb161f869e7f4c5d)
-之后<br>
+之后, 且需将单端口承载用户的协议和混淆设为"origin"和"plain"(!注意,这个操作会使现有ssr单端口节点失效,谨慎操作!)<br>
 
 如果使用自动生成证书的TLS, 请在节点信息后添加"|verify_cert=false"来跳过用户侧证书验证(需客户端支持)
 

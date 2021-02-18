@@ -1,9 +1,9 @@
 #!/bin/bash
 
-VERSION="0.3.2"
+VERSION="0.3.3"
 
 panelConfig() {
-  echo "Air-Universe 0.3.2  + Xray 1.3.0 Installation"
+  echo "Air-Universe 0.3.3  + Xray 1.3.0 Installation"
   echo "########Air-Universe config#######\n"
   read -p "Enter node_ids, (eg 1,2,3): " nIds
   read -p "Enter sspanel domain(https://): " pUrl

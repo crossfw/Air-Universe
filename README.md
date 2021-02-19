@@ -75,3 +75,7 @@ Enter panel token: 123
     - Xray log:/var/log/xr.log
     - Air-Universe日志文件每天6点清空
     - Xray日志文件每60s清空(用于统计ip)
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/crossfw/Air-Universe.svg)](https://starchart.cc/crossfw/Air-Universe)

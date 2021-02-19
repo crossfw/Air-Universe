@@ -2,16 +2,20 @@
 English document → [here](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_en.md) <br>
 中文文档(咕咕咕) → [here](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_cn.md)
 
+>新人第一次写大项目，也是第一次写golang，请多多指教
+
 ## Bugs:
 - None
 ## TODO List:
 - ~~Fix known bugs.~~
 - ~~Auto generate Xray-core configuration from SSPanel.~~  Finished
-- Support speed limit.
 - ~~Record users ip.~~  Finished
 - ~~Support Trojan protocol.~~ Finished
 - ~~Turnkey installation script.~~ Finished
 - ~~Support Shadowsocks multiuser in single port.~~ Finished
+- Support speed limit.
+- Limit users IP count.
+- Support all platform turnkey script.
 
 ## 注意, 未经严格测试, 出问题了造成经济损失一概不负责
 ## Features

@@ -2,22 +2,27 @@
 English document → [here](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_en.md) <br>
 中文文档(咕咕咕) → [here](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_cn.md)
 
+>新人第一次写大项目，也是第一次写golang，请多多指教
+
 ## Bugs:
 - None
 ## TODO List:
 - ~~Fix known bugs.~~
 - ~~Auto generate Xray-core configuration from SSPanel.~~  Finished
-- Support speed limit.
 - ~~Record users ip.~~  Finished
 - ~~Support Trojan protocol.~~ Finished
 - ~~Turnkey installation script.~~ Finished
 - ~~Support Shadowsocks multiuser in single port.~~ Finished
+- Report users who have exceeded the IP limit.
+- Support all platform turnkey script.
+- Support speed limit.
+- Limit users IP count.
 
 ## 注意, 未经严格测试, 出问题了造成经济损失一概不负责
 ## Features
-- 支持3端(Shadowsocks, V2ray, Trojan) 单端口多用户
+- 支持3端(Shadowsocks, V2ray(Vmess), Trojan) 单端口多用户
 - **Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用AEAD加密单端口**
-- V2ray 支持 tcp和Websocket 可配合TLS传输, 证书可自定义(一键脚本不含此功能)也可自动生成
+- V2ray(Vmess) 支持 tcp和Websocket 可配合TLS传输, 证书可自定义(一键脚本不含此功能)也可自动生成
 - Trojan 支持TCP+TLS 
 - 支持多个入站配合多节点ID, 流量分开统计
 - 支持记录用户IP, 但目前不可限制
@@ -38,7 +43,7 @@ wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Univers
 ### 详细说明
 首先需要在面板上添加节点
 请参考教程，比如[这个](https://soga.vaxilu.com/soga-v2ray/sspanel-v2ray) (逃
-唯一的区别是，如果需要在中转后获取真实ip，请在v2ray或trojan节点地址配置时在最后加上"|relay=true"(不含引号)， 
+唯一的区别是，如果需要在中转后获取真实ip，请在v2ray(Vmess)或trojan节点地址配置时在最后加上"|relay=true"(不含引号)， 
 亦或者在节点类型中选择ss中转或v2ray中转。至此，3种协议均可获取中转真实IP， 不过要注意的是，在开启此功能时，TCP包开头必须携带ProxyProtocol，否则不予建立连接，
 所以如果既要中转又要直连的，需要开2个不同的端口(配合不同节点ID)。<br>
 
@@ -71,3 +76,7 @@ Enter panel token: 123
     - Xray log:/var/log/xr.log
     - Air-Universe日志文件每天6点清空
     - Xray日志文件每60s清空(用于统计ip)
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/crossfw/Air-Universe.svg)](https://starchart.cc/crossfw/Air-Universe)

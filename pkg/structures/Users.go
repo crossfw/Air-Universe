@@ -60,13 +60,7 @@ func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error
 	//nLastAppear := false
 	//bLastAppear := false
 	for true {
-		if n == len(*now) {
-			//nLastAppear = true
-			n--
-		} else if b == len(*before) {
-			//bLastAppear = true
-			b--
-		} else if (*before)[b] == (*now)[n] {
+		if (*before)[b] == (*now)[n] {
 			n++
 			b++
 		} else if (*before)[b].Id < (*now)[n].Id {
@@ -84,7 +78,7 @@ func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error
 			n++
 			b++
 			// Last one will tagged
-			continue
+			//continue
 		}
 		// any userList finished, break and add remainder users to remove or add
 		if n == len(*now) || b == len(*before) {
@@ -94,24 +88,14 @@ func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error
 
 	// some new users will add to addList
 	if b != len(*before) {
-		for u := b; u < len(*before)-1; u++ {
+		for u := b; u < len(*before); u++ {
 			*remove = append(*remove, (*before)[u])
 		}
 	} else if n != len(*now) {
-		for u := n; u < len(*now)-1; u++ {
+		for u := n; u < len(*now); u++ {
 			*add = append(*add, (*now)[u])
 		}
 	}
-
-	// Process last one
-	//if (*before)[len(*before)-1] != (*now)[len(*now)-1] {
-	//	if nLastAppear == false {
-	//		*add = append(*add, (*now)[len(*now)-1])
-	//	}
-	//	if bLastAppear == false {
-	//		*remove = append(*remove, (*before)[len(*before)-1])
-	//	}
-	//}
 
 	return
 }

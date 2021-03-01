@@ -158,4 +158,4 @@ Retry delay time(second) if synchronization failure.
 
 > `timeout`: uint32
 
-HTTP connection request timeout(for connect panel)
+HTTP connection request timeout(for connect to the panel)

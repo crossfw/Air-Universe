@@ -1,68 +1,174 @@
-# V2ray-ssp
-> This document was translated from English version by [DeepL](https://www.deepl.com/)
+# Air-Universe
 ## 介绍
-V2ray-ssp 是一个介于 SSPanel 和 V2ray-core 之间的开源和免费的中间件。它将兼容V2ray-core(4.x)的任何版本。
+Air-Universe 是一个介于 SSPanel 和 V2ray-core 或 Xray-core 之间的开源和免费的中间件。它将兼容 V2ray-core(4.x) 或 Xray(1.3+) 的任何版本。
 ## 特征
-* 将用户从SSPanel同步到V2ray-core。
-* 将流量数据发布到SSPanel上
-* 完全可定制的V2ray-核心配置文件。
-* 无用户数限制。
-## 在Linux上安装
-1. 准备V2ray-核心表格[V2ray发布](https://github.com/v2fly/v2ray-core/releases)
-2. 给自己做一个v2ray的配置，可以参考[这里](https://github.com/crossfw/V2ray-ssp/blob/master/example/v2ray-core_json/Single.json) 和 [V2ray文档](https://www.v2ray.com/) <br>
-   你必须保留V2ray-core API和API的路由规则，API端口可以随意更改，V2ray-core API的默认端口是10085。
-3. 从[V2ray-ssp Release](https://github.com/crossfw/V2ray-ssp/releases) 下载V2ray-ssp。
-4. 从[这里](https://github.com/crossfw/V2ray-ssp/blob/master/example/v2rayssp_json/example.json) 进行V2ray-ssp配置
-5. 先启动V2ray-core
-```shell
-./v2ray -c your_v2ray.json
-```
-6. 在V2ray-core 启动后再启动v2ray-ssp
-```shell
-./v2ray-ssp -C your_v2ray-ssp.json
-```
-7. 测试连接.
+- 支持3端(Shadowsocks, V2ray(Vmess), Trojan) 单端口多用户
+- **Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用AEAD加密单端口**(原版 Clash 可用)
+- V2ray(VMess) 支持 TCP 和 Websocket 可配合 TLS 传输, 证书可自定义(一键脚本不含此功能)也可自动生成
+- Trojan 支持TCP+TLS
+- 支持多个入站配合多节点ID, 流量分开统计
+- 支持记录用户IP, 但目前不可限制
+- 不支持限速
+- 审计规则默认屏蔽BT和内网IP, 可自行添加, 不支持从面板拉取
+- 审计信息**不会**上报
 
-## V2ray-ssp 配置文件解析
+## Air-Universe 配置文件解析
+### Overview
+配置文件包含 "panel", "proxy", "sync"
 ```json
 {
-  "url": "https://SSPanel.address",
-  "key": "SSPanel-Key",
-  "node_id": 24,
-  "alert_id": 1,
-  "in_tags": ["p0"],
-  "api_address": "127.0.0.1",
-  "api_port": 10085,
-  "sync_interval": 60,
-  "fail_delay": 3
+  "panel": {},
+  "proxy": {},
+  "sync": {}
 }
-
 ```
 
-- url
-    - 您的SSPanel的网址，请确保它以 "http "或 "https "开头。确保它以 "http "或 "https "开头。
+> `panel`: [PanelObject](#panelobject)
 
-- key
-    - 你的SSPanel的mu_key。从SSPanel网站根目录下的./config/.config.php中查看。
+前端Panel的配置
 
-- node_id
-    - 您要建立的节点
+> `proxy`: [ProxyObject](#proxyobject)
 
-- alert_id
-    - 确保 alertId 与 SSPanel 的节点配置相同，错误的值将导致连接失败或内存泄漏。
+Proxy-core(V2Ray 或 Xray)的API通信配置等
 
-- in_tags
-    - 一个数组包括您想添加用户的v2ray-core inbound标签。
+> `sync`: [SyncObject](#syncobject)
 
-- api_address
-    - V2ray-core的api地址，通常是 "127.0.0.1"
+信息同步设置
 
-- api_port
-    - V2ray-core的api端口，通常是 "10085"。你可以在v2ray-core配置的json中更改它。
+### PanelObject
 
-- sync_interval
-    - 两次同步的间隔时间（秒）。
+`PanelObject` 格式。
+```json
+{
+  "type": "type of panel",
+  "url": "https://SSPanel.address",
+  "key": "SSPanel-Key",
+  "node_ids": [1, 2]
+}
+```
 
-- fail_delay
-    - 同步失败时重试延迟时间(秒)。
-    
+> `type`: string
+
+您使用的面板类型， 目前支持
+- `sspanel` - [SSPanel-Uim](https://github.com/Anankke/SSPanel-Uim)
+
+> `url`: string
+
+面板的通信地址，确保使用 "http://" 或 "https://" 开始
+
+> `key`: string
+
+面板通信密钥
+> `node_ids`: [uint32]
+
+一个数组，每个元素都是你将要部署的nodeId，请让它的长度等于`proxy.in_tags`。
+`proxy.in_tags`的第一个元素将从`panel.node_ids`的第一个元素中获取用户。按其索引进行映射。
+
+### ProxyObject
+`ProxyObject` 配置格式
+```json
+{
+  "type": "type of proxy",
+  "alert_id": 1,
+  "auto_generate": true,
+  "in_tags": [
+    "p0",
+    "p1"
+  ],
+  "api_address": "127.0.0.1",
+  "api_port": 10085,
+  "log_path": "./v2.log",
+  "cert": {
+    "cert_path": "/path/to/certificate.crt",
+    "key_path": "/path/to/key.key"
+  }
+}
+```
+
+> `type`: string
+
+您使用的代理内核，目前支持
+- `v2ray` - [V2Ray-core](https://github.com/v2fly/v2ray-core)
+- `xray` - [Xray](https://github.com/XTLS/Xray-core)
+
+> `alert_id`: string
+
+手动配置入站代理时分配给 VMess 用户的alert_id。
+
+> `auto_generate`: bool
+
+是否自动生成入站代理（仅适配Xray）
+> `in_tags`: [string]
+
+数组中包含了您要添加用户的 Inbound Tag，请使其长度等于`panel.node_ids`。
+`proxy.in_tags`的第一个元素将从`panel.node_ids`的第一个元素中获取用户。按其索引进行映射。
+
+> `api_address`: string
+
+代理内核 API 地址
+> `api_port`: uint32
+
+代理内核 API 端口
+> `log_path`: string
+
+代理内核的日志输出地址（用于统计用户在线ip）
+> `cert`: cert object
+
+TLS 所需的证书，如果留空则会自动生成（仅Xray），请在客户端跳过证书检查。
+### SyncObject
+`SyncObject` configuration format.
+```json
+{
+  "interval": 60,
+  "fail_delay": 5,
+  "timeout": 5
+}
+```
+> `interval`: uint32
+
+于前端面板的同步时间间隔（秒）。
+> `fail_delay`: uint32
+
+同步失败后重试等待时间（秒）。
+> `timeout`: uint32
+
+HTTP(S) 请求超时时间（秒）    
+
+## 最小配置文件启动
+```json
+{
+  "panel": {
+    "url": "https://SSPanel.address",
+    "key": "SSPanel-Key",
+    "node_ids": [1]
+  }
+}
+```
+此时完整的配置（默认配置为）
+```json
+{
+  "panel": {
+    "type": "sspanel",
+    "url": "https://SSPanel.address",
+    "key": "SSPanel-Key",
+    "node_ids": [1]
+  },
+  "proxy": {
+    "type": "xray",
+    "alert_id": 1,
+    "auto_generate": true,
+    "in_tags": [
+      "p0"
+    ],
+    "api_address": "127.0.0.1",
+    "api_port": 10085,
+    "log_path": "./v2.log",
+  },
+  "sync": {
+    "interval": 60,
+    "fail_delay": 5,
+    "timeout": 5
+  }
+}
+```
+需要说明的是，proxy.in_tags 会根据 node_ids 自动补全。补全策略请参看 ./cmd/Air-Universe/cfg.go 文件。

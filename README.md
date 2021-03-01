@@ -3,6 +3,8 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 中文文档(咕咕咕) → [here](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_cn.md)
 
 >新人第一次写大项目，也是第一次写golang，请多多指教
+> 
+> 反馈群 TG Group: https://t.me/Air_Universe
 
 ## Bugs:
 - None
@@ -21,8 +23,8 @@ English document → [here](https://github.com/crossfw/Air-Universe/tree/master/
 ## 注意, 未经严格测试, 出问题了造成经济损失一概不负责
 ## Features
 - 支持3端(Shadowsocks, V2ray(Vmess), Trojan) 单端口多用户
-- **Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用AEAD加密单端口**
-- V2ray(Vmess) 支持 tcp和Websocket 可配合TLS传输, 证书可自定义(一键脚本不含此功能)也可自动生成
+- **Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用AEAD加密单端口**(原版 Clash 可用)
+- V2ray(VMess) 支持 TCP 和 Websocket 可配合 TLS 传输, 证书可自定义(一键脚本不含此功能)也可自动生成
 - Trojan 支持TCP+TLS 
 - 支持多个入站配合多节点ID, 流量分开统计
 - 支持记录用户IP, 但目前不可限制

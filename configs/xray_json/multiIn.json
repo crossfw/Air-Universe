@@ -14,10 +14,10 @@
   "policy": {
     "levels": {
         "0": {
-            "connIdle": 20,
-            "downlinkOnly": 5,
-            "handshake": 4,
-            "uplinkOnly": 5,
+            "connIdle": 300,
+            "downlinkOnly": 20,
+            "handshake": 20,
+            "uplinkOnly": 20,
             "statsUserDownlink": true,
             "statsUserUplink": true
         }

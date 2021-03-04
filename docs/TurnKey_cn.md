@@ -4,8 +4,8 @@
 wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/xray_script/Install_server_with_xray.sh && bash Install_server_with_xray.sh
 ```
 - 仅适配[SSPanel-UIM](https://github.com/Anankke/SSPanel-Uim)
-- 使用Xray做Proxy-core, 同时也支持V2Ray-Core
-- 自动创建入站规则
+- 使用Xray做Proxy-core。
+- 自动创建入站规则。
 - 适配多入站，比如一个带ProxyProtocol的中转 和 一个直连入站，均采用面板节点ID， 流量分开统计。
 
 ## 详细说明

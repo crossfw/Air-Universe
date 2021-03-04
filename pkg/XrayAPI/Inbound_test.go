@@ -44,7 +44,7 @@ func TestAutoAddInbound(t *testing.T) {
 
 	xrayCtl = new(XrayController)
 	ssp := new(structures.NodeInfo)
-	sspApi.GetNodeInfo(baseCfg, ssp, 0)
+	sspApi.GetNodeInfo(baseCfg, 0)
 
 	fmt.Println(ssp)
 	_ = xrayCtl.Init(baseCfg)
@@ -106,7 +106,7 @@ func TestRemoveInbound(t *testing.T) {
 	)
 
 	ssp = new(structures.NodeInfo)
-	sspApi.GetNodeInfo(baseCfg, ssp, 0)
+	//sspApi.GetNodeInfo(baseCfg, ssp, 0)
 	xrayCtl = new(XrayController)
 	_ = xrayCtl.Init(baseCfg)
 

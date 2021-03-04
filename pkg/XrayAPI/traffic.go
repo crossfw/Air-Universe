@@ -25,6 +25,5 @@ func queryUserTraffic(c statsService.StatsServiceClient, userId, direction strin
 	} else {
 		traffic = 0
 	}
-
 	return
 }

@@ -69,7 +69,7 @@ func PostUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (r
 		}
 	}()
 
-	// 按tag id依次推送
+	// 按 inbound tagId 依次推送
 	for tagId := 0; tagId < len(baseCfg.Proxy.InTags); tagId++ {
 		aliveIPData := postIPType{}
 		ipRecord := userIPData{}

@@ -6,7 +6,5 @@ type ProxyCommand interface {
 	RemoveUsers(user *[]UserInfo) error
 	QueryUsersTraffic(user *[]UserInfo) (*[]UserTraffic, error)
 	AddInbound(node *NodeInfo) (err error)
-	//AddTrojanInbound()
-	//AddSSInbound()
 	RemoveInbound(node *NodeInfo) (err error)
 }

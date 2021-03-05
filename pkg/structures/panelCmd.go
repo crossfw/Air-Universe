@@ -4,7 +4,7 @@ type PanelCmd interface {
 	GetNodeInfo(cfg *BaseConfig, idIndex uint32) (changed bool, err error)
 	GetUser(cfg *BaseConfig) (userList *[]UserInfo, err error)
 	PostTraffic(cfg *BaseConfig, trafficData *[]UserTraffic) (ret int, err error)
-
+	PostSysLoad(cfg *BaseConfig, load *SysLoad) (err error)
 	AddInbound(apiClient *interface{}) (ret int, err error)
 }
 
@@ -26,4 +26,11 @@ type NodeInfo struct {
 	Path                string
 	Host                string
 	Cert                Cert
+}
+
+type SysLoad struct {
+	Uptime uint64
+	Load1  float64
+	Load5  float64
+	Load15 float64
 }

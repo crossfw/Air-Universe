@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[]structures.UserInfo, err error) {
+func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New(fmt.Sprintf("get users from sspanel %s", r))
@@ -21,7 +21,7 @@ func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[
 	user := structures.UserInfo{}
 	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/users?key=%s&node_id=%v", cfg.Panel.URL, cfg.Panel.Key, node.Id), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/users?key=%s&node_id=%v", node.URL, node.Key, node.NodeInfo.Id), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -40,36 +40,33 @@ func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[
 	}
 
 	numOfUsers := len(rtn.Get("data").MustArray())
-	if err != nil {
-		return nil, err
-	}
 
 	for u := 0; u < numOfUsers; u++ {
 		user.Id = uint32(rtn.Get("data").GetIndex(u).Get("id").MustInt())
 		user.Uuid = rtn.Get("data").GetIndex(u).Get("uuid").MustString()
 		user.Password = rtn.Get("data").GetIndex(u).Get("passwd").MustString()
-		user.AlertId = node.AlertID
+		user.AlertId = node.NodeInfo.AlertID
 		user.Level = 0
-		user.InTag = cfg.Proxy.InTags[node.IdIndex]
+		user.InTag = node.NodeInfo.Tag
 		user.Tag = fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)
-		user.Protocol = node.Protocol
-		user.MaxClients = uint32(rtn.Get("data").GetIndex(u).Get("node_connector").MustInt())
+		user.Protocol = node.NodeInfo.Protocol
+		user.MaxClients = uint32(rtn.Get("data").GetIndex(u).Get("node.NodeInfo_connector").MustInt())
 
 		userSL := uint32(rtn.Get("data").GetIndex(u).Get("node_speedlimit").MustInt())
 		// The minimal value decide SpeedLimit
-		if userSL < node.SpeedLimit {
+		if userSL < node.NodeInfo.SpeedLimit {
 			user.SpeedLimit = userSL
 		} else {
-			user.SpeedLimit = node.SpeedLimit
+			user.SpeedLimit = node.NodeInfo.SpeedLimit
 		}
 
 		//单端口承载用户判定, 请在配置文件中打开为后端下发偏移后端口选项
 		isMultiUser := rtn.Get("data").GetIndex(u).Get("is_multi_user").MustInt()
 		if isMultiUser > 0 {
 			user.SSConfig = true
-			if node.Protocol == "ss" {
-				node.ListenPort = uint32(rtn.Get("data").GetIndex(u).Get("port").MustInt())
-				node.CipherType = rtn.Get("data").GetIndex(u).Get("method").MustString()
+			if node.NodeInfo.Protocol == "ss" {
+				node.NodeInfo.ListenPort = uint32(rtn.Get("data").GetIndex(u).Get("port").MustInt())
+				node.NodeInfo.CipherType = rtn.Get("data").GetIndex(u).Get("method").MustString()
 			}
 		} else {
 			user.SSConfig = false
@@ -79,9 +76,9 @@ func GetUser(cfg *structures.BaseConfig, node *structures.NodeInfo) (userList *[
 	}
 
 	//写入加密方式，为避免承载用户不是第一个，所以单独拉出来循环
-	if node.Protocol == "ss" {
+	if node.NodeInfo.Protocol == "ss" {
 		for u := 0; u < len(*userList); u++ {
-			(*userList)[u].CipherType = node.CipherType
+			(*userList)[u].CipherType = node.NodeInfo.CipherType
 		}
 	}
 

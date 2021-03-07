@@ -18,7 +18,7 @@ type PostLoad struct {
 	Load   string `json:"load"`
 }
 
-func PostSysLoad(cfg *structures.BaseConfig, node *structures.NodeInfo, LoadData *structures.SysLoad) (ret int, err error) {
+func postSysLoad(node *SspController, LoadData *structures.SysLoad) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("post system loads data to sspanel failed")
@@ -32,28 +32,28 @@ func PostSysLoad(cfg *structures.BaseConfig, node *structures.NodeInfo, LoadData
 	bodyJson, err := json.Marshal(body)
 	if err != nil {
 		log.Println("Post body error")
-		return 0, err
+		return err
 	}
-	client := &http.Client{Timeout: time.Duration(cfg.Sync.Timeout) * time.Second}
+	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", cfg.Panel.URL, node.Id, cfg.Panel.Key), bytes.NewBuffer(bodyJson))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", node.URL, node.NodeInfo.Id, node.Key), bytes.NewBuffer(bodyJson))
 	if err != nil {
-		return 0, err
+		return err
 	}
 	// Use json type
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	rtn, err := simplejson.NewJson(bodyText)
+	_, err = simplejson.NewJson(bodyText)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	return rtn.Get("ret").MustInt(), nil
+	return
 }

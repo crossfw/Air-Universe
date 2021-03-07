@@ -6,7 +6,6 @@ import (
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"log"
 	"testing"
-	"time"
 )
 
 var (
@@ -40,24 +39,21 @@ var (
 func TestAutoAddInbound(t *testing.T) {
 	var (
 		xrayCtl *XrayController
+		sspCtl  *sspApi.SspController
 	)
 
 	xrayCtl = new(XrayController)
-	ssp := new(structures.NodeInfo)
-	sspApi.GetNodeInfo(baseCfg, 0)
+	sspCtl = new(sspApi.SspController)
+	_ = sspCtl.Init(baseCfg, 0)
+	err := sspCtl.GetNodeInfo()
 
-	fmt.Println(ssp)
+	fmt.Println(sspCtl.NodeInfo)
 	_ = xrayCtl.Init(baseCfg)
-	err := addInbound(*xrayCtl.HsClient, ssp)
-	//err := addInboundManual(*xrayCtl.HsClient)
-	users, _ := sspApi.GetUser(baseCfg, ssp)
+	err = addInbound(*xrayCtl.HsClient, sspCtl.NodeInfo)
+	users, _ := sspCtl.GetUser()
 	log.Println(users)
 	err = xrayCtl.AddUsers(users)
 
-	time.Sleep(10 * time.Second)
-
-	//err = removeInbound(*xrayCtl.HsClient, ssp)
-	_ = xrayCtl.CmdConn.Close()
 	log.Println(err)
 	if err != nil {
 		t.Errorf("Failed")

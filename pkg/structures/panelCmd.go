@@ -1,11 +1,13 @@
 package structures
 
-type PanelCmd interface {
-	GetNodeInfo(cfg *BaseConfig, idIndex uint32) (changed bool, err error)
-	GetUser(cfg *BaseConfig) (userList *[]UserInfo, err error)
-	PostTraffic(cfg *BaseConfig, trafficData *[]UserTraffic) (ret int, err error)
-	PostSysLoad(cfg *BaseConfig, load *SysLoad) (err error)
-	AddInbound(apiClient *interface{}) (ret int, err error)
+type PanelCommand interface {
+	Init(cfg *BaseConfig, idIndex uint32) error
+	GetNodeInfo() (err error)
+	GetUser() (userList *[]UserInfo, err error)
+	PostTraffic(trafficData *[]UserTraffic) (err error)
+	PostSysLoad(load *SysLoad) (err error)
+	PostAliveIP(baseCfg *BaseConfig, userIP *[]UserIP) (err error)
+	GetNowInfo() (nodeInfo *NodeInfo)
 }
 
 type NodeInfo struct {

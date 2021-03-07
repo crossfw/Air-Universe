@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/SysLoad"
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	log "github.com/sirupsen/logrus"
 	"testing"
 )
 
@@ -14,7 +13,7 @@ var (
 			Type:    "sspanel",
 			URL:     "",
 			Key:     "",
-			NodeIDs: []uint32{24},
+			NodeIDs: []uint32{4},
 		},
 		Proxy: structures.Proxy{
 			Type:         "xray",
@@ -38,18 +37,22 @@ var (
 
 func TestPostTraffic(t *testing.T) {
 
-	trafficData := &[]structures.UserTraffic{
-		{
-			Up:   5,
-			Down: 545454,
-			Id:   1,
-		},
-	}
+	var (
+		sspCtl      *SspController
+		trafficData = &[]structures.UserTraffic{
+			{
+				Up:   5,
+				Down: 545454,
+				Id:   1,
+			},
+		}
+	)
+	sspCtl = new(SspController)
+	_ = sspCtl.Init(testCfg, 0)
+	err := sspCtl.PostTraffic(trafficData)
 
-	ret, err := PostTraffic(testCfg, nodeInfo, trafficData)
-	if ret != 1 && err != nil {
-		log.Println(err)
-		t.Errorf("Post Failed")
+	if err != nil {
+		t.Errorf("Post Failed %s", err)
 	}
 }
 
@@ -67,23 +70,56 @@ func TestAliveIPost(t *testing.T) {
 				AliveIP: []string{"1.1.1.1", "2.2.2.2"},
 			},
 		}
+		sspCtl *SspController
 	)
 
-	ret, err := PostUsersIP(testCfg, &userIPs)
+	sspCtl = new(SspController)
+	_ = sspCtl.Init(testCfg, 0)
+
+	err := sspCtl.PostAliveIP(testCfg, &userIPs)
 	t.Log(err)
-	if ret != 1 && err != nil {
+	if err != nil {
 		t.Errorf("Post Failed")
 	}
 }
 
 func TestPostSysLoad(t *testing.T) {
+	var (
+		sspCtl *SspController
+	)
 	loaData, err := SysLoad.GetSysLoad()
-	if err != nil {
-		t.Errorf("Post Failed")
-	}
-	ret, err := PostSysLoad(testCfg, nodeInfo, loaData)
+	sspCtl = new(SspController)
+	_ = sspCtl.Init(testCfg, 0)
+	err = sspCtl.PostSysLoad(loaData)
 	if err != nil {
 		t.Errorf("Post Failed %s", err)
 	}
-	fmt.Println(ret)
+	fmt.Println(sspCtl.NodeInfo)
+}
+
+func TestGetNodeInfo(t *testing.T) {
+	var (
+		sspCtl *SspController
+	)
+	sspCtl = new(SspController)
+	_ = sspCtl.Init(testCfg, 0)
+	err := sspCtl.GetNodeInfo()
+	if err != nil {
+		t.Errorf("Post Failed %s", err)
+	}
+	fmt.Println(sspCtl.NodeInfo)
+}
+
+func TestGetUsers(t *testing.T) {
+	var (
+		sspCtl *SspController
+	)
+	sspCtl = new(SspController)
+	_ = sspCtl.Init(testCfg, 0)
+	err := sspCtl.GetNodeInfo()
+	users, err := sspCtl.GetUser()
+	if err != nil {
+		t.Errorf("Post Failed %s", err)
+	}
+	fmt.Println(users)
 }

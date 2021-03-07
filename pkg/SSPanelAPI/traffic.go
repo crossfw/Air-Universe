@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func PostTraffic(cfg *structures.BaseConfig, node *structures.NodeInfo, trafficData *[]structures.UserTraffic) (ret int, err error) {
+func PostTraffic(node *SspController, trafficData *[]structures.UserTraffic) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("post traffic data to sspanel failed")
@@ -28,29 +28,28 @@ func PostTraffic(cfg *structures.BaseConfig, node *structures.NodeInfo, trafficD
 	bodyJson, err := json.Marshal(body)
 	if err != nil {
 		log.Println("Post body error")
-		return 0, err
+		return
 	}
-	log.Println("Traffic data", body)
-	client := &http.Client{Timeout: time.Duration(cfg.Sync.Timeout) * time.Second}
+	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", cfg.Panel.URL, cfg.Panel.Key, node.Id), bytes.NewBuffer(bodyJson))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", node.URL, node.Key, node.NodeInfo.Id), bytes.NewBuffer(bodyJson))
 	if err != nil {
-		return 0, err
+		return
 	}
 	// Use json type
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		return
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, err
+		return
 	}
-	rtn, err := simplejson.NewJson(bodyText)
+	_, err = simplejson.NewJson(bodyText)
 	if err != nil {
-		return 0, err
+		return
 	}
 
-	return rtn.Get("ret").MustInt(), nil
+	return
 }

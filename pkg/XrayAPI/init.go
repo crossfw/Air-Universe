@@ -9,6 +9,12 @@ import (
 	"google.golang.org/grpc"
 )
 
+type XrayController struct {
+	HsClient *command.HandlerServiceClient
+	SsClient *statsService.StatsServiceClient
+	CmdConn  *grpc.ClientConn
+}
+
 func (xrayCtl *XrayController) Init(cfg *structures.BaseConfig) (err error) {
 	defer func() {
 		if r := recover(); r != nil {

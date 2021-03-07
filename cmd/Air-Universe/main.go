@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/IPControl"
-	sspApi "github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
+	"github.com/crossfw/Air-Universe/pkg/SysLoad"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -73,57 +73,62 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	var (
 		usersBefore, usersNow *[]structures.UserInfo
 		usersTraffic          *[]structures.UserTraffic
-		apiClient             structures.ProxyCommand
-		nodeNow               *structures.NodeInfo
+		proxyClient           structures.ProxyCommand
+		panelClient           structures.PanelCommand
 		nodeBefore            *structures.NodeInfo
 	)
-	nodeNow = new(structures.NodeInfo)
+
 	nodeBefore = new(structures.NodeInfo)
 	usersBefore = new([]structures.UserInfo)
 	usersNow = new([]structures.UserInfo)
 	usersTraffic = new([]structures.UserTraffic)
 
 	// Get gRpc client and init v2ray api connection
-	apiClient, err = initProxyCore()
+	proxyClient, err = initProxyCore()
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	panelClient, err = initNode(idIndex)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
 
 	for {
-		nodeNow, err = getNodeInfo(idIndex)
+		err = panelClient.GetNodeInfo()
 		if err != nil {
 			log.Error(err)
 		}
 
-		usersNow, err = getUsers(nodeNow)
+		usersNow, err = panelClient.GetUser()
 		if err != nil {
 			log.Error(err)
 		}
 		// Try add first, if no error cause, it's the first time to add, else remove then add until no error
-		if reflect.DeepEqual(*nodeNow, *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
-			err = apiClient.RemoveInbound(nodeBefore)
-			err = apiClient.AddInbound(nodeNow)
+		if reflect.DeepEqual(*panelClient.GetNowInfo(), *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
+			err = proxyClient.RemoveInbound(nodeBefore)
+			err = proxyClient.AddInbound(panelClient.GetNowInfo())
 			if err != nil {
 				log.Warnf("Add inbound Error", err)
 			}
 			for err != nil {
-				err = apiClient.RemoveInbound(nodeBefore)
+				err = proxyClient.RemoveInbound(nodeBefore)
 				if err != nil {
 					log.Warnf("Remove inbound Error", err)
 				}
 				time.Sleep(time.Duration(30) * time.Second)
-				err = apiClient.AddInbound(nodeNow)
+				err = proxyClient.AddInbound(panelClient.GetNowInfo())
 				if err == nil {
 					break
 				}
 				log.Warnf("Add inbound Failed", err)
 				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 			}
-			log.Printf("Added inbound %s", nodeNow)
+			log.Printf("Added inbound %s", panelClient.GetNowInfo())
 			usersBefore = new([]structures.UserInfo)
 		}
-		*nodeBefore = *nodeNow
+		*nodeBefore = *panelClient.GetNowInfo()
 		useRemove, userAdd, err := structures.FindUserDiffer(usersBefore, usersNow)
 		if err != nil {
 			log.Error(err)
@@ -132,7 +137,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		// Remove first, if user change uuid, remove old then add new.
 		if useRemove != nil {
 			log.Debugf(fmt.Sprint("Remove users ", *useRemove))
-			err = apiClient.RemoveUsers(useRemove)
+			err = proxyClient.RemoveUsers(useRemove)
 			if err != nil {
 				log.Error(err)
 			}
@@ -140,7 +145,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 
 		if userAdd != nil {
 			log.Debugf(fmt.Sprint("Add users ", *userAdd))
-			err = apiClient.AddUsers(userAdd)
+			err = proxyClient.AddUsers(userAdd)
 			if err != nil {
 				log.Error(err)
 			}
@@ -149,15 +154,28 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		// Sync_interval
 		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
 
-		usersTraffic, err = apiClient.QueryUsersTraffic(usersNow)
+		usersTraffic, err = proxyClient.QueryUsersTraffic(usersNow)
 		if err != nil {
 			log.Error(err)
 		}
 		log.Debugf(fmt.Sprint("Traffic data ", *usersTraffic))
-		err = nil
-		_, err = postUsersTraffic(nodeNow, usersTraffic)
+		for {
+			err = panelClient.PostTraffic(usersTraffic)
+			if err != nil {
+				log.Warnf("Failed to post traffic - %s", err)
+				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+			} else {
+				break
+			}
+		}
 		if err != nil {
 			log.Error(err)
+		}
+
+		loaData, err := SysLoad.GetSysLoad()
+		err = panelClient.PostSysLoad(loaData)
+		if err != nil {
+			log.Warnf("Failed to post sys load - %s", err)
 		}
 
 		usersBefore = usersNow
@@ -172,6 +190,9 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 			w.Done()
 		}
 	}()
+
+	panelClient, err := initNode(0)
+
 	for {
 		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
 		usersIp, err := IPControl.ReadLog(baseCfg)
@@ -179,8 +200,8 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 			log.Error(err)
 		}
 		log.Debugf(fmt.Sprint("IP data ", *usersIp))
-		ret, err := sspApi.PostUsersIP(baseCfg, usersIp)
-		if ret != 1 || err != nil {
+		err = panelClient.PostAliveIP(baseCfg, usersIp)
+		if err != nil {
 			log.Error(err)
 		}
 		err = IPControl.ClearLog(baseCfg)

@@ -26,18 +26,16 @@ func String2Uint32(s string) (uint32, error) {
 	return uint32(t), err
 }
 
-func GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (node *structures.NodeInfo, err error) {
+func getNodeInfo(node *SspController) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New(fmt.Sprintf("get nodeInfo from sspanel failed %s", r))
 		}
 	}()
 
-	node = new(structures.NodeInfo)
-
 	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", cfg.Panel.URL, cfg.Panel.NodeIDs[idIndex], cfg.Panel.Key), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", node.URL, node.NodeInfo.Id, node.Key), nil)
 	if err != nil {
 		return
 	}
@@ -55,37 +53,33 @@ func GetNodeInfo(cfg *structures.BaseConfig, idIndex uint32) (node *structures.N
 		return
 	}
 
-	node.RawInfo = rtn.Get("data").Get("server").MustString()
-	node.Sort = uint32(rtn.Get("data").Get("sort").MustInt())
-	node.Id = cfg.Panel.NodeIDs[idIndex]
-	node.IdIndex = idIndex
-	node.SpeedLimit = uint32(rtn.Get("data").Get("node_speedlimit").MustInt())
-	if cfg.Proxy.Cert.KeyPath != "" && cfg.Proxy.Cert.CertPath != "" {
-		node.Cert = cfg.Proxy.Cert
-	}
-	node.Tag = cfg.Proxy.InTags[idIndex]
-	switch node.Sort {
+	node.NodeInfo.RawInfo = rtn.Get("data").Get("server").MustString()
+	node.NodeInfo.Sort = uint32(rtn.Get("data").Get("sort").MustInt())
+
+	node.NodeInfo.SpeedLimit = uint32(rtn.Get("data").Get("node_speedlimit").MustInt())
+
+	switch node.NodeInfo.Sort {
 	case 0:
-		node.Protocol = "ss"
-		err = parseSSRawInfo(node)
+		node.NodeInfo.Protocol = "ss"
+		err = parseSSRawInfo(node.NodeInfo)
 	case 10:
-		node.Protocol = "ss"
-		err = parseSSRawInfo(node)
-		node.EnableProxyProtocol = true
+		node.NodeInfo.Protocol = "ss"
+		err = parseSSRawInfo(node.NodeInfo)
+		node.NodeInfo.EnableProxyProtocol = true
 	case 11:
-		node.Protocol = "vmess"
-		err = parseVmessRawInfo(node)
+		node.NodeInfo.Protocol = "vmess"
+		err = parseVmessRawInfo(node.NodeInfo)
 	case 12:
-		node.Protocol = "vmess"
-		err = parseVmessRawInfo(node)
+		node.NodeInfo.Protocol = "vmess"
+		err = parseVmessRawInfo(node.NodeInfo)
 		// Force Relay
-		node.EnableProxyProtocol = true
+		node.NodeInfo.EnableProxyProtocol = true
 	case 14:
-		node.Protocol = "trojan"
-		err = parseTrojanRawInfo(node)
+		node.NodeInfo.Protocol = "trojan"
+		err = parseTrojanRawInfo(node.NodeInfo)
 	}
 
-	return node, nil
+	return nil
 }
 
 /*

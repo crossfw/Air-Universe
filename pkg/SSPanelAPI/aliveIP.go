@@ -62,7 +62,7 @@ func postIP(baseCfg *structures.BaseConfig, idIndex uint32, userIP *postIPType) 
 	return
 }
 
-func PostUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (ret int, err error) {
+func postUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("post users' alive ip to sspanel failed(Process)")
@@ -88,12 +88,10 @@ func PostUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (r
 
 		// 只推送有数据的id
 		if len(aliveIPData.Data) != 0 {
-			ret, err = postIP(baseCfg, uint32(tagId), &aliveIPData)
+			_, err := postIP(baseCfg, uint32(tagId), &aliveIPData)
 			if err != nil {
-				return 0, err
+				return err
 			}
-		} else {
-			ret = 1
 		}
 	}
 	return

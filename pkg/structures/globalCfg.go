@@ -22,9 +22,10 @@ type Proxy struct {
 	Cert         Cert     `json:"cert"`
 }
 type Sync struct {
-	Interval  uint32 `json:"interval"`
-	FailDelay uint32 `json:"fail_delay"`
-	Timeout   uint32 `json:"timeout"`
+	Interval       uint32 `json:"interval"`
+	FailDelay      uint32 `json:"fail_delay"`
+	Timeout        uint32 `json:"timeout"`
+	PostIPInterval uint32 `json:"post_ip_interval"`
 }
 type Cert struct {
 	CertPath string `json:"cert_path"`

@@ -24,9 +24,10 @@ var (
 			LogPath:      "./v2.log",
 		},
 		Sync: structures.Sync{
-			Interval:  60,
-			FailDelay: 5,
-			Timeout:   5,
+			Interval:       60,
+			FailDelay:      5,
+			Timeout:        5,
+			PostIPInterval: 300,
 		},
 	}
 )

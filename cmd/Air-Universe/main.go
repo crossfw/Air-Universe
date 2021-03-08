@@ -194,7 +194,7 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 	panelClient, err := initNode(0)
 
 	for {
-		time.Sleep(time.Duration(baseCfg.Sync.Interval) * time.Second)
+		time.Sleep(time.Duration(baseCfg.Sync.PostIPInterval) * time.Second)
 		usersIp, err := IPControl.ReadLog(baseCfg)
 		if err != nil {
 			log.Error(err)

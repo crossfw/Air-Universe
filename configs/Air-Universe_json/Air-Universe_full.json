@@ -24,6 +24,7 @@
   "sync": {
     "interval": 60,
     "fail_delay": 5,
-    "timeout": 5
+    "timeout": 5,
+    "post_ip_interval": 300
   }
 }

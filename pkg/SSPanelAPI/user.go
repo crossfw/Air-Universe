@@ -38,6 +38,9 @@ func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {
 	if err != nil {
 		return nil, err
 	}
+	if rtn.Get("ret").MustInt() != 1 {
+		return nil, errors.New(fmt.Sprintf("Server error or node not found"))
+	}
 
 	numOfUsers := len(rtn.Get("data").MustArray())
 

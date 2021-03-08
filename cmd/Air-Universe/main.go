@@ -23,6 +23,9 @@ type WaitGroupWrapper struct {
 }
 
 func init() {
+	log.SetFormatter(&log.TextFormatter{
+		DisableColors: true,
+	})
 	log.SetLevel(log.DebugLevel)
 
 	var (
@@ -43,13 +46,15 @@ func init() {
 	if configPath != "" {
 		_, err := ParseBaseConfig(&configPath)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("Failed to read config file - %s", err)
 			os.Exit(1)
 		}
 		err = checkCfg()
 		if err != nil {
-			log.Error(err)
+			log.Errorf("Failed to check config file - %s", err)
 			os.Exit(1)
+		} else {
+			log.Debugf("Successfully check config file")
 		}
 		return
 	}
@@ -77,7 +82,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		panelClient           structures.PanelCommand
 		nodeBefore            *structures.NodeInfo
 	)
-
+	nodeID := baseCfg.Panel.NodeIDs[idIndex]
 	nodeBefore = new(structures.NodeInfo)
 	usersBefore = new([]structures.UserInfo)
 	usersNow = new([]structures.UserInfo)
@@ -86,68 +91,98 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	// Get gRpc client and init v2ray api connection
 	proxyClient, err = initProxyCore()
 	if err != nil {
-		log.Error(err)
+		log.Errorf("NodeID: %v IDIndex %v - Failed to init proxy-core client - %s", nodeID, idIndex, err)
 		os.Exit(1)
 	}
-	panelClient, err = initNode(idIndex)
+	panelClient, err = initPanel(idIndex)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("NodeID: %v IDIndex %v - Failed to init panel client %s", nodeID, idIndex, err)
 		os.Exit(1)
+	} else {
+		log.Debugf("NodeID: %v IDIndex %v - Successfully init", nodeID, idIndex)
 	}
 
 	for {
-		err = panelClient.GetNodeInfo()
-		if err != nil {
-			log.Error(err)
+		// Repeat until success
+		for {
+			err = panelClient.GetNodeInfo()
+			if err != nil {
+				log.Warnf("NodeID: %v IDIndex %v - Failed to obtain node info - %s", nodeID, idIndex, err)
+			} else {
+				log.Debugf("NodeID: %v IDIndex %v - Successfully obtain node info", nodeID, idIndex)
+				break
+			}
+			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 		}
 
-		usersNow, err = panelClient.GetUser()
-		if err != nil {
-			log.Error(err)
-		}
-		// Try add first, if no error cause, it's the first time to add, else remove then add until no error
-		if reflect.DeepEqual(*panelClient.GetNowInfo(), *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
-			err = proxyClient.RemoveInbound(nodeBefore)
-			err = proxyClient.AddInbound(panelClient.GetNowInfo())
+		for {
+			usersNow, err = panelClient.GetUser()
 			if err != nil {
-				log.Warnf("Add inbound Error", err)
+				log.Warnf("NodeID: %v IDIndex %v - Failed to obtain users info - %s", nodeID, idIndex, err)
+			} else {
+				log.Debugf("NodeID: %v IDIndex %v - Successfully obtain users info", nodeID, idIndex)
+				break
 			}
-			for err != nil {
-				err = proxyClient.RemoveInbound(nodeBefore)
-				if err != nil {
-					log.Warnf("Remove inbound Error", err)
+			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+		}
+
+		if reflect.DeepEqual(*panelClient.GetNowInfo(), *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
+			for {
+				// Is the first time to add inbound.
+				if nodeBefore.Tag == "" {
+					err = proxyClient.AddInbound(panelClient.GetNowInfo())
+					if err != nil {
+						log.Warnf("NodeID: %v IDIndex %v - Failed to add inbound - %s", nodeID, idIndex, err)
+					} else {
+						break
+					}
+				} else {
+					log.Debugf("NodeID: %v IDIndex %v - Node info changed ", nodeID, idIndex)
+					// 用户置0，在删除后添加
+					usersBefore = new([]structures.UserInfo)
+					// 对于已存在的节点，先remove再add
+					err = proxyClient.RemoveInbound(nodeBefore)
+					if err != nil {
+						log.Warnf("NodeID: %v IDIndex %v - Failed to remove inbound - %s", nodeID, idIndex, err)
+						continue
+					} else {
+						log.Infof("NodeID: %v IDIndex %v - Successfully remove inbound", nodeID, idIndex)
+					}
+					err = proxyClient.AddInbound(panelClient.GetNowInfo())
+					if err != nil {
+						log.Warnf("NodeID: %v IDIndex %v - Failed to add inbound - %s", nodeID, idIndex, err)
+					} else {
+						break
+					}
 				}
-				time.Sleep(time.Duration(30) * time.Second)
-				err = proxyClient.AddInbound(panelClient.GetNowInfo())
-				if err == nil {
-					break
-				}
-				log.Warnf("Add inbound Failed", err)
+
 				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 			}
-			log.Printf("Added inbound %s", panelClient.GetNowInfo())
-			usersBefore = new([]structures.UserInfo)
+
+			*nodeBefore = *panelClient.GetNowInfo()
+			log.Infof("NodeID: %v IDIndex %v - Successfully add inbound", nodeID, idIndex)
 		}
-		*nodeBefore = *panelClient.GetNowInfo()
 		useRemove, userAdd, err := structures.FindUserDiffer(usersBefore, usersNow)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("NodeID: %v IDIndex %v - Failed to process users info - %s", nodeID, idIndex, err)
 		}
 
 		// Remove first, if user change uuid, remove old then add new.
 		if useRemove != nil {
-			log.Debugf(fmt.Sprint("Remove users ", *useRemove))
 			err = proxyClient.RemoveUsers(useRemove)
 			if err != nil {
-				log.Error(err)
+				log.Errorf("NodeID: %v IDIndex %v - Failed to remove users - %s", nodeID, idIndex, err)
+			} else {
+				log.Debugf("NodeID: %v IDIndex %v - Remove users num: %v", nodeID, idIndex, len(*useRemove))
 			}
 		}
 
 		if userAdd != nil {
-			log.Debugf(fmt.Sprint("Add users ", *userAdd))
 			err = proxyClient.AddUsers(userAdd)
 			if err != nil {
-				log.Error(err)
+				log.Errorf("NodeID: %v IDIndex %v - Failed to add users - %s", nodeID, idIndex, err)
+			} else {
+				log.Debugf("NodeID: %v IDIndex %v - Add users num: %v", nodeID, idIndex, len(*userAdd))
 			}
 		}
 
@@ -156,17 +191,19 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 
 		usersTraffic, err = proxyClient.QueryUsersTraffic(usersNow)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("NodeID: %v IDIndex %v - Failed to query users traffic - %s", nodeID, idIndex, err)
 		}
-		log.Debugf(fmt.Sprint("Traffic data ", *usersTraffic))
+
+		// Every query will reset traffic statics, post traffic data will loop until success
 		for {
 			err = panelClient.PostTraffic(usersTraffic)
 			if err != nil {
-				log.Warnf("Failed to post traffic - %s", err)
-				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+				log.Errorf("NodeID: %v IDIndex %v - Failed to post users traffic - %s", nodeID, idIndex, err)
 			} else {
+				log.Debugf("NodeID: %v IDIndex %v - Post Traffic data success - %+v", nodeID, idIndex, *usersTraffic)
 				break
 			}
+			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 		}
 		if err != nil {
 			log.Error(err)
@@ -175,7 +212,9 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		loaData, err := SysLoad.GetSysLoad()
 		err = panelClient.PostSysLoad(loaData)
 		if err != nil {
-			log.Warnf("Failed to post sys load - %s", err)
+			log.Errorf("NodeID: %v IDIndex %v - Failed to post system load - %s", nodeID, idIndex, err)
+		} else {
+			log.Debugf("NodeID: %v IDIndex %v - Successfully post system load - %+v", nodeID, idIndex, *loaData)
 		}
 
 		usersBefore = usersNow
@@ -191,22 +230,25 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 		}
 	}()
 
-	panelClient, err := initNode(0)
+	panelClient, err := initPanel(0)
 
 	for {
 		time.Sleep(time.Duration(baseCfg.Sync.PostIPInterval) * time.Second)
 		usersIp, err := IPControl.ReadLog(baseCfg)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("Failed to get alive IP - %s", err)
+		} else {
+			log.Debugf("Alive IP data %+v", *usersIp)
 		}
-		log.Debugf(fmt.Sprint("IP data ", *usersIp))
+
 		err = panelClient.PostAliveIP(baseCfg, usersIp)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("Failed to post alive IP - %s", err)
 		}
+
 		err = IPControl.ClearLog(baseCfg)
 		if err != nil {
-			log.Error("Clear log error - ", err)
+			log.Errorf("Failed to clear proxy-core log - %s", err)
 		}
 	}
 }

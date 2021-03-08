@@ -86,7 +86,7 @@ func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error
 		}
 	}
 
-	// some new users will add to addList
+	// left users will add or remove
 	if b != len(*before) {
 		for u := b; u < len(*before); u++ {
 			*remove = append(*remove, (*before)[u])

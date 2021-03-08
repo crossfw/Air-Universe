@@ -8,7 +8,6 @@ import (
 	"github.com/bitly/go-simplejson"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
@@ -22,50 +21,51 @@ type postIPType struct {
 	Data []userIPData `json:"data"`
 }
 
-func postIP(baseCfg *structures.BaseConfig, idIndex uint32, userIP *postIPType) (ret int, err error) {
+func postIP(baseCfg *structures.BaseConfig, idIndex uint32, userIP *postIPType) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New("post users' alive ip to sspanel failed(POST)")
+			err = errors.New("unplanned outages when post alive IP data")
 		}
 	}()
 
 	bodyJson, err := json.Marshal(userIP)
 	if err != nil {
-		log.Println("Post body error")
-		return 0, err
+		//errors.New("post body structure is invalid")
+		return err
 	}
-	log.Println("Alive IP data", userIP)
 	client := &http.Client{Timeout: 10 * time.Second}
 	defer client.CloseIdleConnections()
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/aliveip?key=%s&node_id=%v", baseCfg.Panel.URL, baseCfg.Panel.Key, baseCfg.Panel.NodeIDs[idIndex]), bytes.NewBuffer(bodyJson))
 	if err != nil {
-		return 0, err
+		return err
 	}
 	// Use json type
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	rtn, err := simplejson.NewJson(bodyText)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	ret = rtn.Get("ret").MustInt()
+	if rtn.Get("ret").MustInt() != 1 {
+		return errors.New(fmt.Sprintf("Server error or node not found"))
+	}
 	return
 }
 
 func postUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New("post users' alive ip to sspanel failed(Process)")
+			err = errors.New("unplanned outages when process alive IP data")
 		}
 	}()
 
@@ -88,7 +88,7 @@ func postUsersIP(baseCfg *structures.BaseConfig, userIP *[]structures.UserIP) (e
 
 		// 只推送有数据的id
 		if len(aliveIPData.Data) != 0 {
-			_, err := postIP(baseCfg, uint32(tagId), &aliveIPData)
+			err := postIP(baseCfg, uint32(tagId), &aliveIPData)
 			if err != nil {
 				return err
 			}

@@ -2,7 +2,16 @@ package XrayAPI
 
 import (
 	"github.com/crossfw/Air-Universe/pkg/structures"
+	"github.com/xtls/xray-core/app/proxyman/command"
+	statsService "github.com/xtls/xray-core/app/stats/command"
+	"google.golang.org/grpc"
 )
+
+type XrayController struct {
+	HsClient *command.HandlerServiceClient
+	SsClient *statsService.StatsServiceClient
+	CmdConn  *grpc.ClientConn
+}
 
 func (xrayCtl *XrayController) AddUsers(users *[]structures.UserInfo) (err error) {
 	for _, u := range *users {

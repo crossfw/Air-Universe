@@ -8,7 +8,6 @@ import (
 	"github.com/bitly/go-simplejson"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
@@ -16,7 +15,7 @@ import (
 func PostTraffic(node *SspController, trafficData *[]structures.UserTraffic) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New("post traffic data to sspanel failed")
+			err = errors.New("unplanned outages when post traffic data")
 		}
 	}()
 	type trafficType struct {
@@ -27,7 +26,6 @@ func PostTraffic(node *SspController, trafficData *[]structures.UserTraffic) (er
 	body.Data = *trafficData
 	bodyJson, err := json.Marshal(body)
 	if err != nil {
-		log.Println("Post body error")
 		return
 	}
 	client := &http.Client{Timeout: 10 * time.Second}
@@ -46,9 +44,12 @@ func PostTraffic(node *SspController, trafficData *[]structures.UserTraffic) (er
 	if err != nil {
 		return
 	}
-	_, err = simplejson.NewJson(bodyText)
+	rtn, err := simplejson.NewJson(bodyText)
 	if err != nil {
 		return
+	}
+	if rtn.Get("ret").MustInt() != 1 {
+		return errors.New("server error or node not found")
 	}
 
 	return

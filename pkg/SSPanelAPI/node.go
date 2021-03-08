@@ -52,6 +52,10 @@ func getNodeInfo(node *SspController) (err error) {
 	if err != nil {
 		return
 	}
+	// ret not equal to 1 means sspanel caused an error or node not fond.
+	if rtn.Get("ret").MustInt() != 1 {
+		return errors.New(fmt.Sprintf("Server error or node not found"))
+	}
 
 	node.NodeInfo.RawInfo = rtn.Get("data").Get("server").MustString()
 	node.NodeInfo.Sort = uint32(rtn.Get("data").Get("sort").MustInt())

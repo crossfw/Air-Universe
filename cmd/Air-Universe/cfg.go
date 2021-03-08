@@ -50,6 +50,5 @@ func ParseBaseConfig(configPath *string) (*structures.BaseConfig, error) {
 			}
 		}
 	}
-	log.Println(*baseCfg)
 	return baseCfg, nil
 }

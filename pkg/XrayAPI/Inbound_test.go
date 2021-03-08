@@ -2,7 +2,7 @@ package XrayAPI
 
 import (
 	"fmt"
-	sspApi "github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
+	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"log"
 	"testing"
@@ -39,11 +39,11 @@ var (
 func TestAutoAddInbound(t *testing.T) {
 	var (
 		xrayCtl *XrayController
-		sspCtl  *sspApi.SspController
+		sspCtl  *SSPanelAPI.SspController
 	)
 
 	xrayCtl = new(XrayController)
-	sspCtl = new(sspApi.SspController)
+	sspCtl = new(SSPanelAPI.SspController)
 	_ = sspCtl.Init(baseCfg, 0)
 	err := sspCtl.GetNodeInfo()
 
@@ -98,18 +98,18 @@ func TestAddSSInbound(t *testing.T) {
 func TestRemoveInbound(t *testing.T) {
 	var (
 		xrayCtl *XrayController
-		ssp     *structures.NodeInfo
+		sspCtl  structures.PanelCommand
 	)
-
-	ssp = new(structures.NodeInfo)
-	//sspApi.GetNodeInfo(baseCfg, ssp, 0)
 	xrayCtl = new(XrayController)
-	_ = xrayCtl.Init(baseCfg)
+	sspCtl = new(SSPanelAPI.SspController)
+	_ = sspCtl.Init(baseCfg, 0)
+	err := sspCtl.GetNodeInfo()
 
-	err := removeInbound(*xrayCtl.HsClient, ssp)
-	//err := removeInboundManual(*xrayCtl.HsClient)
-	_ = xrayCtl.CmdConn.Close()
+	fmt.Println(sspCtl.GetNowInfo())
+	_ = xrayCtl.Init(baseCfg)
+	err = xrayCtl.RemoveInbound(sspCtl.GetNowInfo())
+
 	if err != nil {
-		t.Errorf("Failed")
+		t.Errorf("Failed %s", err)
 	}
 }

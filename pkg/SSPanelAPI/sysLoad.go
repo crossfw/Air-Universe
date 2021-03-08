@@ -8,7 +8,6 @@ import (
 	"github.com/bitly/go-simplejson"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
@@ -21,7 +20,7 @@ type PostLoad struct {
 func postSysLoad(node *SspController, LoadData *structures.SysLoad) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New("post system loads data to sspanel failed")
+			err = errors.New("unplanned outages when post system loads data to panel")
 		}
 	}()
 	var body PostLoad
@@ -31,7 +30,6 @@ func postSysLoad(node *SspController, LoadData *structures.SysLoad) (err error) 
 
 	bodyJson, err := json.Marshal(body)
 	if err != nil {
-		log.Println("Post body error")
 		return err
 	}
 	client := &http.Client{Timeout: 10 * time.Second}
@@ -50,9 +48,12 @@ func postSysLoad(node *SspController, LoadData *structures.SysLoad) (err error) 
 	if err != nil {
 		return err
 	}
-	_, err = simplejson.NewJson(bodyText)
+	rtn, err := simplejson.NewJson(bodyText)
 	if err != nil {
 		return err
+	}
+	if rtn.Get("ret").MustInt() != 1 {
+		return errors.New(fmt.Sprintf("Server error or node not found"))
 	}
 
 	return

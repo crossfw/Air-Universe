@@ -23,15 +23,11 @@ type WaitGroupWrapper struct {
 }
 
 func init() {
-	log.SetFormatter(&log.TextFormatter{
-		DisableColors: true,
-	})
-	log.SetLevel(log.DebugLevel)
-
 	var (
 		printVersion bool
 		configPath   string
 	)
+
 	//log.SetReportCaller(true)
 
 	flag.BoolVar(&printVersion, "v", false, "print version")
@@ -49,6 +45,21 @@ func init() {
 			log.Errorf("Failed to read config file - %s", err)
 			os.Exit(1)
 		}
+
+		switch baseCfg.Log.LogLevel {
+		case "debug":
+			log.SetLevel(log.DebugLevel)
+		case "info":
+			log.SetLevel(log.InfoLevel)
+		case "warning":
+			log.SetLevel(log.WarnLevel)
+		case "error":
+			log.SetLevel(log.ErrorLevel)
+		case "panic":
+			log.SetLevel(log.PanicLevel)
+
+		}
+
 		err = checkCfg()
 		if err != nil {
 			log.Errorf("Failed to check config file - %s", err)
@@ -69,9 +80,8 @@ func init() {
 func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println(r)
 			err = errors.New(fmt.Sprintf("%v (nodeId) main thread error - %s", baseCfg.Panel.NodeIDs[idIndex], r))
-			log.Error(err)
+			log.Errorf("NodeID: %v IDIndex %v - Thread error - %s", baseCfg.Panel.NodeIDs[idIndex], idIndex, r)
 			w.Done()
 		}
 	}()
@@ -91,17 +101,18 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	// Get gRpc client and init v2ray api connection
 	proxyClient, err = initProxyCore()
 	if err != nil {
-		log.Errorf("NodeID: %v IDIndex %v - Failed to init proxy-core client - %s", nodeID, idIndex, err)
+		log.Warnf("NodeID: %v IDIndex %v - Failed to init proxy-core client - %s", nodeID, idIndex, err)
 		os.Exit(1)
 	}
 	panelClient, err = initPanel(idIndex)
 	if err != nil {
-		log.Errorf("NodeID: %v IDIndex %v - Failed to init panel client %s", nodeID, idIndex, err)
+		log.Warnf("NodeID: %v IDIndex %v - Failed to init panel client %s", nodeID, idIndex, err)
 		os.Exit(1)
 	} else {
 		log.Debugf("NodeID: %v IDIndex %v - Successfully init", nodeID, idIndex)
 	}
 
+	log.Infof("NodeID: %v IDIndex %v - Successfully start sync thread", nodeID, idIndex)
 	for {
 		// Repeat until success
 		for {
@@ -137,7 +148,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 						break
 					}
 				} else {
-					log.Debugf("NodeID: %v IDIndex %v - Node info changed ", nodeID, idIndex)
+					log.Infof("NodeID: %v IDIndex %v - Node info changed ", nodeID, idIndex)
 					// 用户置0，在删除后添加
 					usersBefore = new([]structures.UserInfo)
 					// 对于已存在的节点，先remove再add
@@ -146,7 +157,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 						log.Warnf("NodeID: %v IDIndex %v - Failed to remove inbound - %s", nodeID, idIndex, err)
 						continue
 					} else {
-						log.Infof("NodeID: %v IDIndex %v - Successfully remove inbound", nodeID, idIndex)
+						log.Debugf("NodeID: %v IDIndex %v - Successfully remove inbound", nodeID, idIndex)
 					}
 					err = proxyClient.AddInbound(panelClient.GetNowInfo())
 					if err != nil {
@@ -164,25 +175,25 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		}
 		useRemove, userAdd, err := structures.FindUserDiffer(usersBefore, usersNow)
 		if err != nil {
-			log.Errorf("NodeID: %v IDIndex %v - Failed to process users info - %s", nodeID, idIndex, err)
+			log.Warnf("NodeID: %v IDIndex %v - Failed to process users info - %s", nodeID, idIndex, err)
 		}
 
 		// Remove first, if user change uuid, remove old then add new.
 		if useRemove != nil {
 			err = proxyClient.RemoveUsers(useRemove)
 			if err != nil {
-				log.Errorf("NodeID: %v IDIndex %v - Failed to remove users - %s", nodeID, idIndex, err)
+				log.Warnf("NodeID: %v IDIndex %v - Failed to remove users - %s", nodeID, idIndex, err)
 			} else {
-				log.Debugf("NodeID: %v IDIndex %v - Remove users num: %v", nodeID, idIndex, len(*useRemove))
+				log.Infof("NodeID: %v IDIndex %v - Remove users num: %v", nodeID, idIndex, len(*useRemove))
 			}
 		}
 
 		if userAdd != nil {
 			err = proxyClient.AddUsers(userAdd)
 			if err != nil {
-				log.Errorf("NodeID: %v IDIndex %v - Failed to add users - %s", nodeID, idIndex, err)
+				log.Warnf("NodeID: %v IDIndex %v - Failed to add users - %s", nodeID, idIndex, err)
 			} else {
-				log.Debugf("NodeID: %v IDIndex %v - Add users num: %v", nodeID, idIndex, len(*userAdd))
+				log.Infof("NodeID: %v IDIndex %v - Add users num: %v", nodeID, idIndex, len(*userAdd))
 			}
 		}
 
@@ -191,14 +202,14 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 
 		usersTraffic, err = proxyClient.QueryUsersTraffic(usersNow)
 		if err != nil {
-			log.Errorf("NodeID: %v IDIndex %v - Failed to query users traffic - %s", nodeID, idIndex, err)
+			log.Warnf("NodeID: %v IDIndex %v - Failed to query users traffic - %s", nodeID, idIndex, err)
 		}
 
 		// Every query will reset traffic statics, post traffic data will loop until success
 		for {
 			err = panelClient.PostTraffic(usersTraffic)
 			if err != nil {
-				log.Errorf("NodeID: %v IDIndex %v - Failed to post users traffic - %s", nodeID, idIndex, err)
+				log.Warnf("NodeID: %v IDIndex %v - Failed to post users traffic - %s", nodeID, idIndex, err)
 			} else {
 				log.Debugf("NodeID: %v IDIndex %v - Post Traffic data success - %+v", nodeID, idIndex, *usersTraffic)
 				break
@@ -212,7 +223,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		loaData, err := SysLoad.GetSysLoad()
 		err = panelClient.PostSysLoad(loaData)
 		if err != nil {
-			log.Errorf("NodeID: %v IDIndex %v - Failed to post system load - %s", nodeID, idIndex, err)
+			log.Warnf("NodeID: %v IDIndex %v - Failed to post system load - %s", nodeID, idIndex, err)
 		} else {
 			log.Debugf("NodeID: %v IDIndex %v - Successfully post system load - %+v", nodeID, idIndex, *loaData)
 		}
@@ -236,19 +247,19 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 		time.Sleep(time.Duration(baseCfg.Sync.PostIPInterval) * time.Second)
 		usersIp, err := IPControl.ReadLog(baseCfg)
 		if err != nil {
-			log.Errorf("Failed to get alive IP - %s", err)
+			log.Warnf("Failed to get alive IP - %s", err)
 		} else {
 			log.Debugf("Alive IP data %+v", *usersIp)
 		}
 
 		err = panelClient.PostAliveIP(baseCfg, usersIp)
 		if err != nil {
-			log.Errorf("Failed to post alive IP - %s", err)
+			log.Warnf("Failed to post alive IP - %s", err)
 		}
 
 		err = IPControl.ClearLog(baseCfg)
 		if err != nil {
-			log.Errorf("Failed to clear proxy-core log - %s", err)
+			log.Warnf("Failed to clear proxy-core log - %s", err)
 		}
 	}
 }

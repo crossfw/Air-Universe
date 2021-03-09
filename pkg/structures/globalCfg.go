@@ -1,9 +1,13 @@
 package structures
 
 type BaseConfig struct {
+	Log   Log   `json:"log"`
 	Panel Panel `json:"panel"`
 	Proxy Proxy `json:"proxy"`
 	Sync  Sync  `json:"sync"`
+}
+type Log struct {
+	LogLevel string `json:"log_level"`
 }
 type Panel struct {
 	Type    string   `json:"type"`

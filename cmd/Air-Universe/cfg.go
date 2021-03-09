@@ -11,6 +11,9 @@ import (
 // Default config
 var (
 	baseCfg = &structures.BaseConfig{
+		Log: structures.Log{
+			LogLevel: "info",
+		},
 		Panel: structures.Panel{
 			Type: "sspanel",
 		},

@@ -1,32 +1,19 @@
-# Air-Universe
+ Air-Universe
 
 >新人第一次写大项目，也是第一次写golang，请多多指教
 > 
 > 反馈群 TG 群: https://t.me/Air_Universe <br>
 > 欢迎找群主提问
 
-## Bugs:
-- None
-## TODO List:
-- ~~Fix known bugs.~~
-- ~~Auto generate Xray-core configuration from SSPanel.~~  Finished
-- ~~Record users ip.~~  Finished
-- ~~Support Trojan protocol.~~ Finished
-- ~~Turnkey installation script.~~ Finished
-- ~~Support Shadowsocks multiuser in single port.~~ Finished
-- Report users who have exceeded the IP limit.
-- Support all platform turnkey script.
-- Support speed limit.
-- Support limit users IP count.
-
-## 注意, 未经严格测试, 出问题了造成经济损失一概不负责
+## 注意, 未经严格测试, 出问题造成经济损失一概不负责
 ## Features
 - 支持3端(Shadowsocks, V2ray(VMess), Trojan) 单端口多用户
-- **Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用AEAD加密单端口**(原版 Clash 可用)
+- Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用 AEAD 加密单端口 (原版 Clash 可用)
 - V2ray(VMess) 支持 TCP 和 Websocket 可配合 TLS 传输, 证书可自定义(一键脚本不含此功能)也可自动生成
 - Trojan 支持TCP+TLS 
 - 支持多个入站配合多节点ID, 流量分开统计
 - 支持记录用户IP, 但目前不可限制
+- 支持上报服务器负载和开机时间  
 - 不支持限速
 - 审计规则默认屏蔽BT和内网IP, 可自行添加, 不支持从面板拉取
 - 审计信息**不会**上报
@@ -45,3 +32,4 @@
 ## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/crossfw/Air-Universe.svg)](https://starchart.cc/crossfw/Air-Universe)
+

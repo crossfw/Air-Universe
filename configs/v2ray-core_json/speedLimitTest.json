@@ -1,0 +1,97 @@
+{
+  "log": {
+    "access":"/var/log/au-v.log"
+  },
+  "stats": {},
+  "api": {
+    "services": [
+      "HandlerService",
+      "StatsService"
+    ],
+    "tag": "api"
+  },
+  "policy": {
+    "levels": {
+      "0": {
+        "inboundSpeed": "0.1M",
+        "outboundSpeed": "0.1M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "1": {
+        "inboundSpeed": "5M",
+        "outboundSpeed": "5M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "2": {
+        "inboundSpeed": "10M",
+        "outboundSpeed": "10M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "3": {
+        "inboundSpeed": "15M",
+        "outboundSpeed": "15M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      }
+    }
+  },
+  "inbound": {},
+  "inboundDetour": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10085,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1"
+      },
+      "tag": "api"
+    }
+  ],
+  "log": {
+    "loglevel": "debug"
+  },
+  "outbounds": [
+    {
+      "tag":"direct",
+      "protocol":"freedom",
+      "settings":{}
+    },
+    {
+      "tag": "blackhole",
+      "protocol": "blackhole",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "settings": {
+      "rules": [
+        {
+          "inboundTag": [
+            "api"
+          ],
+          "outboundTag": "api",
+          "type": "field"
+        },
+        {
+          "type": "field",
+          "ip": [
+            "127.0.0.1/32",
+            "10.0.0.0/8",
+            "fc00::/7",
+            "fe80::/10",
+            "172.16.0.0/12"
+          ],
+          "protocol":["bittorrent"],
+          "inboundTag": [
+            "p0"
+          ],
+          "outboundTag": "blackhole"
+        }
+      ]
+    },
+    "strategy": "rules"
+  }
+}

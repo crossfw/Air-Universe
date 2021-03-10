@@ -3,16 +3,17 @@ package V2RayAPI
 import (
 	"context"
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	"v2ray.com/core/app/proxyman/command"
-	"v2ray.com/core/common/protocol"
-	"v2ray.com/core/common/serial"
-	"v2ray.com/core/proxy/vmess"
+	"github.com/v2fly/v2ray-core/v4/app/proxyman/command"
+	"github.com/v2fly/v2ray-core/v4/common/protocol"
+	"github.com/v2fly/v2ray-core/v4/common/serial"
+	"github.com/v2fly/v2ray-core/v4/proxy/trojan"
+	"github.com/v2fly/v2ray-core/v4/proxy/vmess"
 )
 
 // level will for control speed limit.
 // https://github.com/v2fly/v2ray-core/pull/403
 
-func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
+func addVmessUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
@@ -35,7 +36,23 @@ func v2AddUser(c command.HandlerServiceClient, user *structures.UserInfo) error 
 	}
 }
 
-func v2RemoveUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
+func addTrojanUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
+	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
+		Tag: user.InTag,
+		Operation: serial.ToTypedMessage(&command.AddUserOperation{
+			User: &protocol.User{
+				Level: user.Level,
+				Email: user.Tag,
+				Account: serial.ToTypedMessage(&trojan.Account{
+					Password: user.Uuid,
+				}),
+			},
+		}),
+	})
+	return err
+}
+
+func removeUser(c command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := c.AlterInbound(context.Background(), &command.AlterInboundRequest{
 		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.RemoveUserOperation{

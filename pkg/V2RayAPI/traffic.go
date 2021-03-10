@@ -3,7 +3,7 @@ package V2RayAPI
 import (
 	"context"
 	"fmt"
-	statsService "v2ray.com/core/app/stats/command"
+	statsService "github.com/v2fly/v2ray-core/v4/app/stats/command"
 )
 
 func v2QueryUserTraffic(c statsService.StatsServiceClient, userId, direction string) (traffic int64, err error) {

@@ -40,8 +40,8 @@ type UserIP struct {
 func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			remove = nil
-			add = nil
+			remove = new([]UserInfo)
+			add = new([]UserInfo)
 			err = errors.New(fmt.Sprintf("model FindUserDiffer cause error - %s", r))
 		}
 	}()
@@ -50,9 +50,9 @@ func FindUserDiffer(before, now *[]UserInfo) (remove, add *[]UserInfo, err error
 	add = new([]UserInfo)
 	// 对于空的对象要处理下，因为会死循环
 	if len(*before) == 0 {
-		return nil, now, err
+		return remove, now, err
 	} else if len(*now) == 0 {
-		return before, nil, err
+		return before, add, err
 	}
 
 	n := 0

@@ -179,7 +179,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		}
 
 		// Remove first, if user change uuid, remove old then add new.
-		if useRemove != nil {
+		if len(*useRemove) > 0 {
 			err = proxyClient.RemoveUsers(useRemove)
 			if err != nil {
 				log.Warnf("NodeID: %v IDIndex %v - Failed to remove users - %s", nodeID, idIndex, err)
@@ -188,7 +188,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 			}
 		}
 
-		if userAdd != nil {
+		if len(*userAdd) > 0 {
 			err = proxyClient.AddUsers(userAdd)
 			if err != nil {
 				log.Warnf("NodeID: %v IDIndex %v - Failed to add users - %s", nodeID, idIndex, err)

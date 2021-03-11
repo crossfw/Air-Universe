@@ -59,8 +59,10 @@ func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {
 		// The minimal value decide SpeedLimit
 		if userSL < node.NodeInfo.SpeedLimit {
 			user.SpeedLimit = userSL
-		} else {
+		} else if node.NodeInfo.SpeedLimit > 0 {
 			user.SpeedLimit = node.NodeInfo.SpeedLimit
+		} else {
+			user.SpeedLimit = userSL
 		}
 
 		//单端口承载用户判定, 请在配置文件中打开为后端下发偏移后端口选项

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/IPControl"
+	"github.com/crossfw/Air-Universe/pkg/SpeedLimitControl"
 	"github.com/crossfw/Air-Universe/pkg/SysLoad"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
@@ -31,7 +32,7 @@ func init() {
 	//log.SetReportCaller(true)
 
 	flag.BoolVar(&printVersion, "v", false, "print version")
-	flag.StringVar(&configPath, "c", "", "configure file")
+	flag.StringVar(&configPath, "c", "locTest/test.json", "configure file")
 	flag.Parse()
 
 	if printVersion {
@@ -135,6 +136,10 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 				break
 			}
 			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+		}
+
+		if baseCfg.Proxy.SpeedLimitLevel != nil {
+			SpeedLimitControl.AddLevel(usersNow, baseCfg.Proxy.SpeedLimitLevel)
 		}
 
 		if reflect.DeepEqual(*panelClient.GetNowInfo(), *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {

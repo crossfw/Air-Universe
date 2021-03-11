@@ -38,7 +38,6 @@
       }
     }
   },
-  "inbound": {},
   "inboundDetour": [
     {
       "listen": "127.0.0.1",
@@ -50,9 +49,6 @@
       "tag": "api"
     }
   ],
-  "log": {
-    "loglevel": "debug"
-  },
   "outbounds": [
     {
       "tag":"direct",

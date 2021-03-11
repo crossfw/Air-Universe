@@ -8,6 +8,12 @@ wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Univers
 - 自动创建入站规则。
 - 适配多入站，比如一个带ProxyProtocol的中转 和 一个直连入站，均采用面板节点ID， 流量分开统计。
 
+实验性限速脚本
+```shell
+wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/v2ray_script/Install_server_with_v2ray.sh && bash Install_server_with_v2ray.sh
+```
+
+
 ## 详细说明
 首先需要在面板上添加节点
 请参考教程，比如[这个](https://soga.vaxilu.com/soga-v2ray/sspanel-v2ray) (逃

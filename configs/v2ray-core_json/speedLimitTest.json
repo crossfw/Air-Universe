@@ -13,32 +13,54 @@
   "policy": {
     "levels": {
       "0": {
-        "inboundSpeed": "0.1M",
-        "outboundSpeed": "0.1M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "1": {
-        "inboundSpeed": "0.1M",
-        "outboundSpeed": "0.1M",
+        "inboundSpeed": "0.2M",
+        "outboundSpeed": "0.2M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "2": {
-        "inboundSpeed": "5M",
-        "outboundSpeed": "5M",
+        "inboundSpeed": "3M",
+        "outboundSpeed": "3M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "3": {
-        "inboundSpeed": "10M",
-        "outboundSpeed": "10M",
+        "inboundSpeed": "7M",
+        "outboundSpeed": "7M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "4": {
-        "inboundSpeed": "15M",
-        "outboundSpeed": "15M",
+        "inboundSpeed": "13M",
+        "outboundSpeed": "13M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "5": {
+        "inboundSpeed": "19M",
+        "outboundSpeed": "19M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "6": {
+        "inboundSpeed": "25M",
+        "outboundSpeed": "25M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "7": {
+        "inboundSpeed": "38M",
+        "outboundSpeed": "38M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "8": {
+        "inboundSpeed": "63M",
+        "outboundSpeed": "63M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       }

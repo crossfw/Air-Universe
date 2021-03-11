@@ -1,9 +1,9 @@
 #!/bin/bash
 
-VERSION="0.4.0"
+VERSION="0.5.0"
 
 panelConfig() {
-  echo "Air-Universe 0.4.0  + V2ray 4.32 with speedlimit Installation"
+  echo "Air-Universe 0.5.0  + V2ray 4.32 with speedlimit Installation"
   echo "########Air-Universe config#######\n"
   read -p "Enter node_id:" nId
   read -p "Enter sspanel domain(https://):" pUrl

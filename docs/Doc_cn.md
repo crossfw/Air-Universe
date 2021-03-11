@@ -102,7 +102,8 @@ error 日志的级别, 指示 error 日志需要记录的信息. 默认值为 "i
   "cert": {
     "cert_path": "/path/to/certificate.crt",
     "key_path": "/path/to/key.key"
-  }
+  },
+  "speed_limit_level": [0, 0.2, 3, 7, 13, 19, 25, 38, 63]
 }
 ```
 
@@ -136,6 +137,10 @@ error 日志的级别, 指示 error 日志需要记录的信息. 默认值为 "i
 > `cert`: cert object
 
 TLS 所需的证书，如果留空则会自动生成（仅Xray），请在客户端跳过证书检查。
+
+> `speed_limit_level`: [float32]
+
+V2Ray 等级对应的限速配置，确保0级为不限速，如配置流量耗尽限速1M，请配置等级1为 0.2M， 请按限速从小到大配置。
 ### SyncObject
 `SyncObject` configuration format.
 ```json

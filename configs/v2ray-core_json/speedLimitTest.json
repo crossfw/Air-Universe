@@ -19,18 +19,24 @@
         "statsUserUplink": true
       },
       "1": {
+        "inboundSpeed": "0.1M",
+        "outboundSpeed": "0.1M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "2": {
         "inboundSpeed": "5M",
         "outboundSpeed": "5M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
-      "2": {
+      "3": {
         "inboundSpeed": "10M",
         "outboundSpeed": "10M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
-      "3": {
+      "4": {
         "inboundSpeed": "15M",
         "outboundSpeed": "15M",
         "statsUserDownlink": true,

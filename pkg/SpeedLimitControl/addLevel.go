@@ -12,17 +12,17 @@ func AddLevel(users *[]structures.UserInfo, sl []float32) (err error) {
 	for userIndex := 0; userIndex < len(*users); userIndex++ {
 		userSpeedLimit := float32((*users)[userIndex].SpeedLimit) / 8
 
-		if userSpeedLimit == 0 {
+		if userSpeedLimit == 0 || userSpeedLimit > sl[len(sl)-1] {
 			(*users)[userIndex].Level = 0
 		}
 
 		for speedIndex = 1; int(speedIndex) < len(sl); speedIndex++ {
-			if userSpeedLimit < sl[speedIndex] {
+			if userSpeedLimit > sl[speedIndex] {
 				continue
 			} else if userSpeedLimit == sl[speedIndex] {
 				(*users)[userIndex].Level = speedIndex
 				break
-			} else if userSpeedLimit >= sl[speedIndex] {
+			} else if userSpeedLimit <= sl[speedIndex] {
 				(*users)[userIndex].Level = speedIndex + 1
 				break
 			}

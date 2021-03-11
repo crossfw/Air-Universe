@@ -34,6 +34,7 @@ makeConfig() {
       "node_ids": [${nId}]
     },
     "proxy": {
+      "type":"v2ray",
       "log_path": "/var/log/au-v.log"
     }
   }

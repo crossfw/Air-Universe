@@ -5,7 +5,6 @@
 > 反馈群 TG 群: https://t.me/Air_Universe <br>
 > 欢迎找群主提问
 
-## 注意, 未经严格测试, 出问题造成经济损失一概不负责
 ## Features
 - 支持3端(Shadowsocks, V2ray(VMess), Trojan) 单端口多用户
 - Shadowsocks 单端口多用户 无须协议和混淆插件支持, 使用 AEAD 加密单端口 (原版 Clash 可用)

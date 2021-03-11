@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/crossfw/Air-Universe/pkg/IPControl"
+	"github.com/crossfw/Air-Universe/pkg/SpeedLimitControl"
 	"github.com/crossfw/Air-Universe/pkg/SysLoad"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
@@ -15,7 +16,7 @@ import (
 )
 
 const (
-	VERSION = "0.4.0"
+	VERSION = "0.5.0 - Alpha"
 )
 
 type WaitGroupWrapper struct {
@@ -135,6 +136,10 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 				break
 			}
 			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
+		}
+
+		if baseCfg.Proxy.SpeedLimitLevel != nil && baseCfg.Proxy.Type == "v2ray" {
+			SpeedLimitControl.AddLevel(usersNow, baseCfg.Proxy.SpeedLimitLevel)
 		}
 
 		if reflect.DeepEqual(*panelClient.GetNowInfo(), *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {

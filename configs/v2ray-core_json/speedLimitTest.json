@@ -1,0 +1,121 @@
+{
+  "log": {
+    "access":"/var/log/au-v.log"
+  },
+  "stats": {},
+  "api": {
+    "services": [
+      "HandlerService",
+      "StatsService"
+    ],
+    "tag": "api"
+  },
+  "policy": {
+    "levels": {
+      "0": {
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "1": {
+        "inboundSpeed": "0.2M",
+        "outboundSpeed": "0.2M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "2": {
+        "inboundSpeed": "3M",
+        "outboundSpeed": "3M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "3": {
+        "inboundSpeed": "7M",
+        "outboundSpeed": "7M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "4": {
+        "inboundSpeed": "13M",
+        "outboundSpeed": "13M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "5": {
+        "inboundSpeed": "19M",
+        "outboundSpeed": "19M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "6": {
+        "inboundSpeed": "25M",
+        "outboundSpeed": "25M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "7": {
+        "inboundSpeed": "38M",
+        "outboundSpeed": "38M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      },
+      "8": {
+        "inboundSpeed": "63M",
+        "outboundSpeed": "63M",
+        "statsUserDownlink": true,
+        "statsUserUplink": true
+      }
+    }
+  },
+  "inboundDetour": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10085,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1"
+      },
+      "tag": "api"
+    }
+  ],
+  "outbounds": [
+    {
+      "tag":"direct",
+      "protocol":"freedom",
+      "settings":{}
+    },
+    {
+      "tag": "blackhole",
+      "protocol": "blackhole",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "settings": {
+      "rules": [
+        {
+          "inboundTag": [
+            "api"
+          ],
+          "outboundTag": "api",
+          "type": "field"
+        },
+        {
+          "type": "field",
+          "ip": [
+            "127.0.0.1/32",
+            "10.0.0.0/8",
+            "fc00::/7",
+            "fe80::/10",
+            "172.16.0.0/12"
+          ],
+          "protocol":["bittorrent"],
+          "inboundTag": [
+            "p0"
+          ],
+          "outboundTag": "blackhole"
+        }
+      ]
+    },
+    "strategy": "rules"
+  }
+}

@@ -22,7 +22,8 @@
     "cert": {
       "cert_path": "/path/to/certificate.crt",
       "key_path": "/path/to/key.key"
-    }
+    },
+    "speed_limit_level": [0, 0.1, 5, 10, 15]
   },
   "sync": {
     "interval": 60,

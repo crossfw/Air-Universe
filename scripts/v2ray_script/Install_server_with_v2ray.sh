@@ -1,23 +1,22 @@
 #!/bin/bash
 
-VERSION="0.3.4"
+VERSION="0.4.0"
 
 panelConfig() {
-  echo "Air-Universe 0.3.4  + V2ray 4.34 Installation"
+  echo "Air-Universe 0.4.0  + V2ray 4.32 with speedlimit Installation"
   echo "########Air-Universe config#######\n"
   read -p "Enter node_id:" nId
   read -p "Enter sspanel domain(https://):" pUrl
   read -p "Enter panel token:" nKey
-  read -p "Enter v2ray out port:" vOut
 
   apt-get update
   apt-get install cron wget ca-certificates -y
 }
 
 download() {
-  v2ray_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/scripts/proxy-core/v2ray-4_34_0"
+  v2ray_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/scripts/proxy-core/v2ray-speedlimit"
   airuniverse_url="https://github.com/crossfw/Air-Universe/releases/download/v${VERSION}/Air-Universe-linux-amd64"
-  v2ray_json_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/configs/v2ray-core_json/Single.json"
+  v2ray_json_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/configs/v2ray-core_json/speedLimitTest.json"
   start_script_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/scripts/v2ray_script/Start_AU_with_v2ray.sh"
 
   wget -N --no-check-certificate ${v2ray_url} -O /usr/bin/au/v2
@@ -39,8 +38,6 @@ makeConfig() {
     }
   }
 EOF
-
-  sed -i "s/11071/${vOut}/g" /etc/au/v2.json
 
 }
 

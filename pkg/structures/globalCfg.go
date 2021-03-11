@@ -16,14 +16,15 @@ type Panel struct {
 	NodeIDs []uint32 `json:"node_ids"`
 }
 type Proxy struct {
-	Type         string   `json:"type"`
-	AlertID      uint32   `json:"alert_id"`
-	AutoGenerate bool     `json:"auto_generate"`
-	InTags       []string `json:"in_tags"`
-	APIAddress   string   `json:"api_address"`
-	APIPort      uint32   `json:"api_port"`
-	LogPath      string   `json:"log_path"`
-	Cert         Cert     `json:"cert"`
+	Type            string    `json:"type"`
+	AlertID         uint32    `json:"alert_id"`
+	AutoGenerate    bool      `json:"auto_generate"`
+	InTags          []string  `json:"in_tags"`
+	APIAddress      string    `json:"api_address"`
+	APIPort         uint32    `json:"api_port"`
+	LogPath         string    `json:"log_path"`
+	Cert            Cert      `json:"cert"`
+	SpeedLimitLevel []float32 `json:"speed_limit_level"`
 }
 type Sync struct {
 	Interval       uint32 `json:"interval"`

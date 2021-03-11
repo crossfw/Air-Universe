@@ -14,6 +14,7 @@ func AddLevel(users *[]structures.UserInfo, sl []float32) (err error) {
 
 		if userSpeedLimit == 0 || userSpeedLimit > sl[len(sl)-1] {
 			(*users)[userIndex].Level = 0
+			continue
 		}
 
 		for speedIndex = 1; int(speedIndex) < len(sl); speedIndex++ {

@@ -10,16 +10,20 @@ func AddLevel(users *[]structures.UserInfo, sl []float32) (err error) {
 	var speedIndex uint32
 	// 不限速策略，默认使用level0
 	for userIndex := 0; userIndex < len(*users); userIndex++ {
-		if (*users)[userIndex].SpeedLimit == 0 {
+		userSpeedLimit := float32((*users)[userIndex].SpeedLimit) / 8
+
+		if userSpeedLimit == 0 {
 			(*users)[userIndex].Level = 0
-			break
 		}
-		for speedIndex = 0; int(speedIndex) < len(sl); speedIndex++ {
-			userSpeedLimit := float32((*users)[userIndex].SpeedLimit) / 8
-			if userSpeedLimit > sl[speedIndex] {
+
+		for speedIndex = 1; int(speedIndex) < len(sl); speedIndex++ {
+			if userSpeedLimit < sl[speedIndex] {
 				continue
-			} else if userSpeedLimit <= sl[speedIndex] {
+			} else if userSpeedLimit == sl[speedIndex] {
 				(*users)[userIndex].Level = speedIndex
+				break
+			} else if userSpeedLimit >= sl[speedIndex] {
+				(*users)[userIndex].Level = speedIndex + 1
 				break
 			}
 		}

@@ -138,7 +138,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 		}
 
-		if baseCfg.Proxy.SpeedLimitLevel != nil {
+		if baseCfg.Proxy.SpeedLimitLevel != nil && baseCfg.Proxy.Type == "v2ray" {
 			SpeedLimitControl.AddLevel(usersNow, baseCfg.Proxy.SpeedLimitLevel)
 		}
 

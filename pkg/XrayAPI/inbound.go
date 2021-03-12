@@ -19,7 +19,7 @@ import (
 	"github.com/xtls/xray-core/transport/internet/websocket"
 )
 
-func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) error {
+func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) (err error) {
 	var (
 		protocolName      string
 		transportSettings []*internet.TransportConfig
@@ -70,7 +70,10 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 			CertFile: node.Cert.CertPath,
 			KeyFile:  node.Cert.KeyPath,
 		}
-		builtCert, _ := certConfig.Build()
+		builtCert, err := certConfig.Build()
+		if err != nil {
+			return err
+		}
 		securityType = serial.GetMessageType(&tls.Config{})
 		securitySettings = []*serial.TypedMessage{
 			serial.ToTypedMessage(&tls.Config{
@@ -106,7 +109,7 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 		})
 	}
 
-	_, err := client.AddInbound(context.Background(), &command.AddInboundRequest{
+	_, err = client.AddInbound(context.Background(), &command.AddInboundRequest{
 		Inbound: &core.InboundHandlerConfig{
 			Tag: node.Tag,
 			ReceiverSettings: serial.ToTypedMessage(&proxyman.ReceiverConfig{

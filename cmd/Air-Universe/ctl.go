@@ -12,16 +12,23 @@ import (
 func checkCfg() (err error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
+		break
+	case "v2board":
+		err = errors.New("v2board api is incomplete now")
 		return
 	default:
 		err = errors.New("unsupported panel type")
+		return
 	}
 
 	switch baseCfg.Proxy.Type {
 	case "v2ray":
-		return
+		break
+	case "xray":
+		break
 	default:
 		err = errors.New("unsupported proxy type")
+		return
 	}
 
 	if len(baseCfg.Panel.NodeIDs) != len(baseCfg.Proxy.InTags) {

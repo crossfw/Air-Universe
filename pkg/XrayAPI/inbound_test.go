@@ -60,6 +60,56 @@ func TestAutoAddInbound(t *testing.T) {
 	}
 }
 
+func TestAddTLSInbound(t *testing.T) {
+	var (
+		xrayCtl *XrayController
+		ssp     = &structures.NodeInfo{
+			Id:                  0,
+			IdIndex:             0,
+			Tag:                 "p0",
+			SpeedLimit:          0,
+			Sort:                0,
+			RawInfo:             "",
+			Url:                 "",
+			Protocol:            "vmess",
+			CipherType:          "",
+			ListenPort:          31856,
+			AlertID:             0,
+			EnableTLS:           true,
+			EnableProxyProtocol: false,
+			TransportMode:       "tcp",
+			Path:                "/a",
+			Host:                "xxx.com",
+			Cert: structures.Cert{
+				CertPath: "cert\\f.crt",
+				KeyPath:  "cert\\f.key",
+			},
+		}
+		users = &[]structures.UserInfo{
+			{
+				Id:         1,
+				Level:      0,
+				InTag:      "p0",
+				Tag:        "1-p0",
+				Uuid:       "23ad6b10-8d1a-40f7-8ad0-e3e35cd38297",
+				Protocol:   "vmess",
+				CipherType: "aes-256-gcm",
+				Password:   "1234567",
+			},
+		}
+	)
+	xrayCtl = new(XrayController)
+	_ = xrayCtl.Init(baseCfg)
+	err := addInbound(*xrayCtl.HsClient, ssp)
+	if err != nil {
+		t.Errorf("Failed%s", err)
+	}
+	err = xrayCtl.AddUsers(users)
+	if err != nil {
+		t.Errorf("Failed%s", err)
+	}
+}
+
 func TestAddSSInbound(t *testing.T) {
 	var (
 		xrayCtl *XrayController

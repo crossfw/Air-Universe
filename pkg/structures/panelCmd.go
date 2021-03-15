@@ -2,7 +2,7 @@ package structures
 
 type PanelCommand interface {
 	Init(cfg *BaseConfig, idIndex uint32) error
-	GetNodeInfo() (err error)
+	GetNodeInfo(closeTLS bool) (err error)
 	GetUser() (userList *[]UserInfo, err error)
 	PostTraffic(trafficData *[]UserTraffic) (err error)
 	PostSysLoad(load *SysLoad) (err error)

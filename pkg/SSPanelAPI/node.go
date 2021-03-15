@@ -26,7 +26,7 @@ func String2Uint32(s string) (uint32, error) {
 	return uint32(t), err
 }
 
-func getNodeInfo(node *SspController) (err error) {
+func getNodeInfo(node *SspController, closeTLS bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New(fmt.Sprintf("get nodeInfo from sspanel failed %s", r))
@@ -72,15 +72,15 @@ func getNodeInfo(node *SspController) (err error) {
 		node.NodeInfo.EnableProxyProtocol = true
 	case 11:
 		node.NodeInfo.Protocol = "vmess"
-		err = parseVmessRawInfo(node.NodeInfo)
+		err = parseVmessRawInfo(node.NodeInfo, closeTLS)
 	case 12:
 		node.NodeInfo.Protocol = "vmess"
-		err = parseVmessRawInfo(node.NodeInfo)
+		err = parseVmessRawInfo(node.NodeInfo, closeTLS)
 		// Force Relay
 		node.NodeInfo.EnableProxyProtocol = true
 	case 14:
 		node.NodeInfo.Protocol = "trojan"
-		err = parseTrojanRawInfo(node.NodeInfo)
+		err = parseTrojanRawInfo(node.NodeInfo, closeTLS)
 	}
 
 	return nil
@@ -91,7 +91,7 @@ func getNodeInfo(node *SspController) (err error) {
 path	(?<=path=).*?(?=\|)|(?<=path=).*
 host	(?<=host=).*?(?=\|)|(?<=host=).*
 */
-func parseVmessRawInfo(node *structures.NodeInfo) (err error) {
+func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	reBasicInfos, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
 	rePath, _ := regexp.Compile("(?<=path=).*?(?=\\|)|(?<=path=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
@@ -120,7 +120,7 @@ func parseVmessRawInfo(node *structures.NodeInfo) (err error) {
 
 		node.TransportMode = basicInfoArray[3]
 
-		if basicInfoArray[4] == "tls" {
+		if basicInfoArray[4] == "tls" && closeTLS == false {
 			node.EnableTLS = true
 		} else {
 			node.EnableTLS = false
@@ -146,7 +146,7 @@ func parseVmessRawInfo(node *structures.NodeInfo) (err error) {
 	return
 }
 
-func parseTrojanRawInfo(node *structures.NodeInfo) (err error) {
+func parseTrojanRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	reUrl, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
 	rePort, _ := regexp.Compile("(?<=port=).*?(?=\\|)|(?<=port=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
@@ -184,7 +184,12 @@ func parseTrojanRawInfo(node *structures.NodeInfo) (err error) {
 	}
 
 	node.TransportMode = "tcp"
-	node.EnableTLS = true
+	if closeTLS == false {
+		node.EnableTLS = true
+	} else {
+		node.EnableTLS = false
+	}
+
 	return
 }
 

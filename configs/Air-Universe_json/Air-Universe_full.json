@@ -18,6 +18,7 @@
     ],
     "api_address": "127.0.0.1",
     "api_port": 10085,
+    "force_close_tls": false,
     "log_path": "./v2.log",
     "cert": {
       "cert_path": "/path/to/certificate.crt",

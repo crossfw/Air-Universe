@@ -98,6 +98,7 @@ error 日志的级别, 指示 error 日志需要记录的信息. 默认值为 "i
   ],
   "api_address": "127.0.0.1",
   "api_port": 10085,
+  "force_close_tls": false,
   "log_path": "./v2.log",
   "cert": {
     "cert_path": "/path/to/certificate.crt",
@@ -131,6 +132,11 @@ error 日志的级别, 指示 error 日志需要记录的信息. 默认值为 "i
 > `api_port`: uint32
 
 代理内核 API 端口
+
+> `force_close_tls`: bool
+
+强制不启用 tls，即使面板节点配置了 tls，用于 ws 反代的情况. 
+
 > `log_path`: string
 
 代理内核的日志输出地址（用于统计用户在线ip）

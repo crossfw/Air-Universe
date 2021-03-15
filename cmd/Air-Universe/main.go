@@ -117,7 +117,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 	for {
 		// Repeat until success
 		for {
-			err = panelClient.GetNodeInfo()
+			err = panelClient.GetNodeInfo(baseCfg.Proxy.ForceCloseTLS)
 			if err != nil {
 				log.Warnf("NodeID: %v IDIndex %v - Failed to obtain node info - %s", nodeID, idIndex, err)
 			} else {
@@ -139,7 +139,10 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		}
 
 		if baseCfg.Proxy.SpeedLimitLevel != nil && baseCfg.Proxy.Type == "v2ray" {
-			SpeedLimitControl.AddLevel(usersNow, baseCfg.Proxy.SpeedLimitLevel)
+			err = SpeedLimitControl.AddLevel(usersNow, baseCfg.Proxy.SpeedLimitLevel)
+			if err != nil {
+				log.Warnf("NodeID: %v IDIndex %v - Failed to add level to users - %s", nodeID, idIndex, err)
+			}
 		}
 
 		if reflect.DeepEqual(*panelClient.GetNowInfo(), *nodeBefore) == false && baseCfg.Proxy.AutoGenerate == true {
@@ -183,7 +186,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 			log.Warnf("NodeID: %v IDIndex %v - Failed to process users info - %s", nodeID, idIndex, err)
 		}
 
-		// Remove first, if user change uuid, remove old then add new.
+		// Remove first, if user changed uuid, remove old then add new.
 		if len(*useRemove) > 0 {
 			err = proxyClient.RemoveUsers(useRemove)
 			if err != nil {

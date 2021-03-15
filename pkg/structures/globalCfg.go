@@ -23,6 +23,7 @@ type Proxy struct {
 	APIAddress      string    `json:"api_address"`
 	APIPort         uint32    `json:"api_port"`
 	LogPath         string    `json:"log_path"`
+	ForceCloseTLS   bool      `json:"force_close_tls"`
 	Cert            Cert      `json:"cert"`
 	SpeedLimitLevel []float32 `json:"speed_limit_level"`
 }

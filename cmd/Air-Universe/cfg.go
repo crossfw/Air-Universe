@@ -24,6 +24,7 @@ var (
 			InTags:          []string{"p0"},
 			APIAddress:      "127.0.0.1",
 			APIPort:         10085,
+			ForceCloseTLS:   false,
 			LogPath:         "./v2.log",
 			SpeedLimitLevel: []float32{0, 0.2, 3, 7, 13, 19, 25, 38, 63},
 		},

@@ -2,8 +2,8 @@ package SSPanelAPI
 
 import "github.com/crossfw/Air-Universe/pkg/structures"
 
-func (sspCtl *SspController) GetNodeInfo() (err error) {
-	return getNodeInfo(sspCtl)
+func (sspCtl *SspController) GetNodeInfo(closeTLS bool) (err error) {
+	return getNodeInfo(sspCtl, closeTLS)
 }
 
 func (sspCtl *SspController) GetUser() (userList *[]structures.UserInfo, err error) {

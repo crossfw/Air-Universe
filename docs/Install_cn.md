@@ -37,10 +37,11 @@
         - [样例地址](https://github.com/crossfw/Air-Universe/tree/master/configs/Air-Universe_json)
     - Xray
         - [文档地址](https://xtls.github.io/guide/document/)
-        - 样例地址
+        - [样例地址](https://github.com/crossfw/Air-Universe/blob/master/configs/xray_json/multiIn.json)
     - V2Ray
         - [文档地址](https://www.v2fly.org/config/overview.html)
-        - 样例地址
+        - [限速样例地址](https://github.com/crossfw/Air-Universe/blob/master/configs/v2ray-core_json/speedLimitTest.json)
+        - [样例地址](https://github.com/crossfw/Air-Universe/blob/master/configs/v2ray-core_json/Single.json)
     
 ## 安装
 1. 首先启动代理内核(Xray or V2Ray)

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-VERSION="0.4.0"
+VERSION="0.5.1"
 
 panelConfig() {
-  echo "Air-Universe ${VERSION}  + Xray 1.3.1 Installation"
+  echo "Air-Universe ${VERSION}  + Xray 1.4.0 Installation"
   echo "########Air-Universe config#######\n"
 
   read -r -p "Enter node_ids, (eg 1,2,3): " nIds
@@ -15,7 +15,7 @@ panelConfig() {
 }
 
 download() {
-  v2ray_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/scripts/proxy-core/xray-1_3_1"
+  v2ray_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/scripts/proxy-core/xray-1_4_0"
   air_universe_url="https://github.com/crossfw/Air-Universe/releases/download/v${VERSION}/Air-Universe-linux-amd64"
   v2ray_json_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/configs/xray_json/multiIn.json"
   start_script_url="https://raw.githubusercontent.com/crossfw/Air-Universe/master/scripts/xray_script/Start_AU_with_xray.sh"

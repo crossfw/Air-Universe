@@ -1,13 +1,13 @@
 #!/bin/bash
 
-VERSION="0.5.0"
+VERSION="0.5.1"
 
 panelConfig() {
-  echo "Air-Universe 0.5.0  + V2ray 4.32 with speedlimit Installation"
+  echo "Air-Universe 0.5.1  + V2ray 4.32 with speedlimit Installation"
   echo "########Air-Universe config#######\n"
-  read -p "Enter node_id:" nId
-  read -p "Enter sspanel domain(https://):" pUrl
-  read -p "Enter panel token:" nKey
+  read -r -p "Enter node_ids, (eg 1,2,3): " nIds
+  read -r -p "Enter sspanel domain(https://): " pUrl
+  read -r -p "Enter panel token: " nKey
 
   apt-get update
   apt-get install cron wget ca-certificates -y
@@ -31,7 +31,7 @@ makeConfig() {
     "panel": {
       "url": "https://${pUrl}",
       "key": "${nKey}",
-      "node_ids": [${nId}]
+      "node_ids": [${nIds}]
     },
     "proxy": {
       "type":"v2ray",

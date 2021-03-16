@@ -30,6 +30,18 @@ var (
 )
 
 func TestGetIP(t *testing.T) {
-	a, _ := ReadLog(baseCfg)
+	a, err := ReadLog(baseCfg)
+	if err != nil {
+		t.Errorf("Failed %s", err)
+	}
 	fmt.Println(*a)
+}
+
+func TestCaptureDetail(t *testing.T) {
+	line := "2021/03/15 19:16:04 127.0.0.1:46948 accepted tcp:accepted-sngapm.qcloud.com:443 email: 3668-node2"
+	ret, err := captureDetail(line)
+	if err != nil {
+		t.Errorf("Failed %s", err)
+	}
+	fmt.Println(ret)
 }

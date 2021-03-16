@@ -103,7 +103,7 @@ func TestGetNodeInfo(t *testing.T) {
 	)
 	sspCtl = new(SspController)
 	_ = sspCtl.Init(testCfg, 0)
-	err := sspCtl.GetNodeInfo()
+	err := sspCtl.GetNodeInfo(false)
 	if err != nil {
 		t.Errorf("Post Failed %s", err)
 	}
@@ -116,7 +116,7 @@ func TestGetUsers(t *testing.T) {
 	)
 	sspCtl = new(SspController)
 	_ = sspCtl.Init(testCfg, 0)
-	err := sspCtl.GetNodeInfo()
+	err := sspCtl.GetNodeInfo(false)
 	users, err := sspCtl.GetUser()
 	if err != nil {
 		t.Errorf("Post Failed %s", err)

@@ -45,7 +45,7 @@ func TestAutoAddInbound(t *testing.T) {
 	xrayCtl = new(XrayController)
 	sspCtl = new(SSPanelAPI.SspController)
 	_ = sspCtl.Init(baseCfg, 0)
-	err := sspCtl.GetNodeInfo()
+	err := sspCtl.GetNodeInfo(false)
 
 	fmt.Println(sspCtl.NodeInfo)
 	_ = xrayCtl.Init(baseCfg)
@@ -153,7 +153,7 @@ func TestRemoveInbound(t *testing.T) {
 	xrayCtl = new(XrayController)
 	sspCtl = new(SSPanelAPI.SspController)
 	_ = sspCtl.Init(baseCfg, 0)
-	err := sspCtl.GetNodeInfo()
+	err := sspCtl.GetNodeInfo(false)
 
 	fmt.Println(sspCtl.GetNowInfo())
 	_ = xrayCtl.Init(baseCfg)

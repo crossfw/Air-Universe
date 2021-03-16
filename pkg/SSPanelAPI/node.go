@@ -54,7 +54,7 @@ func getNodeInfo(node *SspController, closeTLS bool) (err error) {
 	}
 	// ret not equal to 1 means sspanel caused an error or node not fond.
 	if rtn.Get("ret").MustInt() != 1 {
-		return errors.New(fmt.Sprintf("Server error or node not found"))
+		return errors.New(fmt.Sprintf("Server error or node not found or key error"))
 	}
 
 	node.NodeInfo.RawInfo = rtn.Get("data").Get("server").MustString()

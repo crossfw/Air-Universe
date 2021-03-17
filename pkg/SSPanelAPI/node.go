@@ -118,12 +118,18 @@ func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 		}
 		node.AlertID, _ = String2Uint32(basicInfoArray[2])
 
-		node.TransportMode = basicInfoArray[3]
-
-		if basicInfoArray[4] == "tls" && closeTLS == false {
-			node.EnableTLS = true
-		} else {
-			node.EnableTLS = false
+		node.EnableTLS = false
+		for _, transM := range []int{3, 4} {
+			switch basicInfoArray[transM] {
+			case "tcp":
+				node.TransportMode = "tcp"
+			case "ws":
+				node.TransportMode = "ws"
+			case "tls":
+				if closeTLS == false {
+					node.EnableTLS = true
+				}
+			}
 		}
 
 	} else {

@@ -1,6 +1,6 @@
 {
   "log": {
-    "access":"/var/log/au-v.log"
+    "access":"/var/log/au/v2.log"
   },
   "stats": {},
   "api": {

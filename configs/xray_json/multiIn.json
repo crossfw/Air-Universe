@@ -1,6 +1,6 @@
 {
   "log": {
-    "access": "/var/log/xr.log"
+    "access": "/var/log/au/xr.log"
   },
   "stats": {},
   "api": {
@@ -34,9 +34,6 @@
       "tag": "api"
     }
   ],
-  "log": {
-    "loglevel": "debug"
-  },
   "outbounds": [
     {
       "tag": "direct",

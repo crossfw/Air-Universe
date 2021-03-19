@@ -1,5 +1,5 @@
 # TurnKey Install
-自动安装 Air-Universe + Xray, 在debian8测试通过, 不支持Centos
+自动安装 Air-Universe + Xray
 ```shell
 wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/xray_script/Install_server_with_xray.sh && bash Install_server_with_xray.sh
 ```

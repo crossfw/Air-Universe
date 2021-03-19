@@ -134,7 +134,6 @@ EOF
 Description=Air-Universe - v2ray Service
 After=au.service
 BindsTo=au.service
-Wants=au.service
 
 [Service]
 Type=simple

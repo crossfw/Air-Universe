@@ -5,7 +5,7 @@ COPY xray.sh /root/xray.sh
 COPY supervisord.conf /etc/supervisord.conf
 RUN set -ex \
 	&& apk add --no-cache tzdata ca-certificates supervisor \
-	&& mkdir -p /var/log/au /usr/local/share/xray /usr/local/etc/au /usr/local/etc/xr \
+	&& mkdir -p /var/log/au /usr/local/share/xray /usr/local/etc/au /usr/local/etc/xray \
 	&& chmod +x /root/xray.sh \
 	&& /root/xray.sh \
 	&& rm -fv /root/xray.sh \

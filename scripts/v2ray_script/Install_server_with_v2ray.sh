@@ -46,7 +46,7 @@ check_sys() {
 Installation_dependency() {
   if [[ ${release} == "centos" ]]; then
     yum update
-    yum install -y gzip ca-certificates curl
+    yum install -y ca-certificates curl
   else
     apt-get update
     apt-get install -y ca-certificates curl
@@ -112,6 +112,7 @@ EOF
 }
 
 createService() {
+  mkdir -p /usr/lib/systemd/system/
   cat >>/usr/lib/systemd/system/au.service <<EOF
 [Unit]
 Description=Air-Universe - main Service

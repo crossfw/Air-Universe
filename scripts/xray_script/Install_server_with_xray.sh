@@ -92,6 +92,7 @@ get_latest_version() {
   VERSION="v${RELEASE_LATEST#v}"
 }
 makeConfig() {
+  mkdir -p /usr/lib/systemd/system/
   cat >>/usr/local/etc/au/au.json <<EOF
 {
   "panel": {

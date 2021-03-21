@@ -44,7 +44,7 @@ Enter panel token: 123
     - Air-Universe
     - Xray
 
-- 配置文件目录/etc/au/
+- 配置文件目录/use/local/au
 - 日志文件
     - Air-Universe log: /var/log/au.log
     - Xray log:/var/log/xr.log
@@ -53,6 +53,6 @@ Enter panel token: 123
     
 ### 脚本命令
 ```shell
-$ /usr/bin/au/run.sh start|restart|stop
+$ systemctl start|stop|restart au
 ```
 对应启动，重启，停止，默认会添加一条crontab保活并开机自启

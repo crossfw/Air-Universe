@@ -120,7 +120,7 @@ Type=simple
 User=nobody
 Restart=on-failure
 RestartSec=5s
-ExecStart=/usr/local/bin/au -c  /usr/local/etc/au/au.json
+ExecStart=/usr/local/bin/au -c /usr/local/etc/au/au.json > /var/log/au/au.log
 
 [Install]
 WantedBy=multi-user.target

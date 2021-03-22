@@ -17,11 +17,13 @@ type Panel struct {
 }
 type Proxy struct {
 	Type            string    `json:"type"`
+	Protocol        string    `json:"protocol"`
 	AlertID         uint32    `json:"alert_id"`
 	AutoGenerate    bool      `json:"auto_generate"`
 	InTags          []string  `json:"in_tags"`
 	APIAddress      string    `json:"api_address"`
 	APIPort         uint32    `json:"api_port"`
+	ConfigPath      string    `json:"config_path"`
 	LogPath         string    `json:"log_path"`
 	ForceCloseTLS   bool      `json:"force_close_tls"`
 	Cert            Cert      `json:"cert"`

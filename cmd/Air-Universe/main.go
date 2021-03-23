@@ -211,11 +211,15 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		usersTraffic, err = proxyClient.QueryUsersTraffic(usersNow)
 		if err != nil {
 			log.Warnf("NodeID: %v IDIndex %v - Failed to query users traffic - %s", nodeID, idIndex, err)
+		} else {
+			log.Debugf("NodeID: %v IDIndex %v - Quary user traffic success - %+v", nodeID, idIndex, *usersTraffic)
 		}
 
 		// Every query will reset traffic statics, post traffic data will loop until success
 		for {
-			err = panelClient.PostTraffic(usersTraffic)
+			if len(*usersTraffic) > 0 {
+				err = panelClient.PostTraffic(usersTraffic)
+			}
 			if err != nil {
 				log.Warnf("NodeID: %v IDIndex %v - Failed to post users traffic - %s", nodeID, idIndex, err)
 			} else {
@@ -283,7 +287,9 @@ func main() {
 		time.Sleep(time.Duration(1) * time.Second)
 	}
 	wg.Add(1)
-	go postUsersIP(wg)
+	if baseCfg.Panel.Type == "sspanel" {
+		go postUsersIP(wg)
+	}
 
 	// wait
 	wg.Wait()

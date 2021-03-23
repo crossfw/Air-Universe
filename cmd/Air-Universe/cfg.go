@@ -19,7 +19,6 @@ var (
 		},
 		Proxy: structures.Proxy{
 			Type:            "xray",
-			Protocol:        "vmess",
 			AlertID:         1,
 			AutoGenerate:    true,
 			InTags:          []string{"p0"},

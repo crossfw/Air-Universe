@@ -21,7 +21,7 @@ var (
 			Type:          "xray",
 			AlertID:       1,
 			AutoGenerate:  true,
-			InTags:        []string{"p0"},
+			InTags:        []string{},
 			APIAddress:    "127.0.0.1",
 			APIPort:       10085,
 			ForceCloseTLS: false,
@@ -36,7 +36,7 @@ var (
 			Interval:       60,
 			FailDelay:      5,
 			Timeout:        5,
-			PostIPInterval: 300,
+			PostIPInterval: 90,
 		},
 	}
 )

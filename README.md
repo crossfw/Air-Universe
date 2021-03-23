@@ -17,13 +17,15 @@
 - 审计规则默认屏蔽BT和内网IP, 可自行添加, 不支持从面板拉取
 - 审计信息**不会**上报
 - [一键脚本快速安装](https://github.com/crossfw/Air-Universe/tree/master/docs/TurnKey_cn.md)
-
+- [Docker对接](https://github.com/crossfw/Air-Universe/tree/master/docs/Docker_cn.md)
 ## 文档
 - 配置文件
   - [English](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_en.md)
   - [中文](https://github.com/crossfw/Air-Universe/tree/master/docs/Doc_cn.md)
 - 一键脚本
   - [中文](https://github.com/crossfw/Air-Universe/tree/master/docs/TurnKey_cn.md)
+- Docker安装
+  - [中文](https://github.com/crossfw/Air-Universe/tree/master/docs/Docker_cn.md)
 - 手动安装
   - [中文](https://github.com/crossfw/Air-Universe/tree/master/docs/Install_cn.md)
 

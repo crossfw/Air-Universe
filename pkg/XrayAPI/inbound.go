@@ -96,11 +96,7 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 
 	switch node.Protocol {
 	case "vmess":
-		proxySetting = serial.ToTypedMessage(&vmessInbound.Config{
-			Detour: &vmessInbound.DetourConfig{
-				To: "direct",
-			},
-		})
+		proxySetting = serial.ToTypedMessage(&vmessInbound.Config{})
 	case "trojan":
 		proxySetting = serial.ToTypedMessage(&trojanInbound.ServerConfig{})
 	case "ss":

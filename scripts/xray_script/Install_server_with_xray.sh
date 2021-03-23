@@ -18,8 +18,20 @@ panelConfig() {
   echo "Air-Universe $VERSION + Xray"
   echo "########Air-Universe config#######"
   read -r -p "Enter node_ids, (eg 1,2,3): " nIds
-  read -r -p "Enter sspanel domain(Include https:// or http://): " pUrl
+  read -r -p "Enter panel domain(Include https:// or http://): " pUrl
   read -r -p "Enter panel token: " nKey
+  echo && echo -e "Choose panel type:
+  1. SSPanel
+  2. V2board"
+  read -r -p "Choose panel type: " panelnum
+  if [ "$panelnum" == "1" ]; then
+    panelType="sspanel"
+  fi
+  if [ "$panelnum" == "2" ]; then
+    panelType="v2board"
+    read -r -p "Enter nodes type, (eg \"vmess\",\"ss\")(DON'T FORGET '\"'): " nType
+    read -r -p "Enter nodes enable receive proxy protocol, (eg true, false) enter means all false: " npp
+  fi
 }
 
 check_root() {
@@ -96,9 +108,12 @@ makeConfig() {
   cat >>/usr/local/etc/au/au.json <<EOF
 {
   "panel": {
+    "type": "${panelType}
     "url": "${pUrl}",
     "key": "${nKey}",
-    "node_ids": [${nIds}]
+    "node_ids": [${nIds}],
+    "nodes_type": [${nType}],
+    "nodes_proxy_protocol": [${npp}]
   },
   "proxy": {
     "type":"xray",

@@ -10,11 +10,12 @@ type Log struct {
 	LogLevel string `json:"log_level"`
 }
 type Panel struct {
-	Type      string   `json:"type"`
-	URL       string   `json:"url"`
-	Key       string   `json:"key"`
-	NodeIDs   []uint32 `json:"node_ids"`
-	NodesType []string `json:"nodes_type"`
+	Type               string   `json:"type"`
+	URL                string   `json:"url"`
+	Key                string   `json:"key"`
+	NodeIDs            []uint32 `json:"node_ids"`
+	NodesType          []string `json:"nodes_type"`
+	NodesProxyProtocol []bool   `json:"nodes_proxy_protocol"`
 }
 type Proxy struct {
 	Type            string    `json:"type"`

@@ -22,6 +22,7 @@ func (v2bCtl *V2bController) Init(cfg *structures.BaseConfig, idIndex uint32) (e
 	v2bCtl.NodeInfo.AlertID = cfg.Proxy.AlertID
 	v2bCtl.NodeInfo.Tag = cfg.Proxy.InTags[idIndex]
 	v2bCtl.NodeInfo.Cert = cfg.Proxy.Cert
+	v2bCtl.NodeInfo.EnableProxyProtocol = cfg.Panel.NodesProxyProtocol[idIndex]
 
 	switch strings.ToLower(cfg.Panel.NodesType[idIndex]) {
 	case "v2ray":

@@ -28,14 +28,26 @@ wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Univers
 ### 需要输入的内容
 ```shell
 ########Air-Universe config#######
-Enter node_ids, (eg 1,2,3): 2,3
-Enter sspanel domain(https://): 1.1.1.1
-Enter panel token: 123
+Enter node_ids, (eg 1,2,3): 1,2,1
+Enter panel domain(Include https:// or http://): https://xxx.cloud
+Enter panel token: xxxxxxx
+
+Choose panel type:
+  1. SSPanel
+  2. V2board
+Choose panel type: 2
+Enter nodes type, (eg vmess,ss): "vmess","vmess","ss"
+Enter nodes enable receive proxy protocol, (eg true, false) enter means all false:[false,true,false]
+
 
 ```
 - 节点ID列表, 不同id用英文逗号","分隔,最后一位不用加
-- 面板地址(都2021年了还没HTTPS?) 输入域名即可,必须是https协议,否则你要自己去改配置文件.
+- 面板地址 请携带https:// 或 http://
 - 面板密码
+- 选择面板类型（若选择 v2board 则需要输入一下两项）
+- 节点类型，请输入 "vmess", "trojan", "ss" 类型选项。 请和最开头的节点顺序一致。不要忘了加双引号。
+- 接收 proxy protocol 来获得真实IP 开关，true 或 false 请和最开头的节点顺序一致。直接回车表示关闭。
+
 
 ### 这个脚本会做什么
 - 下载2个主程序到/usr/local/bin/

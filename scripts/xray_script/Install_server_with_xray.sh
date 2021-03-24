@@ -108,7 +108,7 @@ makeConfig() {
   cat >>/usr/local/etc/au/au.json <<EOF
 {
   "panel": {
-    "type": "${panelType}
+    "type": "${panelType}",
     "url": "${pUrl}",
     "key": "${nKey}",
     "node_ids": [${nIds}],

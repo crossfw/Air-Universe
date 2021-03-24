@@ -279,7 +279,8 @@ func postUsersIP(w *WaitGroupWrapper) (err error) {
 func main() {
 	var wg *WaitGroupWrapper
 	wg = new(WaitGroupWrapper)
-
+	// delay 2 s to wait proxy-core start
+	time.Sleep(time.Duration(2) * time.Second)
 	for idIndex := 0; idIndex < len(baseCfg.Panel.NodeIDs); idIndex++ {
 		wg.Add(1)
 		go nodeSync(uint32(idIndex), wg)

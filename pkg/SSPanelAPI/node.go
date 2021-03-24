@@ -93,7 +93,7 @@ host	(?<=host=).*?(?=\|)|(?<=host=).*
 */
 func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	reBasicInfos, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
-	rePath, _ := regexp.Compile("(?<=path=).*?(?=\\|)|(?<=path=).*", 1)
+	rePath, _ := regexp.Compile("(?<=path=).*?(?=\\||\\?)|(?<=path=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
 	reInsidePort, _ := regexp.Compile("(?<=inside_port=).*?(?=\\|)|(?<=inside_port=).*", 1)
 	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=)", 1)

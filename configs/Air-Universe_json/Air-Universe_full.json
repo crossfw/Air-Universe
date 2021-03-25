@@ -3,10 +3,12 @@
     "log_level": "info"
   },
   "panel": {
-    "type": "sspanel",
+    "type": "v2board",
     "url": "https://SSPanel.address",
     "key": "SSPanel-Key",
-    "node_ids": [1, 2]
+    "node_ids": [1, 2],
+    "nodes_type": ["vmess", "ss"],
+    "nodes_proxy_protocol": [true, false]
   },
   "proxy": {
     "type": "xray",

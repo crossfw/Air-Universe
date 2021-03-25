@@ -49,7 +49,7 @@ func PostTraffic(node *SspController, trafficData *[]structures.UserTraffic) (er
 		return
 	}
 	if rtn.Get("ret").MustInt() != 1 {
-		return errors.New("server error or node not found")
+		return errors.New(fmt.Sprintf("Server error - %s", rtn.Get("data").MustString()))
 	}
 
 	return

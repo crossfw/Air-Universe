@@ -53,7 +53,7 @@ func postSysLoad(node *SspController, LoadData *structures.SysLoad) (err error) 
 		return err
 	}
 	if rtn.Get("ret").MustInt() != 1 {
-		return errors.New(fmt.Sprintf("Server error or node not found"))
+		return errors.New(fmt.Sprintf("Server error - %s", rtn.Get("data").MustString()))
 	}
 
 	return

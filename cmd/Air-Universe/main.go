@@ -233,11 +233,13 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 		}
 
 		loaData, err := SysLoad.GetSysLoad()
-		err = panelClient.PostSysLoad(loaData)
-		if err != nil {
-			log.Warnf("NodeID: %v IDIndex %v - Failed to post system load - %s", nodeID, idIndex, err)
-		} else {
-			log.Debugf("NodeID: %v IDIndex %v - Successfully post system load - %+v", nodeID, idIndex, *loaData)
+		if baseCfg.Panel.Type == "sspanel" {
+			err = panelClient.PostSysLoad(loaData)
+			if err != nil {
+				log.Warnf("NodeID: %v IDIndex %v - Failed to post system load - %s", nodeID, idIndex, err)
+			} else {
+				log.Debugf("NodeID: %v IDIndex %v - Successfully post system load - %+v", nodeID, idIndex, *loaData)
+			}
 		}
 
 		usersBefore = usersNow

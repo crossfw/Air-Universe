@@ -21,9 +21,9 @@ jobs:
       - name: Build
         run: make test
 
-      - name: Upload files to Artifacts
-          uses: actions/upload-artifact@v2
-          with:
-            name: Air-Universe
-            path: Air-Universe/bin/*
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: Air-Universe
+          path: Air-Universe/bin/*
       

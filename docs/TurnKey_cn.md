@@ -25,6 +25,7 @@ wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Univers
 [232c87c](https://github.com/Anankke/SSPanel-Uim/commit/232c87c0ff80d0118249d9c0eb161f869e7f4c5d)
 之后, 且需将单端口承载用户的协议和混淆设为"origin"和"plain"(!注意,这个操作会使现有ssr单端口节点失效,谨慎操作!)<br>
 
+注意 证书务必使用 `fullchain.cer` 否则可能会导致无法连接问题。
 ### 需要输入的内容
 ```shell
 ########Air-Universe config#######

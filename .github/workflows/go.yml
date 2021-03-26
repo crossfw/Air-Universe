@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: make test
 
-      - name: Upload artifact
+      - name: Upload files to Artifacts
           uses: actions/upload-artifact@v2
           with:
             name: Air-Universe

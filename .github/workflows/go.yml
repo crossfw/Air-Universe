@@ -25,5 +25,5 @@ jobs:
           uses: actions/upload-artifact@v2
           with:
             name: Air-Universe
-            path: Air-Universe/bin
+            path: Air-Universe/bin/*
       

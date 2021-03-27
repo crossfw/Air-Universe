@@ -32,7 +32,7 @@ func init() {
 	//log.SetReportCaller(true)
 
 	flag.BoolVar(&printVersion, "v", false, "print version")
-	flag.StringVar(&configPath, "c", "", "configure file")
+	flag.StringVar(&configPath, "c", "locTest/test.json", "configure file")
 	flag.Parse()
 
 	if printVersion {
@@ -62,7 +62,7 @@ func init() {
 		}
 
 		if baseCfg.Log.Access != "" {
-			file, err := os.OpenFile(baseCfg.Log.Access, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+			file, err := os.OpenFile(baseCfg.Log.Access, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 			if err == nil {
 				log.Infof("Log file will save at %s", baseCfg.Log.Access)
 				log.SetOutput(file)

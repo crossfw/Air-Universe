@@ -1,0 +1,9 @@
+{
+  "linux-386": { "friendlyName": "linux-386" },
+  "linux-amd64": { "friendlyName": "linux-amd64" },
+  "linux-mips64le": { "friendlyName": "linux-mips64le" },
+  "linux-mips64": { "friendlyName": "linux-mips64" },
+  "linux-riscv64": { "friendlyName": "linux-riscv64" },
+  "windows-386": { "friendlyName": "windows-32" },
+  "windows-amd64": { "friendlyName": "windows-64" }
+}

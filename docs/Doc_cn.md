@@ -43,18 +43,23 @@ Proxy-core(V2Ray 或 Xray)的API通信配置等
 `logObject` 格式。
 ```json
 {
-  "log_level": "info"
+  "log_level": "info",
+  "access": "/var/log/au/au.log"
 }
 ```
 > `log_level`: “debug” | “info” | “warning” | “error” | “panic”
 
-error 日志的级别, 指示 error 日志需要记录的信息. 默认值为 "info"。
+日志的级别, 日志需要记录的信息. 默认值为 "info"。
 
 - "debug"：调试程序时用到的输出信息。同时包含所有 "info" 内容。
 - "info"：运行时的状态信息等，不影响正常使用。同时包含所有 "warning" 内容。
 - "warning"：发生了一些并不影响正常运行的问题时输出的信息，但有可能影响用户的体验。同时包含所有 "error" 内容。
 - "error"：遇到了无法正常运行的问题，但是不影响主体运行。
 - "panic"：程序崩溃前的日志，需要立即处理。
+
+> `access`: string
+
+日志保存路径
 
 ### PanelObject
 

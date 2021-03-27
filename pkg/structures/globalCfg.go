@@ -8,6 +8,7 @@ type BaseConfig struct {
 }
 type Log struct {
 	LogLevel string `json:"log_level"`
+	Access   string `json:"access"`
 }
 type Panel struct {
 	Type               string   `json:"type"`

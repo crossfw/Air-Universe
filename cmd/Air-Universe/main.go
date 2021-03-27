@@ -61,6 +61,16 @@ func init() {
 
 		}
 
+		if baseCfg.Log.Access != "" {
+			file, err := os.OpenFile(baseCfg.Log.Access, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+			if err == nil {
+				log.Infof("Log file will save at %s", baseCfg.Log.Access)
+				log.SetOutput(file)
+			} else {
+				log.Warn("Failed to log to file, using default stderr")
+			}
+		}
+
 		err = checkCfg()
 		if err != nil {
 			log.Errorf("Failed to check config file - %s", err)

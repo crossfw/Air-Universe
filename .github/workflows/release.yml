@@ -70,16 +70,6 @@ jobs:
       - name: Get project dependencies
         run: go mod download
 
-      - name: Replace Custom to Commit ID
-        if: github.event_name != 'release'
-        run: |
-          ID=$(git rev-parse --short ${{ github.sha }})
-          if [ "${{ github.event_name }}" == 'pull_request' ]
-          then
-            ID=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})
-          fi
-          sed -i '/build/ s/Custom/'$ID'/' ./core/core.go
-
       - name: Build Air-Universe
         run: |
           mkdir -p build_assets

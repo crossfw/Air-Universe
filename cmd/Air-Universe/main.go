@@ -148,7 +148,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 			time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 		}
 
-		if baseCfg.Proxy.SpeedLimitLevel != nil && baseCfg.Proxy.Type == "v2ray" {
+		if baseCfg.Proxy.SpeedLimitLevel != nil {
 			err = SpeedLimitControl.AddLevel(usersNow, baseCfg.Proxy.SpeedLimitLevel)
 			if err != nil {
 				log.Warnf("NodeID: %v IDIndex %v - Failed to add level to users - %s", nodeID, idIndex, err)
@@ -162,6 +162,8 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 					err = proxyClient.AddInbound(panelClient.GetNowInfo())
 					if err != nil {
 						log.Warnf("NodeID: %v IDIndex %v - Failed to add inbound - %s", nodeID, idIndex, err)
+						// 第一次未成功先删除后添加
+						nodeBefore.Tag = "fff"
 					} else {
 						break
 					}
@@ -173,7 +175,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 					err = proxyClient.RemoveInbound(nodeBefore)
 					if err != nil {
 						log.Warnf("NodeID: %v IDIndex %v - Failed to remove inbound - %s", nodeID, idIndex, err)
-						continue
+						//continue
 					} else {
 						log.Debugf("NodeID: %v IDIndex %v - Successfully remove inbound", nodeID, idIndex)
 					}
@@ -184,7 +186,6 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 						break
 					}
 				}
-
 				time.Sleep(time.Duration(baseCfg.Sync.FailDelay) * time.Second)
 			}
 

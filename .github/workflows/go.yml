@@ -19,7 +19,7 @@ jobs:
           go-version: 1.16
 
       - name: Build
-        run: make test
+        run: make all
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2

@@ -4,6 +4,7 @@
   "linux-mips64le": { "friendlyName": "linux-mips64le" },
   "linux-mips64": { "friendlyName": "linux-mips64" },
   "linux-riscv64": { "friendlyName": "linux-riscv64" },
+  "linux-s390x": { "friendlyName": "linux-s390x" },
   "windows-386": { "friendlyName": "windows-32" },
   "windows-amd64": { "friendlyName": "windows-64" }
 }

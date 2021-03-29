@@ -2,6 +2,7 @@ package XrayAPI
 
 import (
 	"context"
+	"errors"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"github.com/xtls/xray-core/app/proxyman"
 	"github.com/xtls/xray-core/app/proxyman/command"
@@ -27,6 +28,21 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 		securitySettings  []*serial.TypedMessage
 		proxySetting      *serial.TypedMessage
 	)
+
+	switch node.Protocol {
+	case "vmess":
+		proxySetting = serial.ToTypedMessage(&vmessInbound.Config{})
+	case "trojan":
+		proxySetting = serial.ToTypedMessage(&trojanInbound.ServerConfig{})
+	case "ss":
+		proxySetting = serial.ToTypedMessage(&ssInbound.ServerConfig{
+			Network: []net.Network{2, 3},
+		})
+	case "vless":
+		err = errors.New("unsupported to auto add VLESS inbounds")
+		return err
+	}
+
 	switch node.TransportMode {
 	case "ws":
 		protocolName = "websocket"
@@ -92,17 +108,6 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 		// Disable TLS
 		securityType = ""
 		securitySettings = nil
-	}
-
-	switch node.Protocol {
-	case "vmess":
-		proxySetting = serial.ToTypedMessage(&vmessInbound.Config{})
-	case "trojan":
-		proxySetting = serial.ToTypedMessage(&trojanInbound.ServerConfig{})
-	case "ss":
-		proxySetting = serial.ToTypedMessage(&ssInbound.ServerConfig{
-			Network: []net.Network{2, 3},
-		})
 	}
 
 	_, err = client.AddInbound(context.Background(), &command.AddInboundRequest{

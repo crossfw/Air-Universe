@@ -97,6 +97,7 @@ func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
 	reInsidePort, _ := regexp.Compile("(?<=inside_port=).*?(?=\\|)|(?<=inside_port=).*", 1)
 	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=)", 1)
+	reVless, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=enable_vless=)", 1)
 
 	basicInfos, _ := reBasicInfos.FindStringMatch(node.RawInfo)
 	var basicInfoArray []string
@@ -108,6 +109,8 @@ func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	mHost, _ := reHost.FindStringMatch(node.RawInfo)
 	mRelay, _ := reRelay.FindStringMatch(node.RawInfo)
 	mInsidePort, _ := reInsidePort.FindStringMatch(node.RawInfo)
+	mVless, _ := reVless.FindStringMatch(node.RawInfo)
+
 	//insidePort := mInsidePort
 	if len(basicInfoArray) == 5 {
 		node.Url = basicInfoArray[0]
@@ -147,6 +150,9 @@ func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	}
 	if mHost != nil {
 		node.Host = mHost.String()
+	}
+	if mVless != nil {
+		node.Protocol = "vless"
 	}
 
 	return

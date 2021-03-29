@@ -29,16 +29,16 @@ func addVmessUser(client command.HandlerServiceClient, user *structures.UserInfo
 	return err
 }
 
-func addVlessUser(client command.HandlerServiceClient, inboundTag string, level uint32, email string, id string, flow string) error {
+func addVlessUser(client command.HandlerServiceClient, user *structures.UserInfo) error {
 	_, err := client.AlterInbound(context.Background(), &command.AlterInboundRequest{
-		Tag: inboundTag,
+		Tag: user.InTag,
 		Operation: serial.ToTypedMessage(&command.AddUserOperation{
 			User: &protocol.User{
-				Level: level,
-				Email: email,
+				Level: user.Level,
+				Email: user.Tag,
 				Account: serial.ToTypedMessage(&vless.Account{
-					Id:   id,
-					Flow: flow,
+					Id:   user.Uuid,
+					Flow: "xtls-rprx-direct",
 				}),
 			},
 		}),

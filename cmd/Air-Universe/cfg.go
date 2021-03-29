@@ -31,7 +31,6 @@ var (
 				CertPath: "/usr/local/share/server.crt",
 				KeyPath:  "/usr/local/share/server.key",
 			},
-			SpeedLimitLevel: []float32{0, 0.2, 3, 7, 13, 19, 25, 38, 63},
 		},
 		Sync: structures.Sync{
 			Interval:       60,

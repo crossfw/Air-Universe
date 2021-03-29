@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
-	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2RayAPI"
 	"github.com/crossfw/Air-Universe/pkg/V2boardAPI"
 	"github.com/crossfw/Air-Universe/pkg/XrayAPI"
 	"github.com/crossfw/Air-Universe/pkg/structures"
@@ -44,17 +43,6 @@ func checkCfg() (err error) {
 
 func initProxyCore() (apiClient structures.ProxyCommand, err error) {
 	switch baseCfg.Proxy.Type {
-	case "v2ray":
-		apiClient = new(v2rayApi.V2rayController)
-		for {
-			err = apiClient.Init(baseCfg)
-			if err != nil {
-				log.Error(err)
-			} else {
-				break
-			}
-		}
-		return
 	case "xray":
 		apiClient = new(XrayAPI.XrayController)
 		for {

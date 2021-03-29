@@ -6,7 +6,6 @@
   "api": {
     "services": [
       "HandlerService",
-      "LoggerService",
       "StatsService"
     ],
     "tag": "api"
@@ -14,16 +13,12 @@
   "policy": {
     "levels": {
       "0": {
-        "connIdle": 300,
-        "downlinkOnly": 20,
-        "handshake": 20,
-        "uplinkOnly": 20,
         "statsUserDownlink": true,
         "statsUserUplink": true
       }
     }
   },
-  "inboundDetour": [
+  "inbound": [
     {
       "listen": "127.0.0.1",
       "port": 10085,
@@ -58,15 +53,28 @@
         },
         {
           "type": "field",
+          "protocol": [
+            "bittorrent"
+          ],
+          "inboundTag": [
+            "p0",
+            "p1",
+            "p2",
+            "p3",
+            "p4",
+            "p5",
+            "p6"
+          ],
+          "outboundTag": "blackhole"
+        },
+        {
+          "type": "field",
           "ip": [
             "127.0.0.1/32",
             "10.0.0.0/8",
             "fc00::/7",
             "fe80::/10",
             "172.16.0.0/12"
-          ],
-          "protocol": [
-            "bittorrent"
           ],
           "inboundTag": [
             "p0",

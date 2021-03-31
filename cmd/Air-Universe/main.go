@@ -39,7 +39,6 @@ func init() {
 		_, _ = fmt.Fprintf(os.Stdout, "Air-Universe %s\n", VERSION)
 		os.Exit(0)
 	}
-
 	if configPath != "" {
 		_, err := ParseBaseConfig(&configPath)
 		if err != nil {

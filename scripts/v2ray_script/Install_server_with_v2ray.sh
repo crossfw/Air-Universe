@@ -105,7 +105,8 @@ makeConfig() {
   },
   "proxy": {
     "type":"xray",
-    "log_path": "/var/log/au/v2.log"
+    "log_path": "/var/log/au/xr.log",
+    "speed_limit_level": [0, 2, 10, 30, 60, 100, 150, 250, 400]
   }
 }
 EOF

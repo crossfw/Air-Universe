@@ -124,7 +124,7 @@ Proxy-core(V2Ray 或 Xray)的API通信配置等
     "cert_path": "/path/to/certificate.crt",
     "key_path": "/path/to/key.key"
   },
-  "speed_limit_level": [0, 0.2, 3, 7, 13, 19, 25, 38, 63]
+  "speed_limit_level": [0, 2, 10, 30, 60, 100, 150, 250, 400]
 }
 ```
 
@@ -166,7 +166,7 @@ TLS 所需的证书，默认路径 `/usr/local/share/server.crt` 与 `/usr/local
 
 > `speed_limit_level`: [float32]
 
-V2Ray 等级对应的限速配置，确保0级为不限速，如配置流量耗尽限速1M，请配置等级1为 0.2M， 请按限速从小到大配置。
+V2Ray 等级对应的限速配置，确保0级为不限速，如配置流量耗尽限速1M，请配置等级1为 1M， 请按限速从小到大配置。单位Mbps
 ### SyncObject
 `SyncObject` configuration format.
 ```json

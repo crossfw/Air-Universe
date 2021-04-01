@@ -17,50 +17,50 @@
         "statsUserUplink": true
       },
       "1": {
-        "inboundSpeed": "2M",
-        "outboundSpeed": "2M",
+        "downlinkSpeed": "2M",
+        "uplinkSpeed": "2M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "2": {
-        "inboundSpeed": "10M",
-        "outboundSpeed": "10M",
+        "downlinkSpeed": "10M",
+        "uplinkSpeed": "10M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "3": {
-        "inboundSpeed": "30M",
-        "outboundSpeed": "30M",
+        "downlinkSpeed": "30M",
+        "uplinkSpeed": "30M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "4": {
-        "inboundSpeed": "60M",
-        "outboundSpeed": "60M",
+        "downlinkSpeed": "60M",
+        "uplinkSpeed": "60M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "5": {
-        "inboundSpeed": "100M",
-        "outboundSpeed": "100M",
+        "downlinkSpeed": "100M",
+        "uplinkSpeed": "100M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "6": {
-        "inboundSpeed": "150M",
-        "outboundSpeed": "150M",
+        "downlinkSpeed": "150M",
+        "uplinkSpeed": "150M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "7": {
-        "inboundSpeed": "250M",
-        "outboundSpeed": "250M",
+        "downlinkSpeed": "250M",
+        "uplinkSpeed": "250M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       },
       "8": {
-        "inboundSpeed": "400M",
-        "outboundSpeed": "400M",
+        "downlinkSpeed": "400M",
+        "uplinkSpeed": "400M",
         "statsUserDownlink": true,
         "statsUserUplink": true
       }

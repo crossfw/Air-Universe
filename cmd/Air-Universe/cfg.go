@@ -13,7 +13,7 @@ var (
 	baseCfg = &structures.BaseConfig{
 		Log: structures.Log{
 			LogLevel: "info",
-			Access:   "/var/log/au/au.log",
+			Access:   "",
 		},
 		Panel: structures.Panel{
 			Type: "sspanel",

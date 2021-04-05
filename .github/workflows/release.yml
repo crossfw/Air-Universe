@@ -6,7 +6,7 @@ on:
     types: [published]
   push:
     branches:
-      - main
+      - master
     paths:
       - "**/*.go"
       - "go.mod"

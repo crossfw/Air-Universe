@@ -78,6 +78,16 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 				}),
 			},
 		}
+	case "kcp":
+		protocolName = "mkcp"
+		transportSettings = []*internet.TransportConfig{
+			{
+				ProtocolName: protocolName,
+				Settings: serial.ToTypedMessage(&tcp.Config{
+					AcceptProxyProtocol: node.EnableProxyProtocol,
+				}),
+			},
+		}
 	}
 
 	if node.EnableTLS == true && node.Cert.CertPath != "" && node.Cert.KeyPath != "" {

@@ -15,6 +15,7 @@ import (
 	trojanInbound "github.com/xtls/xray-core/proxy/trojan"
 	vmessInbound "github.com/xtls/xray-core/proxy/vmess/inbound"
 	"github.com/xtls/xray-core/transport/internet"
+	"github.com/xtls/xray-core/transport/internet/kcp"
 	"github.com/xtls/xray-core/transport/internet/tcp"
 	"github.com/xtls/xray-core/transport/internet/tls"
 	"github.com/xtls/xray-core/transport/internet/websocket"
@@ -83,9 +84,7 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 		transportSettings = []*internet.TransportConfig{
 			{
 				ProtocolName: protocolName,
-				Settings: serial.ToTypedMessage(&tcp.Config{
-					AcceptProxyProtocol: node.EnableProxyProtocol,
-				}),
+				Settings:     serial.ToTypedMessage(&kcp.Config{}),
 			},
 		}
 	}

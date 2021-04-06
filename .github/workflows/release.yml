@@ -26,21 +26,9 @@ jobs:
     strategy:
       matrix:
         # Include amd64 on all platforms.
-        goos: [windows, freebsd, openbsd, linux, dragonfly, darwin]
+        goos: [windows, linux]
         goarch: [amd64, 386]
-        exclude:
-          # Exclude i386 on darwin and dragonfly.
-          - goarch: 386
-            goos: dragonfly
-          - goarch: 386
-            goos: darwin
-          - goarch: 386
-            goos: openbsd
         include:
-          # BEIGIN MacOS ARM64
-          - goos: darwin
-            goarch: arm64
-          # END MacOS ARM64
           # BEGIN Linux ARM 5 6 7
           - goos: linux
             goarch: arm
@@ -52,17 +40,7 @@ jobs:
             goarch: arm
             goarm: 5
           # END Linux ARM 5 6 7
-          # BEGIN Android ARM 8
-          - goos: android
-            goarch: arm64
-          # END Android ARM 8
           # BEGIN Other architectures
-          # BEGIN riscv64 & ARM64
-          - goos: linux
-            goarch: arm64
-          - goos: linux
-            goarch: riscv64
-          # END riscv64 & ARM64
           # BEGIN MIPS
           - goos: linux
             goarch: mips64
@@ -73,23 +51,6 @@ jobs:
           - goos: linux
             goarch: mips
           # END MIPS
-          # BEGIN PPC
-          - goos: linux
-            goarch: ppc64
-          - goos: linux
-            goarch: ppc64le
-          # END PPC
-          # BEGIN FreeBSD ARM
-          - goos: freebsd
-            goarch: arm64
-          - goos: freebsd
-            goarch: arm
-            goarm: 7
-          # END FreeBSD ARM
-          # BEGIN S390X
-          - goos: linux
-            goarch: s390x
-          # END S390X
           # END Other architectures
       fail-fast: false
     runs-on: ubuntu-latest
@@ -131,6 +92,19 @@ jobs:
         run: |
           cd ./build_assets || exit 1
           mv Air-Universe Air-Universe.exe
+      - name: Create ZIP archive
+        shell: bash
+        run: |
+          pushd build_assets || exit 1
+          touch -mt $(date +%Y01010000) *
+          zip -9vr ../Air-Universe-$ASSET_NAME.zip .
+          popd || exit 1
+          FILE=./Air-Universe-$ASSET_NAME.zip
+          DGST=$FILE.dgst
+          for METHOD in {"md5","sha1","sha256","sha512"}
+          do
+            openssl dgst -$METHOD $FILE | sed 's/([^)]*)//g' >>$DGST
+          done
       - name: Change the name
         run: |
           mv build_assets Air-Universe-$ASSET_NAME
@@ -145,6 +119,6 @@ jobs:
         if: github.event_name == 'release'
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./Air-Universe-${{ steps.get_filename.outputs.ASSET_NAME }}*
+          file: ./Air-Universe-${{ steps.get_filename.outputs.ASSET_NAME }}.zip*
           tag: ${{ github.ref }}
           file_glob: true

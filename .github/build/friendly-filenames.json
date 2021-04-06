@@ -8,7 +8,7 @@
   "freebsd-arm64": { "friendlyName": "freebsd-arm64-v8a" },
   "freebsd-arm7": { "friendlyName": "freebsd-arm32-v7a" },
   "linux-386": { "friendlyName": "linux-32" },
-  "linux-amd64": { "friendlyName": "linux-amd64" },
+  "linux-amd64": { "friendlyName": "linux-64" },
   "linux-arm5": { "friendlyName": "linux-arm32-v5" },
   "linux-arm64": { "friendlyName": "linux-arm64-v8a" },
   "linux-arm6": { "friendlyName": "linux-arm32-v6" },

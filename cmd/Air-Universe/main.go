@@ -297,7 +297,7 @@ func main() {
 		wg.Add(1)
 		go nodeSync(uint32(idIndex), wg)
 		// 延迟执行，防止在多节点时面板和代理内核崩溃
-		time.Sleep(time.Duration(1) * time.Second)
+		time.Sleep(time.Duration(5) * time.Second)
 	}
 	wg.Add(1)
 	if baseCfg.Panel.Type == "sspanel" {

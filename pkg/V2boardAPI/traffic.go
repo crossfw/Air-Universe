@@ -23,7 +23,7 @@ func postTraffic(node *V2bController, trafficData *[]structures.UserTraffic) (er
 	if err != nil {
 		return
 	}
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 40 * time.Second}
 	defer client.CloseIdleConnections()
 	apiURL := ""
 	switch node.NodeInfo.Protocol {

@@ -19,7 +19,7 @@ func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {
 	}()
 	userList = new([]structures.UserInfo)
 	user := structures.UserInfo{}
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 40 * time.Second}
 	defer client.CloseIdleConnections()
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/users?key=%s&node_id=%v", node.URL, node.Key, node.NodeInfo.Id), nil)
 	if err != nil {

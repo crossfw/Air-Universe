@@ -21,7 +21,7 @@ func getUser(node *V2bController) (userList *[]structures.UserInfo, err error) {
 	userList = new([]structures.UserInfo)
 	user := structures.UserInfo{}
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 40 * time.Second}
 	defer client.CloseIdleConnections()
 	apiURL := ""
 	switch node.NodeInfo.Protocol {

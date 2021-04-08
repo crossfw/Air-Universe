@@ -17,7 +17,7 @@ func getNodeInfo(node *V2bController, closeTLS bool) (err error) {
 		}
 	}()
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 40 * time.Second}
 	defer client.CloseIdleConnections()
 	apiURL := ""
 	switch node.NodeInfo.Protocol {

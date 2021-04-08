@@ -32,7 +32,7 @@ func postSysLoad(node *SspController, LoadData *structures.SysLoad) (err error) 
 	if err != nil {
 		return err
 	}
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 40 * time.Second}
 	defer client.CloseIdleConnections()
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", node.URL, node.NodeInfo.Id, node.Key), bytes.NewBuffer(bodyJson))
 	if err != nil {

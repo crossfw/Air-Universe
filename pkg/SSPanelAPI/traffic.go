@@ -28,7 +28,7 @@ func PostTraffic(node *SspController, trafficData *[]structures.UserTraffic) (er
 	if err != nil {
 		return
 	}
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 40 * time.Second}
 	defer client.CloseIdleConnections()
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/mod_mu/users/traffic?key=%s&node_id=%v", node.URL, node.Key, node.NodeInfo.Id), bytes.NewBuffer(bodyJson))
 	if err != nil {

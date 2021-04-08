@@ -33,7 +33,7 @@ func getNodeInfo(node *SspController, closeTLS bool) (err error) {
 		}
 	}()
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := &http.Client{Timeout: 40 * time.Second}
 	defer client.CloseIdleConnections()
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/mod_mu/nodes/%v/info?key=%s", node.URL, node.NodeInfo.Id, node.Key), nil)
 	if err != nil {

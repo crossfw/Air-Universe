@@ -162,7 +162,7 @@ func nodeSync(idIndex uint32, w *WaitGroupWrapper) (err error) {
 					if err != nil {
 						log.Warnf("NodeID: %v IDIndex %v - Failed to add inbound - %s", nodeID, idIndex, err)
 						// 第一次未成功先删除后添加
-						nodeBefore.Tag = "fff"
+						nodeBefore.Tag = panelClient.GetNowInfo().Tag
 					} else {
 						break
 					}

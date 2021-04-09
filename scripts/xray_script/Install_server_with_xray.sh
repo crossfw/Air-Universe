@@ -105,7 +105,7 @@ get_latest_version() {
 }
 makeConfig() {
   mkdir -p /usr/lib/systemd/system/
-  cat >>/usr/local/etc/au/au.json <<EOF
+  cat >/usr/local/etc/au/au.json <<EOF
 {
   "panel": {
     "type": "${panelType}",
@@ -124,7 +124,7 @@ EOF
 }
 
 createService() {
-  cat >>/usr/lib/systemd/system/au.service <<EOF
+  cat >/usr/lib/systemd/system/au.service <<EOF
 [Unit]
 Description=Air-Universe - main Service
 After=network.target

@@ -11,7 +11,7 @@ func (sspCtl *SspController) GetUser() (userList *[]structures.UserInfo, err err
 }
 
 func (sspCtl *SspController) PostTraffic(trafficData *[]structures.UserTraffic) (err error) {
-	return PostTraffic(sspCtl, trafficData)
+	return postTraffic(sspCtl, trafficData)
 }
 
 func (sspCtl *SspController) PostSysLoad(load *structures.SysLoad) (err error) {

@@ -1,18 +1,12 @@
 # TurnKey Install
-自动安装 Air-Universe + Xray
+Air-Universe 管理脚本(安装+拆卸+申请证书)
 ```shell
 wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/xray_script/Install_server_with_xray.sh && bash Install_server_with_xray.sh
 ```
-实验性限速脚本
+升级Xray
 ```shell
-wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/v2ray_script/Install_server_with_v2ray.sh && bash Install_server_with_v2ray.sh
+bash -c "$(curl -L https://github.com/crossfw/Xray-install/raw/main/install-release.sh)" @ install
 ```
-
-- 仅适配[SSPanel-UIM](https://github.com/Anankke/SSPanel-Uim)
-- 使用Xray做Proxy-core。限速版本使用V2Ray
-- 自动创建入站规则。
-- 适配多入站，比如一个带ProxyProtocol的中转 和 一个直连入站，均采用面板节点ID， 流量分开统计。
-
 
 ## 详细说明
 首先需要在面板上添加节点
@@ -38,8 +32,6 @@ Choose panel type:
   2. V2board
 Choose panel type: 2
 Enter nodes type, (eg vmess,ss): "vmess","vmess","ss"
-Enter nodes enable receive proxy protocol, (eg true, false) enter means all false:[false,true,false]
-
 
 ```
 - 节点ID列表, 不同id用英文逗号","分隔,最后一位不用加
@@ -47,8 +39,6 @@ Enter nodes enable receive proxy protocol, (eg true, false) enter means all fals
 - 面板密码
 - 选择面板类型（若选择 v2board 则需要输入一下两项）
 - 节点类型，请输入 "vmess", "trojan", "ss" 类型选项。 请和最开头的节点顺序一致。不要忘了加双引号。
-- 接收 proxy protocol 来获得真实IP 开关，true 或 false 请和最开头的节点顺序一致。直接回车表示关闭。
-
 
 ### 这个脚本会做什么
 - 下载2个主程序到/usr/local/bin/

@@ -2,10 +2,10 @@
 
 ## 准备的程序和工具
 - 机器一台，Windows 和 Linux 均可，架构请选择 release 中包含的架构，否则请自行编译。
-- Xray 或 V2Ray 内核可执行文件一个，请自行选择合适的内核版本，配置 JSON 一个。
+- Xray 内核可执行文件一个，请自行选择合适的内核版本，配置 JSON 一个。
 - Air-Universe 可执行文件一个，配置 JSON 一个。
 - 机器需要有公网端口，否则外部无法连接。
-- 一个安装正确的 SSPanel 面板。
+- 一个安装正确的 SSPanel 或 V2board面板。
 
 ## 安装前准备
 1. 确定所需的协议和端口
@@ -22,11 +22,9 @@
     
 
 3. 程序下载地址
-   >Xray 和 V2Ray 二选一
     - Air-Universe [下载地址](https://github.com/crossfw/Air-Universe/releases)
     - Xray-core [下载地址](https://github.com/XTLS/Xray-core/releases)
-    - V2Ray-core [下载地址](https://github.com/v2fly/v2ray-core/releases/tag/v4.34.0)
-    
+     
 
 4. 配置文件制作。
    >代理内核配置文件请自行增加正确的 API 配置。
@@ -38,11 +36,7 @@
     - Xray
         - [文档地址](https://xtls.github.io/guide/document/)
         - [样例地址](https://github.com/crossfw/Air-Universe/blob/master/configs/xray_json/multiIn.json)
-    - V2Ray
-        - [文档地址](https://www.v2fly.org/config/overview.html)
-        - [限速样例地址](https://github.com/crossfw/Air-Universe/blob/master/configs/v2ray-core_json/speedLimitTest.json)
-        - [样例地址](https://github.com/crossfw/Air-Universe/blob/master/configs/v2ray-core_json/Single.json)
-    
+        
 ## 安装
 1. 首先启动代理内核(Xray or V2Ray)
     ```shell

@@ -1,5 +1,6 @@
 # Docker Install
 
+此方法暂时废弃
 ## 使用方法
 ```
 sudo docker run --network host -v /PATH2CONFIG:/usr/local/etc/au crossfw/airu

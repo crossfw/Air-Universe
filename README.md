@@ -12,7 +12,7 @@
 - 支持单启动多开节点，单服务器多节点无须多开程序，多个入站配合多节点ID, 流量分开统计
 - 支持记录用户 IP, 但目前不可限制用户 IP 连接数
 - 支持上报服务器负载和开机时间  
-- 支持限速(请自行替换Xray内核 无教程)
+- 支持限速(请自行替换Xray内核 无教程) [点此下载](https://github.com/crossfw/Air-Universe/raw/master/scripts/proxy-core/xray_speedlimit)
 - 审计规则默认屏蔽BT和内网IP, 可自行添加, 不支持从面板拉取
 - 审计信息不会上报
 - [一键脚本快速安装](https://github.com/crossfw/Air-Universe/tree/master/docs/TurnKey_cn.md)

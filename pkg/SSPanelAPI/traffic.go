@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func PostTraffic(node *SspController, trafficData *[]structures.UserTraffic) (err error) {
+func postTraffic(node *SspController, trafficData *[]structures.UserTraffic) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.New("unplanned outages when post traffic data")

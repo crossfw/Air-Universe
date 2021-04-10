@@ -28,8 +28,8 @@ var (
 			LogPath:       "/var/log/au/xr.log",
 			ForceCloseTLS: false,
 			Cert: structures.Cert{
-				CertPath: "/usr/local/share/server.crt",
-				KeyPath:  "/usr/local/share/server.key",
+				CertPath: "/usr/local/share/au/server.crt",
+				KeyPath:  "/usr/local/share/au/server.key",
 			},
 		},
 		Sync: structures.Sync{

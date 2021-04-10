@@ -1,7 +1,7 @@
 # TurnKey Install
 Air-Universe 管理脚本(安装+拆卸+申请证书)
 ```shell
-wget -N --no-check-certificate --no-cache https://github.com/crossfw/Air-Universe/raw/master/scripts/xray_script/Install_server_with_xray.sh && bash Install_server_with_xray.sh
+bash <(curl -Ls https://raw.githubusercontent.com/crossfw/Air-Universe-install/master/AirU.sh)
 ```
 升级Xray
 ```shell

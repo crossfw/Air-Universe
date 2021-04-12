@@ -21,6 +21,8 @@ bash -c "$(curl -L https://github.com/crossfw/Xray-install/raw/main/install-rele
 
 注意 证书务必使用 `fullchain.cer` 否则可能会导致无法连接问题。
 ### 需要输入的内容
+#### 安装
+选择安装 `Air-Universe` 脚本会自动安装 Xray 和 Air-Universe 的最新版本。
 ```shell
 ########Air-Universe config#######
 Enter node_ids, (eg 1,2,3): 1,2,1
@@ -39,6 +41,37 @@ Enter nodes type, (eg vmess,ss): "vmess","vmess","ss"
 - 面板密码
 - 选择面板类型（若选择 v2board 则需要输入一下两项）
 - 节点类型，请输入 "vmess", "trojan", "ss" 类型选项。 请和最开头的节点顺序一致。不要忘了加双引号。
+
+#### 申请证书
+选择 `使用ACME获取SSL证书`, 证书续签为自动化过程.
+
+```shell
+1. http
+2. dns (only support cloudflare)"
+```
+- 第一种 http 方式无须配置 Cloudflare API Key, 使用本地 80 端口验证,请先把域名解析做好.
+- 第二种dns配置, 需要提前准备好 Cloudflare Global API Key 无须本机80端口.
+
+##### http 申请
+```shell
+1. web path
+2. nginx
+3. apache
+4. use 80 port"
+```
+- `web path` 如有建站应用占用 80 端口,可输入网站根目录获取 (不推荐)
+- `nginx` 如果 nginx 占用 80 端口, 建议使用该方法
+- `apache` 如果 apache 占用 80 端口, 建议使用该方法
+- `use 80 port` 没有任何应用占用 80 端口, 建议使用该方法
+
+##### dns 申请
+```shell
+Input your CloudFlare Email:
+Input your CloudFlare Global API Key:
+```
+输入Cloudflare 邮箱和 Global Key 即可
+获取 Cloudflare Global API Key 请前往 [此处](https://support.cloudflare.com/hc/zh-cn/articles/200167836-%E7%AE%A1%E7%90%86-API-%E4%BB%A4%E7%89%8C%E5%92%8C%E5%AF%86%E9%92%A5) 参考 `查看 API 秘钥` 章节
+
 
 ### 这个脚本会做什么
 - 下载2个主程序到/usr/local/bin/

@@ -15,6 +15,7 @@ import (
 	trojanInbound "github.com/xtls/xray-core/proxy/trojan"
 	vmessInbound "github.com/xtls/xray-core/proxy/vmess/inbound"
 	"github.com/xtls/xray-core/transport/internet"
+	"github.com/xtls/xray-core/transport/internet/http"
 	"github.com/xtls/xray-core/transport/internet/kcp"
 	"github.com/xtls/xray-core/transport/internet/tcp"
 	"github.com/xtls/xray-core/transport/internet/tls"
@@ -40,7 +41,7 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 			Network: []net.Network{2, 3},
 		})
 	case "vless":
-		err = errors.New("unsupported to auto add VLESS inbounds")
+		err = errors.New("unsupported to auto create VLESS inbounds")
 		return err
 	}
 
@@ -87,6 +88,18 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 				Settings:     serial.ToTypedMessage(&kcp.Config{}),
 			},
 		}
+	case "http":
+		protocolName = "http"
+		transportSettings = []*internet.TransportConfig{
+			{
+				ProtocolName: protocolName,
+				Settings: serial.ToTypedMessage(&http.Config{
+					Host: []string{node.Host},
+					Path: node.Path,
+				}),
+			},
+		}
+
 	}
 
 	if node.EnableTLS == true && node.Cert.CertPath != "" && node.Cert.KeyPath != "" {

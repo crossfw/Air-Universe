@@ -130,6 +130,8 @@ func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 				node.TransportMode = "ws"
 			case "kcp":
 				node.TransportMode = "kcp"
+			case "http":
+				node.TransportMode = "http"
 			case "tls":
 				if closeTLS == false {
 					node.EnableTLS = true

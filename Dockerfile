@@ -1,7 +1,7 @@
 # Build go
 FROM golang:1.16-alpine AS builder
 WORKDIR /app
-COPY deployments/docker/Single .
+COPY . .
 ENV CGO_ENABLED=0
 RUN go mod download
 RUN go build -v -o au -trimpath -ldflags "-s -w -buildid=" ./cmd/Air-Universe

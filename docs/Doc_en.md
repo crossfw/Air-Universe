@@ -89,7 +89,7 @@ The first element of `proxy.in_tags` will get users from the first element of `p
 ```json
 {
   "type": "type of proxy",
-  "alert_id": 1,
+  "alter_id": 1,
   "auto_generate": true,
   "in_tags": [
     "p0",
@@ -110,9 +110,9 @@ The first element of `proxy.in_tags` will get users from the first element of `p
 Which proxy you are using. Now it supports
 - `v2ray` - [V2Ray-core](https://github.com/v2fly/v2ray-core)
 
-> `alert_id`: string
+> `alter_id`: string
 
-V2Ray AlertId you want to set for every user. Please make sure it is equal to your panel setting.
+V2Ray AlterId you want to set for every user. Please make sure it is equal to your panel setting.
 
 > `auto_generate`: bool
 

@@ -12,7 +12,7 @@
   },
   "proxy": {
     "type": "xray",
-    "alert_id": 1,
+    "alter_id": 1,
     "auto_generate": true,
     "in_tags": [
       "p0",

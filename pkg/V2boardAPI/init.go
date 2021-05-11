@@ -18,8 +18,8 @@ func (v2bCtl *V2bController) Init(cfg *structures.BaseConfig, idIndex uint32) (e
 	v2bCtl.Key = cfg.Panel.Key
 	v2bCtl.NodeInfo.Id = cfg.Panel.NodeIDs[idIndex]
 	v2bCtl.NodeInfo.IdIndex = idIndex
-	// 预先写入，如果没有获取到节点配置则使用配置文件的alertID
-	v2bCtl.NodeInfo.AlertID = cfg.Proxy.AlertID
+	// 预先写入，如果没有获取到节点配置则使用配置文件的alterID
+	v2bCtl.NodeInfo.AlterID = cfg.Proxy.AlterID
 	v2bCtl.NodeInfo.Tag = cfg.Proxy.InTags[idIndex]
 	v2bCtl.NodeInfo.Cert = cfg.Proxy.Cert
 	// Not force

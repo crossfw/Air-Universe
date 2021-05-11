@@ -21,7 +21,7 @@ func addVmessUser(client command.HandlerServiceClient, user *structures.UserInfo
 				Email: user.Tag,
 				Account: serial.ToTypedMessage(&vmess.Account{
 					Id:      user.Uuid,
-					AlterId: user.AlertId,
+					AlterId: user.AlterId,
 				}),
 			},
 		}),

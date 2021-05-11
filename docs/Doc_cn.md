@@ -110,7 +110,7 @@ Proxy-core(V2Ray 或 Xray)的API通信配置等
 ```json
 {
   "type": "type of proxy",
-  "alert_id": 1,
+  "alter_id": 1,
   "auto_generate": true,
   "in_tags": [
     "p0",
@@ -134,9 +134,9 @@ Proxy-core(V2Ray 或 Xray)的API通信配置等
 - `v2ray` - [V2Ray-core](https://github.com/v2fly/v2ray-core)
 - `xray` - [Xray](https://github.com/XTLS/Xray-core)
 
-> `alert_id`: string
+> `alter_id`: string
 
-手动配置入站代理时分配给 VMess 用户的alert_id。
+手动配置入站代理时分配给 VMess 用户的alter_id。
 
 > `auto_generate`: bool
 
@@ -212,7 +212,7 @@ HTTP(S) 请求超时时间（秒）
   },
   "proxy": {
     "type": "xray",
-    "alert_id": 1,
+    "alter_id": 1,
     "auto_generate": true,
     "force_close_tls": false,
     "in_tags": [

@@ -18,7 +18,7 @@ var (
 		},
 		Proxy: structures.Proxy{
 			Type:       "v2ray",
-			AlertID:    1,
+			AlterID:    1,
 			InTags:     []string{"p0"},
 			APIAddress: "127.0.0.1",
 			APIPort:    10085,
@@ -74,7 +74,7 @@ func TestAddTLSInbound(t *testing.T) {
 			Protocol:            "vmess",
 			CipherType:          "",
 			ListenPort:          31856,
-			AlertID:             0,
+			AlterID:             0,
 			EnableTLS:           true,
 			EnableProxyProtocol: false,
 			TransportMode:       "tcp",

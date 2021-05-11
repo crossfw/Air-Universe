@@ -20,7 +20,7 @@ type Panel struct {
 }
 type Proxy struct {
 	Type            string    `json:"type"`
-	AlertID         uint32    `json:"alert_id"`
+	AlterID         uint32    `json:"alter_id"`
 	AutoGenerate    bool      `json:"auto_generate"`
 	InTags          []string  `json:"in_tags"`
 	APIAddress      string    `json:"api_address"`

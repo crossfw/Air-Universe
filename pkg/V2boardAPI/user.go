@@ -69,7 +69,7 @@ func getUser(node *V2bController) (userList *[]structures.UserInfo, err error) {
 			user.Uuid = rtn.Get("data").GetIndex(u).Get("trojan_user").Get("password").MustString()
 		case "vmess":
 			user.Uuid = rtn.Get("data").GetIndex(u).Get("v2ray_user").Get("uuid").MustString()
-			user.AlertId = uint32(rtn.Get("data").GetIndex(u).Get("v2ray_user").Get("alter_id").MustInt())
+			user.AlterId = uint32(rtn.Get("data").GetIndex(u).Get("v2ray_user").Get("alter_id").MustInt())
 		}
 
 		*userList = append(*userList, user)

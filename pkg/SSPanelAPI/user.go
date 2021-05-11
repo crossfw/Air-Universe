@@ -48,7 +48,7 @@ func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {
 		user.Id = uint32(rtn.Get("data").GetIndex(u).Get("id").MustInt())
 		user.Uuid = rtn.Get("data").GetIndex(u).Get("uuid").MustString()
 		user.Password = rtn.Get("data").GetIndex(u).Get("passwd").MustString()
-		user.AlertId = node.NodeInfo.AlertID
+		user.AlterId = node.NodeInfo.AlterID
 		user.Level = 0
 		user.InTag = node.NodeInfo.Tag
 		user.Tag = fmt.Sprintf("%s-%s", strconv.FormatUint(uint64(user.Id), 10), user.InTag)

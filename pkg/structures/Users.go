@@ -9,7 +9,7 @@ import (
 type UserInfo struct {
 	Id      uint32
 	Uuid    string
-	AlertId uint32
+	AlterId uint32
 	// Level will use for speed limit
 	Level uint32
 	InTag string

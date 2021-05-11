@@ -17,7 +17,7 @@ var (
 		},
 		Proxy: structures.Proxy{
 			Type:         "xray",
-			AlertID:      1,
+			AlterID:      1,
 			AutoGenerate: true,
 			InTags:       []string{"p0"},
 			APIAddress:   "127.0.0.1",
@@ -29,9 +29,6 @@ var (
 			FailDelay: 5,
 			Timeout:   5,
 		},
-	}
-	nodeInfo = &structures.NodeInfo{
-		Id: 44,
 	}
 )
 

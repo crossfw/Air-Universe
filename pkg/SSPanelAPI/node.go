@@ -13,7 +13,7 @@ import (
 )
 
 /*
-[url, port, alertId, isTLS, transportMode]   (.*?)(?=;)
+[url, port, alterId, isTLS, transportMode]   (.*?)(?=;)
 path	(?<=path=).*(?=\|)|(?<=path=).*
 host	(?<=host=).*(?=\|)|(?<=host=).*
 */
@@ -87,7 +87,7 @@ func getNodeInfo(node *SspController, closeTLS bool) (err error) {
 }
 
 /*
-[url, port, alertId, isTLS, transportMode]   (^|(?<=;))([^;]*)(?=;)
+[url, port, alterId, isTLS, transportMode]   (^|(?<=;))([^;]*)(?=;)
 path	(?<=path=).*?(?=\|)|(?<=path=).*
 host	(?<=host=).*?(?=\|)|(?<=host=).*
 */
@@ -119,7 +119,7 @@ func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 		} else {
 			node.ListenPort, _ = String2Uint32(mInsidePort.String())
 		}
-		node.AlertID, _ = String2Uint32(basicInfoArray[2])
+		node.AlterID, _ = String2Uint32(basicInfoArray[2])
 
 		node.EnableTLS = false
 		for _, transM := range []int{3, 4} {

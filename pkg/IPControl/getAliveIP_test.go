@@ -15,7 +15,7 @@ var (
 		},
 		Proxy: structures.Proxy{
 			Type:       "v2ray",
-			AlertID:    1,
+			AlterID:    1,
 			InTags:     []string{"p0"},
 			APIAddress: "127.0.0.1",
 			APIPort:    10085,

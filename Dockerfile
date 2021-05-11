@@ -11,7 +11,6 @@ FROM  alpine
 # 安装必要的工具包
 RUN  apk --update --no-cache add tzdata ca-certificates \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-RUN mkdir /etc/XrayR/
+RUN mkdir /etc/au/ && mkdir -p /usr/local/share/au/
 COPY --from=builder /app/au /usr/local/bin
-RUN mkdir -p /usr/local/share/au/
 ENTRYPOINT [ "au", "-c", "/etc/au/config.json"]

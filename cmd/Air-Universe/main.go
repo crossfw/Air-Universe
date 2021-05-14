@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	VERSION = "0.7.7"
+	VERSION = "0.8.1"
 )
 
 type WaitGroupWrapper struct {

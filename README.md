@@ -44,7 +44,7 @@
 - 可自动生成配置的节点类型
     - Shadowsocks
     - VMess(V2ary) 
-      - 传输方式: TCP, Websocket, KCP
+      - 传输方式: TCP, Websocket, KCP, HTTP
       - 传输层加密: TLS
     - Trojan (TCP+TLS)
 

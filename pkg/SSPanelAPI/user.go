@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/bitly/go-simplejson"
 	"github.com/crossfw/Air-Universe/pkg/structures"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -43,10 +44,14 @@ func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {
 	}
 
 	numOfUsers := len(rtn.Get("data").MustArray())
-
+	numOfSkipUsers := 0
 	for u := 0; u < numOfUsers; u++ {
 		user.Id = uint32(rtn.Get("data").GetIndex(u).Get("id").MustInt())
 		user.Uuid = rtn.Get("data").GetIndex(u).Get("uuid").MustString()
+		if user.Uuid == "" && node.NodeInfo.Protocol != "ss" {
+			numOfSkipUsers++
+			continue
+		}
 		user.Password = rtn.Get("data").GetIndex(u).Get("passwd").MustString()
 		user.AlterId = node.NodeInfo.AlterID
 		user.Level = 0
@@ -86,6 +91,9 @@ func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {
 			(*userList)[u].CipherType = node.NodeInfo.CipherType
 		}
 	}
-
+	// 如果有无效用户提示
+	if numOfSkipUsers != 0 {
+		log.Warnf("There are %v users who haven't valid UUID. Please check your panel.", numOfSkipUsers)
+	}
 	return userList, nil
 }

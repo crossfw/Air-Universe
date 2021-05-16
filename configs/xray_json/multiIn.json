@@ -42,53 +42,32 @@
     }
   ],
   "routing": {
-    "settings": {
-      "rules": [
-        {
-          "inboundTag": [
-            "api"
-          ],
-          "outboundTag": "api",
-          "type": "field"
-        },
-        {
-          "type": "field",
-          "protocol": [
-            "bittorrent"
-          ],
-          "inboundTag": [
-            "p0",
-            "p1",
-            "p2",
-            "p3",
-            "p4",
-            "p5",
-            "p6"
-          ],
-          "outboundTag": "blackhole"
-        },
-        {
-          "type": "field",
-          "ip": [
-            "127.0.0.1/32",
-            "10.0.0.0/8",
-            "fc00::/7",
-            "fe80::/10",
-            "172.16.0.0/12"
-          ],
-          "inboundTag": [
-            "p0",
-            "p1",
-            "p2",
-            "p3",
-            "p4",
-            "p5",
-            "p6"
-          ],
-          "outboundTag": "blackhole"
-        }
-      ]
-    },
-    "strategy": "rules"
+    "rules": [
+      {
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "type": "field"
+      },
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "blackhole"
+      },
+      {
+        "type": "field",
+        "ip": [
+          "127.0.0.1/32",
+          "10.0.0.0/8",
+          "fc00::/7",
+          "fe80::/10",
+          "172.16.0.0/12"
+        ],
+        "outboundTag": "blackhole"
+      }
+    ]
   }
 }

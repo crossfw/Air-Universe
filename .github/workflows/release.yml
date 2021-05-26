@@ -40,6 +40,21 @@ jobs:
             goarch: arm
             goarm: 5
           # END Linux ARM 5 6 7
+          # BEGIN Android ARM 8
+          - goos: android
+            goarch: arm64
+          # END Android ARM 8
+          # Windows ARM 7
+          - goos: windows
+            goarch: arm
+            goarm: 7
+          # BEGIN Other architectures
+          # BEGIN riscv64 & ARM64
+          - goos: linux
+            goarch: arm64
+          - goos: linux
+            goarch: riscv64
+          # END riscv64 & ARM64
           # BEGIN Other architectures
           # BEGIN MIPS
           - goos: linux

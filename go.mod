@@ -12,8 +12,6 @@ require (
 	github.com/shirou/gopsutil v3.21.2+incompatible
 	github.com/sirupsen/logrus v1.7.0
 	github.com/tklauser/go-sysconf v0.3.4 // indirect
-	github.com/v2fly/v2ray-core/v4 v4.35.1
-	github.com/xtls/xray-core v1.3.0
-	google.golang.org/grpc v1.36.0
-	v2ray.com/core v4.19.1+incompatible // indirect
+	github.com/xtls/xray-core v1.4.2
+	google.golang.org/grpc v1.36.1
 )

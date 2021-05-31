@@ -62,12 +62,6 @@ jobs:
           - goos: linux
             goarch: mips
           # END MIPS
-          # BEGIN PPC
-          - goos: linux
-            goarch: ppc64
-          - goos: linux
-            goarch: ppc64le
-          # END PPC
           # BEGIN FreeBSD ARM
           - goos: freebsd
             goarch: arm64
@@ -80,13 +74,6 @@ jobs:
             goarch: s390x
           # END S390X
           # END Other architectures
-          # BEGIN OPENBSD ARM
-          - goos: openbsd
-            goarch: arm64
-          - goos: openbsd
-            goarch: arm
-            goarm: 7
-          # END OPENBSD ARM
           # END Other architectures
       fail-fast: false
     runs-on: ubuntu-latest

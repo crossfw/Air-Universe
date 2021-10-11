@@ -1,6 +1,6 @@
 module github.com/crossfw/Air-Universe
 
-go 1.15
+go 1.17
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20210224194228-fe8f1750fd46 // indirect

@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/crossfw/Air-Universe/pkg/DjangoSSPanelAPI"
 	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
 	"github.com/crossfw/Air-Universe/pkg/V2boardAPI"
 	"github.com/crossfw/Air-Universe/pkg/XrayAPI"
@@ -14,6 +15,8 @@ func checkCfg() (err error) {
 	case "sspanel":
 		break
 	case "v2board":
+		break
+	case "django-sspanel":
 		break
 	default:
 		err = errors.New("unsupported panel type")
@@ -71,6 +74,13 @@ func initPanel(idIndex uint32) (node structures.PanelCommand, err error) {
 		return
 	case "v2board":
 		node = new(V2boardAPI.V2bController)
+		err = node.Init(baseCfg, idIndex)
+		if err != nil {
+			log.Error(err)
+		}
+		return
+	case "django-sspanel":
+		node = new(DjangoSSPanelAPI.DjSspController)
 		err = node.Init(baseCfg, idIndex)
 		if err != nil {
 			log.Error(err)

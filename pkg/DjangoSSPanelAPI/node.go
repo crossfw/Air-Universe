@@ -66,7 +66,7 @@ func parseTrojanRawInfo(rtnJson *simplejson.Json, node *structures.NodeInfo, clo
 	inboundInfo := rtnJson.Get("inbounds").GetIndex(0)
 	node.ListenPort = uint32(inboundInfo.Get("port").MustInt())
 	node.TransportMode = inboundInfo.Get("streamSettings").Get("network").MustString()
-	if closeTLS != false {
+	if closeTLS == false {
 		node.EnableTLS = true
 	} else {
 		node.EnableTLS = false

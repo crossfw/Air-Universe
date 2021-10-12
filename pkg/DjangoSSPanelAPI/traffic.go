@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
 	"github.com/crossfw/Air-Universe/pkg/structures"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -87,21 +85,9 @@ func postTraffic(node *DjSspController, trafficData *[]structures.UserTraffic) (
 	}
 	// Use json type
 	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
+	_, err = client.Do(req)
 	if err != nil {
 		return
 	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	rtn, err := simplejson.NewJson(bodyText)
-	if err != nil {
-		return
-	}
-	if rtn.Get("ret").MustInt() != 1 {
-		return errors.New("server error or node not found")
-	}
-
 	return
 }

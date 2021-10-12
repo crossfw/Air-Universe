@@ -83,11 +83,13 @@ func parseVmessRawInfo(rtnJson *simplejson.Json, node *structures.NodeInfo, clos
 	case "ws":
 		node.Path = inboundInfo.Get("streamSettings").Get("wsSettings").Get("path").MustString()
 		//node.Host = inboundInfo.Get("streamSettings").Get("wsSettings").Get("headers").Get("Host").MustString()
-		if closeTLS != false {
+		if closeTLS == false {
 			node.EnableTLS = true
 		} else {
 			node.EnableTLS = false
 		}
+	default:
+		node.TransportMode = "tcp"
 	}
 
 	return err

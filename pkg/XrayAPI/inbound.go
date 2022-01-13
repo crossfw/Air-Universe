@@ -136,8 +136,10 @@ func addInbound(client command.HandlerServiceClient, node *structures.NodeInfo) 
 		Inbound: &core.InboundHandlerConfig{
 			Tag: node.Tag,
 			ReceiverSettings: serial.ToTypedMessage(&proxyman.ReceiverConfig{
-				PortRange: net.SinglePortRange(net.Port(node.ListenPort)),
-				Listen:    net.NewIPOrDomain(net.AnyIP),
+				PortList: &net.PortList{
+					Range: []*net.PortRange{net.SinglePortRange(net.Port(node.ListenPort))},
+				},
+				Listen: net.NewIPOrDomain(net.AnyIP),
 				SniffingSettings: &proxyman.SniffingConfig{
 					Enabled:             true,
 					DestinationOverride: []string{"http", "tls"},

@@ -7,8 +7,8 @@ require (
 	github.com/dlclark/regexp2 v1.4.0
 	github.com/shirou/gopsutil v3.21.2+incompatible
 	github.com/sirupsen/logrus v1.7.0
-	github.com/xtls/xray-core v1.4.2
-	google.golang.org/grpc v1.36.1
+	github.com/xtls/xray-core v1.5.2
+	google.golang.org/grpc v1.43.0
 )
 
 require (

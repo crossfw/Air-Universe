@@ -7,7 +7,6 @@ import (
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -82,14 +81,7 @@ func parseVmessRawInfo(rtnJson *simplejson.Json, node *structures.NodeInfo, clos
 
 	switch node.TransportMode {
 	case "ws":
-		wsPath := inboundInfo.Get("streamSettings").Get("wsSettings").Get("path").MustString()
-		realPathIndex := strings.Index(wsPath, "?")
-
-		if realPathIndex != 0 {
-			node.Path = string([]byte(wsPath)[0:realPathIndex])
-		} else {
-			node.Path = wsPath
-		}
+		node.Path = inboundInfo.Get("streamSettings").Get("wsSettings").Get("path").MustString()
 		node.Host = inboundInfo.Get("streamSettings").Get("wsSettings").Get("headers").Get("Host").MustString()
 	}
 

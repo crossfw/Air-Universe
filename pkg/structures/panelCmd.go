@@ -22,6 +22,7 @@ type NodeInfo struct {
 	CipherType          string
 	ListenPort          uint32
 	AlterID             uint32
+	EnableSniffing      bool
 	EnableTLS           bool
 	EnableProxyProtocol bool
 	TransportMode       string

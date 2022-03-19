@@ -19,14 +19,15 @@ var (
 			Type: "sspanel",
 		},
 		Proxy: structures.Proxy{
-			Type:          "xray",
-			AlterID:       1,
-			AutoGenerate:  true,
-			InTags:        []string{},
-			APIAddress:    "127.0.0.1",
-			APIPort:       10085,
-			LogPath:       "/var/log/au/xr.log",
-			ForceCloseTLS: false,
+			Type:           "xray",
+			AlterID:        1,
+			AutoGenerate:   true,
+			InTags:         []string{},
+			APIAddress:     "127.0.0.1",
+			APIPort:        10085,
+			LogPath:        "/var/log/au/xr.log",
+			ForceCloseTLS:  false,
+			EnableSniffing: true,
 			Cert: structures.Cert{
 				CertPath: "/usr/local/share/au/server.crt",
 				KeyPath:  "/usr/local/share/au/server.key",
@@ -53,7 +54,7 @@ func ParseBaseConfig(configPath *string) (*structures.BaseConfig, error) {
 	}
 	if baseCfg.Proxy.AutoGenerate == true {
 		if len(baseCfg.Proxy.InTags) < len(baseCfg.Panel.NodeIDs) {
-			log.Warnln("InTags length isn't equal to nodeID length, adding inTags")
+			log.Infof("InTags length isn't equal to nodeID length, adding inTags")
 			for n := len(baseCfg.Proxy.InTags); n < len(baseCfg.Panel.NodeIDs); n++ {
 				baseCfg.Proxy.InTags = append(baseCfg.Proxy.InTags, fmt.Sprintf("p%v", n))
 			}

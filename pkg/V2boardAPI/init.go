@@ -22,6 +22,7 @@ func (v2bCtl *V2bController) Init(cfg *structures.BaseConfig, idIndex uint32) (e
 	v2bCtl.NodeInfo.AlterID = cfg.Proxy.AlterID
 	v2bCtl.NodeInfo.Tag = cfg.Proxy.InTags[idIndex]
 	v2bCtl.NodeInfo.Cert = cfg.Proxy.Cert
+	v2bCtl.NodeInfo.EnableSniffing = cfg.Proxy.EnableSniffing
 	// Not force
 	if len(cfg.Panel.NodesProxyProtocol) > int(idIndex) {
 		v2bCtl.NodeInfo.EnableProxyProtocol = cfg.Panel.NodesProxyProtocol[idIndex]

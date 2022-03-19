@@ -18,6 +18,7 @@ func (sspCtl *SspController) Init(cfg *structures.BaseConfig, idIndex uint32) (e
 	sspCtl.NodeInfo.AlterID = cfg.Proxy.AlterID
 	sspCtl.NodeInfo.Tag = cfg.Proxy.InTags[idIndex]
 	sspCtl.NodeInfo.Cert = cfg.Proxy.Cert
+	sspCtl.NodeInfo.EnableSniffing = cfg.Proxy.EnableSniffing
 
 	return err
 }

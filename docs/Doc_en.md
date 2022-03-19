@@ -98,6 +98,7 @@ The first element of `proxy.in_tags` will get users from the first element of `p
   "api_address": "127.0.0.1",
   "api_port": 10085,
   "log_path": "./v2.log",
+  "enable_sniffing": true,
   "cert": {
     "cert_path": "/path/to/certificate.crt",
     "key_path": "/path/to/key.key"
@@ -134,6 +135,10 @@ V2Ray-core api port, normally it will be "10085". You can change it in your v2ra
 > `log_path`: string
 
 V2Ray-core log path, it will use to record users' IP address.
+
+> `enable_sniffing`: true | false
+
+When set to `false` Air-Universe will not set sniffing to all nodes.
 
 > `cert`: cert object
 

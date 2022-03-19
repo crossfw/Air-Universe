@@ -28,6 +28,7 @@ type Proxy struct {
 	ConfigPath      string    `json:"config_path"`
 	LogPath         string    `json:"log_path"`
 	ForceCloseTLS   bool      `json:"force_close_tls"`
+	EnableSniffing  bool      `json:"enable_sniffing"`
 	Cert            Cert      `json:"cert"`
 	SpeedLimitLevel []float32 `json:"speed_limit_level"`
 }

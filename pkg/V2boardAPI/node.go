@@ -1,6 +1,7 @@
 package V2boardAPI
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/bitly/go-simplejson"
@@ -75,7 +76,18 @@ func parseTrojanRawInfo(rtnJson *simplejson.Json, node *structures.NodeInfo, clo
 }
 
 func parseVmessRawInfo(rtnJson *simplejson.Json, node *structures.NodeInfo, closeTLS bool) (err error) {
-	inboundInfo := rtnJson.Get("inbound")
+	// Thanks XrayR
+	inboundInfo := simplejson.New()
+	if tmpInboundInfo, ok := rtnJson.CheckGet("inbound"); ok {
+		inboundInfo = tmpInboundInfo
+		// Compatible with v2board 1.5.5-dev
+	} else if tmpInboundInfo, ok := rtnJson.CheckGet("inbounds"); ok {
+		tmpInboundInfo := tmpInboundInfo.MustArray()
+		marshal_byte, _ := json.Marshal(tmpInboundInfo[0].(map[string]interface{}))
+		inboundInfo, _ = simplejson.NewJson(marshal_byte)
+	} else {
+		return fmt.Errorf("Unable to find inbound(s) in the nodeInfo.")
+	}
 	node.ListenPort = uint32(inboundInfo.Get("port").MustInt())
 	node.TransportMode = inboundInfo.Get("streamSettings").Get("network").MustString()
 

@@ -1,6 +1,6 @@
 # Air-Universe
 
-开源多功能机场后端， 协议支持 V2Ray(VMess), Trojan, Shadowsocks(单端口多用户)；面板支持 SSPanel, v2board.
+开源多功能机场后端， 协议支持 V2Ray(VMess), Trojan, Shadowsocks(单端口多用户)；面板支持 django-sspanel, SSPanel, v2board.
 
 > 反馈 TG 群: https://t.me/Air_Universe <br>
 > 喜欢本项目欢迎 Star⭐
@@ -53,6 +53,7 @@
 
 | 前端        | v2ray | trojan | shadowsocks |
 | ----------- | ----- | ------ | ---------- |
+| django-sspanel | √     | √      | √  |
 | sspanel-uim | √     | √      | √  |
 | v2board     | √     | √      | √          |
 
@@ -61,7 +62,7 @@
 
 * [Project X](https://github.com/XTLS/)
 * [V2Fly](https://github.com/v2fly)
-* [XrayR](https://github.com/XrayR-project/XrayR) - 另一个开源后端, 原生支持限速限用户,但不支持自定义Xray配置.
+* [XrayR](https://github.com/XrayR-project/XrayR) - RIP
 * [one_click_script](https://github.com/jinwyp/one_click_script)
 * [All stargazers](https://github.com/crossfw/Air-Universe/stargazers)
 

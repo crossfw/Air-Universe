@@ -62,7 +62,7 @@
 
 * [Project X](https://github.com/XTLS/)
 * [V2Fly](https://github.com/v2fly)
-* [XrayR](https://github.com/XrayR-project/XrayR) - RIP
+* [XrayR](https://github.com/XrayR-project/XrayR)
 * [one_click_script](https://github.com/jinwyp/one_click_script)
 * [All stargazers](https://github.com/crossfw/Air-Universe/stargazers)
 

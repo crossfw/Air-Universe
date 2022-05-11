@@ -54,7 +54,7 @@ func ParseBaseConfig(configPath *string) (*structures.BaseConfig, error) {
 	}
 	if baseCfg.Proxy.AutoGenerate == true {
 		if len(baseCfg.Proxy.InTags) < len(baseCfg.Panel.NodeIDs) {
-			log.Infof("InTags length isn't equal to nodeID length, adding inTags")
+			log.Debugf("InTags length isn't equal to nodeID length, adding inTags")
 			for n := len(baseCfg.Proxy.InTags); n < len(baseCfg.Panel.NodeIDs); n++ {
 				baseCfg.Proxy.InTags = append(baseCfg.Proxy.InTags, fmt.Sprintf("p%v", n))
 			}

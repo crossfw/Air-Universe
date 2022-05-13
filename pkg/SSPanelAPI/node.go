@@ -3,13 +3,14 @@ package SSPanelAPI
 import (
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
-	"github.com/crossfw/Air-Universe/pkg/structures"
-	regexp "github.com/dlclark/regexp2"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/crossfw/Air-Universe/pkg/structures"
+	regexp "github.com/dlclark/regexp2"
 )
 
 /*
@@ -96,8 +97,8 @@ func parseVmessRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	rePath, _ := regexp.Compile("(?<=path=).*?(?=\\||\\?)|(?<=path=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
 	reInsidePort, _ := regexp.Compile("(?<=inside_port=).*?(?=\\|)|(?<=inside_port=).*", 1)
-	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=)", 1)
-	reVless, _ := regexp.Compile("(?<=enable_vless=).*?(?=\\|)|(?<=enable_vless=)", 1)
+	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=).*", 1)
+	reVless, _ := regexp.Compile("(?<=enable_vless=).*?(?=\\|)|(?<=enable_vless=).*", 1)
 
 	basicInfos, _ := reBasicInfos.FindStringMatch(node.RawInfo)
 	var basicInfoArray []string
@@ -166,7 +167,7 @@ func parseTrojanRawInfo(node *structures.NodeInfo, closeTLS bool) (err error) {
 	reUrl, _ := regexp.Compile("(^|(?<=;))([^;]*)(?=;)", 1)
 	rePort, _ := regexp.Compile("(?<=port=).*?(?=\\|)|(?<=port=).*", 1)
 	reHost, _ := regexp.Compile("(?<=host=).*?(?=\\|)|(?<=host=).*", 1)
-	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=)", 1)
+	reRelay, _ := regexp.Compile("(?<=relay=).*?(?=\\|)|(?<=relay=).*", 1)
 	reListenPort, _ := regexp.Compile("(?<=#).*", 1)
 
 	mUrl, _ := reUrl.FindStringMatch(node.RawInfo)

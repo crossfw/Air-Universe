@@ -3,12 +3,13 @@ package DjangoSSPanelAPI
 import (
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 func getUser(node *DjSspController) (userList *[]structures.UserInfo, err error) {

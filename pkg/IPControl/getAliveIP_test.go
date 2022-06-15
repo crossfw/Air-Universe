@@ -2,8 +2,9 @@ package IPControl
 
 import (
 	"fmt"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"testing"
+
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 //# v2ray.com/core/common/buf

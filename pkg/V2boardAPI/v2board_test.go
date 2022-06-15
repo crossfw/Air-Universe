@@ -2,8 +2,9 @@ package V2boardAPI
 
 import (
 	"fmt"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"testing"
+
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 var (

@@ -3,9 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 // Default config

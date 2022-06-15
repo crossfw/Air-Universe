@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"net/http"
 	"time"
+
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 type UserTraffic struct {

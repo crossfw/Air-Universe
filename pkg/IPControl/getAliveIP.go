@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/crossfw/Air-Universe/pkg/structures"
-	regexp "github.com/dlclark/regexp2"
 	"io"
 	"os"
 	"strconv"
+
+	"github.com/crossfw/Air-Universe/pkg/structures"
+	regexp "github.com/dlclark/regexp2"
 
 	"strings"
 )

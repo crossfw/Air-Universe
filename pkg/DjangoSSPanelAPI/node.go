@@ -3,12 +3,13 @@ package DjangoSSPanelAPI
 import (
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 func getNodeInfo(node *DjSspController, closeTLS bool) (err error) {

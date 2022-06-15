@@ -2,6 +2,7 @@ package V2boardAPI
 
 import (
 	"errors"
+
 	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 

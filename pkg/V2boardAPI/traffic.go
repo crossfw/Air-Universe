@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 func postTraffic(node *V2bController, trafficData *[]structures.UserTraffic) (err error) {

@@ -2,10 +2,11 @@ package XrayAPI
 
 import (
 	"fmt"
-	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"log"
 	"testing"
+
+	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 var (

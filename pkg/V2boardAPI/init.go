@@ -2,8 +2,9 @@ package V2boardAPI
 
 import (
 	"errors"
-	"github.com/crossfw/Air-Universe/pkg/structures"
 	"strings"
+
+	"github.com/crossfw/Air-Universe/pkg/structures"
 )
 
 type V2bController struct {

@@ -3,13 +3,14 @@ package SSPanelAPI
 import (
 	"errors"
 	"fmt"
-	"github.com/bitly/go-simplejson"
-	"github.com/crossfw/Air-Universe/pkg/structures"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/crossfw/Air-Universe/pkg/structures"
+	log "github.com/sirupsen/logrus"
 )
 
 func getUser(node *SspController) (userList *[]structures.UserInfo, err error) {

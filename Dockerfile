@@ -8,7 +8,7 @@ RUN go mod download && \
     go build -v -o au -trimpath -ldflags "-s -w -buildid=" ./cmd/Air-Universe
 
 # Release
-FROM alpine
+FROM alpine:3.15 AS prod
 # 安装必要的工具包
 RUN apk --update --no-cache add tzdata ca-certificates && \
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
